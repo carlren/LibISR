@@ -158,17 +158,23 @@
   <ItemGroup>
     <ClInclude Include="CoreISR\Engine\ISRTrackingEngine.h" />
     <ClInclude Include="CoreISR\LibISR.h" />
+    <ClInclude Include="CoreISR\Objects\ISRCalib.h" />
+    <ClInclude Include="CoreISR\Objects\ISRExtrinsics.h" />
     <ClInclude Include="CoreISR\Objects\ISRFrame.h" />
     <ClInclude Include="CoreISR\Objects\ISRHistogram.h" />
     <ClInclude Include="CoreISR\Objects\ISRImage.h" />
+    <ClInclude Include="CoreISR\Objects\ISRIntrinsics.h" />
     <ClInclude Include="CoreISR\Objects\ISROptimizationHelper.h" />
     <ClInclude Include="CoreISR\Objects\ISRPoints.h" />
     <ClInclude Include="CoreISR\Objects\ISRPose.h" />
     <ClInclude Include="CoreISR\Objects\ISRShape.h" />
     <ClInclude Include="CoreISR\Objects\ISRShapeUnion.h" />
+    <ClInclude Include="CoreISR\Utils\ISRMath.h" />
+    <ClInclude Include="CoreISR\Utils\ISRMatrix.h" />
+    <ClInclude Include="CoreISR\Utils\ISRVector.h" />
     <ClInclude Include="CoreISR\Utils\LibISRDefine.h" />
-    <ClInclude Include="CoreISR\Utils\MathUtils.h" />
     <ClInclude Include="Engine\ISRKinectCapture.h" />
+    <ClInclude Include="Engine\UIEngine.h" />
     <ClInclude Include="Utils\IOUtil.h" />
     <ClInclude Include="Utils\Timer.h" />
   </ItemGroup>

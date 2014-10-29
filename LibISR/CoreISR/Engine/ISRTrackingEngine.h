@@ -1,5 +1,4 @@
-#ifndef __ISR_TRACKING__
-#define __ISR_TRACKING__
+#pragma once
 
 #include "..//Objects//ISRHistogram.h"
 #include "..//Objects//ISRShape.h"
@@ -12,9 +11,9 @@
 
 #include <stdlib.h>
 
-using namespace LibISR::Objects;
+using namespace CoreISR::Objects;
 
-namespace LibISR
+namespace CoreISR
 {
 	namespace Engine
 	{
@@ -25,13 +24,13 @@ namespace LibISR
 			static ISRTrackingEngine *instance;
 
 			//unproject image pixels into CAMERA cooridnates
-			int		UnprojectRGBDImgPts(ISRFrame *frame, ISRShapeUnion *shapes);
+			int	UnprojectRGBDImgPts(ISRFrame *frame, ISRShapeUnion *shapes);
 
 			// apply a Euclidean transform to points
-			void	TransformRT(ISRPoints *inPoints, ISRPoints *outPoints, ISRPose *pose);
+			void TransformRT(ISRPoints *inPoints, ISRPoints *outPoints, ISRPose *pose);
 
 			// evaulate energy function
-			float	EvaluateEnergyFunction(ISRShapeUnion *shapeUnion);
+			float EvaluateEnergyFunction(ISRShapeUnion *shapeUnion);
 
 			// compute the hessian and jacobian
 			void ComputeJacobianAndHessian(ISRShapeUnion *shapeUnion, ISROptimizationHelper *helper);
@@ -55,4 +54,3 @@ namespace LibISR
 	}
 }
 
-#endif

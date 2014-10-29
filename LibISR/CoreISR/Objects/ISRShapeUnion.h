@@ -1,5 +1,4 @@
-#ifndef __ISR_SHAPE_UNION__
-#define __ISR_SHAPE_UNION__
+#pragma once
 
 #include <stdio.h>
 
@@ -8,9 +7,9 @@
 #include "..//Objects//ISRShape.h"
 #include "..//Objects//ISRFrame.h"
 
-using namespace LibISR::Objects;
+using namespace CoreISR::Objects;
 
-namespace LibISR
+namespace CoreISR
 {
 	namespace Objects
 	{
@@ -133,4 +132,3 @@ namespace LibISR
 	}
 }
 
-#endif

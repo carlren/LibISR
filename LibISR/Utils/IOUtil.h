@@ -1,6 +1,4 @@
-#ifndef __IO_UTILS__
-#define __IO_UTILS__
-
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -90,4 +88,3 @@ static inline void PrintPointListToFile(char* fileName, Vector3f *data, int nCou
 }
 
 
-#endif

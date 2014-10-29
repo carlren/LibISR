@@ -1,10 +1,9 @@
-#ifndef __ISR_POSE__
-#define __ISR_POSE__
+#pragma once
 
 #include "..//Utils//LibISRDefine.h"
 #include "..//Utils//MathUtils.h"
 
-namespace LibISR
+namespace CoreISR
 {
 	namespace Objects
 	{
@@ -46,13 +45,12 @@ namespace LibISR
 
 			void SetFrom(ISRPose *pose)
 			{
-				SetVectorFromVector_3(this->r, pose->r);
-				SetVectorFromVector_3(this->mrp, pose->mrp);
-				SetMatrixFromMatrix_3(this->R, pose->R);
-				SetVectorFromVector_3(this->t, pose->t);
-				
-				SetMatrixFromMatrix_4(this->H, pose->H);
-				SetMatrixFromMatrix_4(this->invH, pose->invH);
+				this->r = pose->r;
+				this->mrp = pose->mrp;
+				this->R = pose->R;
+				this->t = pose->t;
+				this->H = pose->H;
+				this->invH = pose->invH;
 
 				this->scale = pose->scale;
 			}
@@ -87,10 +85,11 @@ namespace LibISR
 					}
 				}
 				this->H->m33 = 1;
-				MatrixInvert_4(this->invH, this->H);
+
+				this->H->inv((*this->invH));
+
 			}
 		};
 	}
 }
 
-#endif

@@ -1,10 +1,9 @@
-#ifndef __ISR_IMAGE__
-#define __ISR_IMAGE__
+#pragma once
 
 #include <stdlib.h>
 #include <string.h>
 
-namespace LibISR
+namespace CoreISR
 {
 	namespace Objects
 	{
@@ -41,4 +40,3 @@ namespace LibISR
 	}
 }
 
-#endif

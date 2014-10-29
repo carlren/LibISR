@@ -1,8 +1,15 @@
-#ifndef __ISR_DEFINES__
-#define __ISR_DEFINES__
+#pragma once
 
 #include <stdlib.h>
 #include <math.h>
+
+#if defined(__CUDACC__) && defined(__CUDA_ARCH__)
+#define _CPU_AND_GPU_CODE_ __device__	// for CUDA device code
+#else
+#define _CPU_AND_GPU_CODE_ 
+#endif
+
+#include "ISRMath.h"
 
 #ifndef MAX_OBJECT_COUNT
 #define MAX_OBJECT_COUNT 2
@@ -37,30 +44,6 @@
 #endif
 
 
-#ifndef MIN
-#define MIN(a,b) ((a < b) ? a : b)
-#endif
-
-#ifndef MAX
-#define MAX(a,b) ((a < b) ? b : a)
-#endif
-
-#ifndef ABS
-#define ABS(a) ((a < 0) ? -a : a)
-#endif
-
-#ifndef CLAMP
-#define CLAMP(x,a,b) ((x) < (a) ? (a) : ((x) > (b) ? (b) : (x)))
-#endif
-
-#ifndef PI
-#define PI 3.1415926535897932384626433832795
-#endif
-
-#ifndef DEGTORAD
-#define DEGTORAD (float)(0.017453292519943295769236907684886)
-#endif
-
 //debug
 #ifndef DEBUGBREAK
 #define DEBUGBREAK \
@@ -71,9 +54,6 @@
 #endif
 
 //types
-#ifndef NULL
-#define NULL 0
-#endif
 
 #ifndef TRUE
 #define TRUE 1
@@ -141,5 +121,3 @@
 typedef unsigned short USHORT;
 #endif
 
-
-#endif

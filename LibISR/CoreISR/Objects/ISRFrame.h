@@ -1,5 +1,4 @@
-#ifndef __ISR_FRAME__
-#define __ISR_FRAME__
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,10 +9,10 @@
 #include "..//Objects//ISRHistogram.h"
 #include "..//Objects//ISRImage.h"
 
-using namespace LibISR::Objects;
+using namespace CoreISR::Objects;
 
 
-namespace LibISR
+namespace CoreISR
 {
 	namespace Objects
 	{
@@ -190,4 +189,3 @@ namespace LibISR
 	}
 }
 
-#endif

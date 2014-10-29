@@ -1,6 +1,4 @@
-#ifndef __ISR_KINECT_CAP__
-#define __ISR_KINECT_CAP__
-
+#pragma once
 
 #include <Windows.h>
 
@@ -122,4 +120,3 @@ namespace LibISR
 	}
 }
 
-#endif

@@ -1,5 +1,4 @@
-#ifndef __ISR_HISTOGRAM__
-#define __ISR_HISTOGRAM__
+#pragma once
 
 #include <string.h>
 
@@ -8,7 +7,7 @@
 #include "..//Objects//ISRImage.h"
 
 
-namespace LibISR
+namespace CoreISR
 {
 	namespace Objects
 	{
@@ -118,4 +117,3 @@ namespace LibISR
 	}
 }
 
-#endif

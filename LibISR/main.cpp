@@ -10,8 +10,9 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/core/core.hpp"
 
-using namespace LibISR::Objects;
-using namespace LibISR::Engine;
+using namespace CoreISR::Objects;
+using namespace CoreISR::Engine;
+
 
 //int main(void
 //{

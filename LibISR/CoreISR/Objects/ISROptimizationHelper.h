@@ -1,5 +1,4 @@
-#ifndef __ISR_OPTIMIZATION__
-#define __ISR_OPTIMIZATION__
+#pragma once
 
 #include <stdlib.h>
 
@@ -9,7 +8,7 @@
 #include "..//Objects//ISRShapeUnion.h"
 
 
-namespace LibISR
+namespace CoreISR
 {
 	namespace Objects
 	{
@@ -75,4 +74,3 @@ namespace LibISR
 	}
 }
 
-#endif

@@ -1,5 +1,4 @@
-#ifndef Timer_H
-#define Timer_H
+#pragma once
 
 #include <ctime>
 #include <iostream>
@@ -137,5 +136,5 @@ inline std::ostream& operator<<(std::ostream& os, Timer& t)
 }
 //===========================================================================
 
-#endif // Timer_H
+
 

@@ -1,6 +1,6 @@
 #include "ISRTrackingEngine.h"
 
-using namespace LibISR::Engine;
+using namespace CoreISR::Engine;
 
 ISRTrackingEngine *ISRTrackingEngine::instance;
 

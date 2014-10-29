@@ -1,5 +1,4 @@
-#ifndef __ISR_SHAPE__
-#define __ISR_SHAPE__
+#pragma once
 
 #include <stdio.h>
 
@@ -8,9 +7,9 @@
 #include "..//Objects//ISRPose.h"
 #include "..//Objects//ISRPoints.h"
 
-using namespace LibISR::Objects;
+using namespace CoreISR::Objects;
 
-namespace LibISR
+namespace CoreISR
 {
 	namespace Objects
 	{
@@ -158,5 +157,3 @@ namespace LibISR
 		};
 	}
 }
-
-#endif

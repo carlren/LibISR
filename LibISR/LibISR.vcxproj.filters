@@ -63,17 +63,33 @@
     <ClInclude Include="CoreISR\Utils\LibISRDefine.h">
       <Filter>CoreISR\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="CoreISR\Utils\MathUtils.h">
-      <Filter>CoreISR\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="CoreISR\Engine\ISRTrackingEngine.h">
       <Filter>CoreISR\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\LibISR.h">
+      <Filter>CoreISR</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\UIEngine.h">
+      <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ISRKinectCapture.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="CoreISR\LibISR.h">
-      <Filter>CoreISR</Filter>
+    <ClInclude Include="CoreISR\Objects\ISRCalib.h">
+      <Filter>CoreISR\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Objects\ISRIntrinsics.h">
+      <Filter>CoreISR\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Objects\ISRExtrinsics.h" />
+    <ClInclude Include="CoreISR\Utils\ISRMatrix.h">
+      <Filter>CoreISR\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Utils\ISRMath.h">
+      <Filter>CoreISR\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Utils\ISRVector.h">
+      <Filter>CoreISR\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

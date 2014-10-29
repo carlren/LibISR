@@ -1,12 +1,11 @@
-#ifndef __ISR_POINTS__
-#define __ISR_POINTS__
+#pragma once
 
 #include <stdlib.h>
 
 #include "..//Utils//LibISRDefine.h"
 #include "..//Utils//MathUtils.h"
 
-namespace LibISR
+namespace CoreISR
 {
 	namespace Objects
 	{
@@ -48,4 +47,3 @@ namespace LibISR
 	}
 }
 
-#endif
