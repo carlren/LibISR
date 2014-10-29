@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="ISRTrackingEngine.cpp">
+      <Filter>Engines</Filter>
+    </ClCompile>
+    <ClCompile Include="IOUtil.h">
+      <Filter>Utils</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="LibISRDefine.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="MathUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ISRShape.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ISRImage.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ISRPose.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ISRHistogram.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ISRFrame.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ISRTrackingEngine.h">
+      <Filter>Engines</Filter>
+    </ClInclude>
+    <ClInclude Include="ISRPoints.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ISROptimizationHelper.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ISRKinectCapture.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ISRShapeUnion.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{9b452c03-93c8-41e2-abde-4827b3166b45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Objects">
+      <UniqueIdentifier>{c39b6585-6169-4959-bfb7-2d5614a8de08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{a1f3e34f-6da4-4ba4-b605-a0be56c777fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include">
+      <UniqueIdentifier>{6c122fbb-6b63-4dd0-9865-0ec1703ca633}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engines">
+      <UniqueIdentifier>{673c346d-9042-401f-a553-2adb424ead28}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
