@@ -2,67 +2,78 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ISRTrackingEngine.cpp">
-      <Filter>Engines</Filter>
+    <ClCompile Include="CoreISR\Objects\ISRPose.cpp">
+      <Filter>CoreISR\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="IOUtil.h">
-      <Filter>Utils</Filter>
+    <ClCompile Include="CoreISR\Engine\ISRTrackingEngine.cpp">
+      <Filter>CoreISR\Engine</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="LibISRDefine.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="MathUtils.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="ISRShape.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="ISRImage.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="ISRPose.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="ISRHistogram.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="ISRFrame.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="ISRTrackingEngine.h">
-      <Filter>Engines</Filter>
-    </ClInclude>
-    <ClInclude Include="ISRPoints.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="ISROptimizationHelper.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="ISRKinectCapture.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="ISRShapeUnion.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
-      <UniqueIdentifier>{9b452c03-93c8-41e2-abde-4827b3166b45}</UniqueIdentifier>
+      <UniqueIdentifier>{4af27829-1a0e-4a0b-86cf-aa3d0d0a9c49}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Objects">
-      <UniqueIdentifier>{c39b6585-6169-4959-bfb7-2d5614a8de08}</UniqueIdentifier>
+    <Filter Include="CoreISR">
+      <UniqueIdentifier>{2c8c3c5d-cbd4-41e8-886f-e73aaf90d220}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CoreISR\Engine">
+      <UniqueIdentifier>{fddcd40b-887a-4ce9-aaaf-093df9de9a9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CoreISR\Objects">
+      <UniqueIdentifier>{7fb4ec90-f57f-4ae4-838c-20fc561b38b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CoreISR\Utils">
+      <UniqueIdentifier>{f47f59da-aeb6-486a-9c7c-7a1fb456e28b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Utils">
-      <UniqueIdentifier>{a1f3e34f-6da4-4ba4-b605-a0be56c777fd}</UniqueIdentifier>
+      <UniqueIdentifier>{e4fa263a-1ee7-4f24-8e37-47d5e49cba6b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include">
-      <UniqueIdentifier>{6c122fbb-6b63-4dd0-9865-0ec1703ca633}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engines">
-      <UniqueIdentifier>{673c346d-9042-401f-a553-2adb424ead28}</UniqueIdentifier>
-    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Utils\IOUtil.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Timer.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Objects\ISRFrame.h">
+      <Filter>CoreISR\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Objects\ISRHistogram.h">
+      <Filter>CoreISR\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Objects\ISRImage.h">
+      <Filter>CoreISR\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Objects\ISROptimizationHelper.h">
+      <Filter>CoreISR\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Objects\ISRPoints.h">
+      <Filter>CoreISR\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Objects\ISRPose.h">
+      <Filter>CoreISR\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Objects\ISRShape.h">
+      <Filter>CoreISR\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Objects\ISRShapeUnion.h">
+      <Filter>CoreISR\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Utils\LibISRDefine.h">
+      <Filter>CoreISR\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Utils\MathUtils.h">
+      <Filter>CoreISR\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Engine\ISRTrackingEngine.h">
+      <Filter>CoreISR\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ISRKinectCapture.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\LibISR.h">
+      <Filter>CoreISR</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,19 +1,14 @@
 #include <stdio.h>
 
-#include "IOUtil.h"
-#include "Timer.h"
+#include "CoreISR\\LibISR.h"
 
-#include"ISRHistogram.h"
-#include"ISRShape.h"
-#include"ISRImage.h"
-#include"ISRPose.h"
-//#include"ISRKinectCapture.h"
-#include"ISRFrame.h"
-#include"ISRTrackingEngine.h"
+#include "Utils\\IOUtil.h"
+#include "Utils\\Timer.h"
 
+//#include"Engine\\ISRKinectCapture.h"
 
-#include "../Dependency/OpenCV/opencv2/highgui/highgui.hpp"
-#include "../Dependency/OpenCV/opencv2/core/core.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/core/core.hpp"
 
 using namespace LibISR::Objects;
 using namespace LibISR::Engine;
@@ -139,12 +134,10 @@ int main(void)
 	ISRUCharImage *histMask = new ISRUCharImage(640, 480);
 
 
-	loadISRU4Image("Files\\color.jpg",histColor);
-	IplImage *tmpMask = cvLoadImage("Files\\mask.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+	loadISRU4Image("..\\Data\\color.jpg",histColor);
+	IplImage *tmpMask = cvLoadImage("..\\Data\\mask.jpg", CV_LOAD_IMAGE_GRAYSCALE);
 	memcpy(histMask->data, tmpMask->imageData, 640 * 480 * sizeof(unsigned char));
 	myFrame->histogram->BuildHistogram(histColor, histMask);
-
-	//PrintArrayToFile("d:\\hist.txt", myFrame->histogram->posterior, myFrame->histogram->dim);
 
 	float ctPt1[3] = { 0, 0.1, 0 };
 	float ctPt2[3] = { 0, -0.1, 0 };
@@ -158,27 +151,21 @@ int main(void)
 
 	Timer *mytimer = new Timer();
 
-	//char outTimerName[100];
-	//sprintf(outTimerName, "d:\\Timer_%04d.txt", objCount);
-	//FILE* fid = fopen(outTimerName, "w");
-
 	while ((key = cvWaitKey(10)) != 27 && count<1480)
 	{
-		sprintf(inputColorName, "Files\\k1_cut\\c0-%04d.jpg", count);
-		sprintf(inputDepthName, "Files\\k1_cut\\d-%04d.pgm", count);
+		sprintf(inputColorName, "..\\Data\\k1_cut\\c0-%04d.jpg", count);
+		sprintf(inputDepthName, "..\\Data\\k1_cut\\d-%04d.pgm", count);
 
 		loadISRU4Image(inputColorName, tColor);
 		IplImage *tmpDepth = cvLoadImage(inputDepthName, CV_LOAD_IMAGE_UNCHANGED);
 		memcpy(tDepth->data, tmpDepth->imageData, 640 * 480 * sizeof(unsigned short));
 
 		myFrame->loadColorAndDepthFrame(tColor,tDepth,true);
-		
-		//WriteMatlabTXTImg("d:\\tmp\\depth.txt", myFrame->depthImage->data, 640, 480);
 
 		mytimer->restart();
 		ISRTrackingEngine::Instance()->TrackFrame(myFrame, myShapeUnion, myHelper);	
-		//fprintf(fid, "%f\n", mytimer->elapsed_time());
 		mytimer->check();
+
 
 		Vector2d iPt1 = ProjectPtToImg((Matrix3f*) myFrame->intrinsics->A, myShapeUnion->shapes[0]->pose->invH, (Vector3f*)ctPt1);
 		Vector2d iPt2 = ProjectPtToImg((Matrix3f*)myFrame->intrinsics->A, myShapeUnion->shapes[0]->pose->invH, (Vector3f*)ctPt2);
@@ -226,9 +213,7 @@ int main(void)
 		count++;
 	}
 
-	//fclose(fid);
 	cvDestroyAllWindows();
-
 	cvReleaseImage(&colorFrame);
 	cvReleaseImage(&depthFrame);
 

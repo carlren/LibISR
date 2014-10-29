@@ -1,5 +1,68 @@
-﻿Build started 10/29/2014 11:56:32 AM.
+﻿Build started 10/29/2014 12:40:38 PM.
+     1>Project "D:\VS\LibISR\LibISR\LibISR.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\CL.exe /c /ID:\1.Work\VS\LibISR\Dependency\Kinect\inc /ID:\1.Work\VS\LibISR\Dependency\OpenCV /Zi /nologo /W3 /WX- /O2 /Oi /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Release\\" /Fd"x64\Release\vc120.pdb" /Gd /TP /errorReport:prompt main.cpp
+         main.cpp
+     1>d:\vs\libisr\libisr\coreisr\Objects\\ISRHistogram.h(53): warning C4101: 'idx_mask' : unreferenced local variable
+     1>d:\vs\libisr\libisr\coreisr\Objects\\ISRShape.h(55): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+     1>d:\vs\libisr\libisr\coreisr\Objects\\ISRShape.h(84): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>d:\vs\libisr\libisr\coreisr\Objects\\ISRShape.h(123): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>d:\vs\libisr\libisr\coreisr\Objects\\ISRShape.h(124): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>d:\vs\libisr\libisr\coreisr\Objects\\ISRShape.h(125): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>d:\vs\libisr\libisr\coreisr\Objects\\ISRShape.h(135): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>d:\vs\libisr\libisr\coreisr\Objects\\ISRShape.h(136): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>d:\vs\libisr\libisr\coreisr\Objects\\ISRShape.h(137): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>d:\vs\libisr\libisr\coreisr\engine\..//Objects//ISRShapeUnion.h(109): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+     1>d:\vs\libisr\libisr\coreisr\engine\..//Objects//ISRShapeUnion.h(110): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+     1>d:\vs\libisr\libisr\coreisr\engine\..//Objects//ISRShapeUnion.h(119): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>d:\vs\libisr\libisr\Utils\\IOUtil.h(11): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>d:\vs\libisr\libisr\Utils\\IOUtil.h(17): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>d:\vs\libisr\libisr\Utils\\IOUtil.h(24): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>d:\vs\libisr\libisr\Utils\\IOUtil.h(30): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>d:\vs\libisr\libisr\Utils\\IOUtil.h(37): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>d:\vs\libisr\libisr\Utils\\IOUtil.h(53): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>d:\vs\libisr\libisr\Utils\\IOUtil.h(70): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>d:\vs\libisr\libisr\Utils\\IOUtil.h(81): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>main.cpp(142): warning C4305: 'initializing' : truncation from 'double' to 'float'
+     1>main.cpp(143): warning C4305: 'initializing' : truncation from 'double' to 'float'
+     1>main.cpp(144): warning C4305: 'initializing' : truncation from 'double' to 'float'
+     1>main.cpp(145): warning C4305: 'initializing' : truncation from 'double' to 'float'
+     1>main.cpp(146): warning C4305: 'initializing' : truncation from 'double' to 'float'
+     1>main.cpp(147): warning C4305: 'initializing' : truncation from 'double' to 'float'
+     1>main.cpp(156): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(356) : see declaration of 'sprintf'
+     1>main.cpp(157): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(356) : see declaration of 'sprintf'
+     1>main.cpp(178): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>main.cpp(179): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>main.cpp(180): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>main.cpp(181): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>main.cpp(182): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>main.cpp(183): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>main.cpp(196): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>main.cpp(197): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>main.cpp(198): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>main.cpp(199): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>main.cpp(200): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>main.cpp(201): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"D:\VS\LibISR\x64\Release\LibISR.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:D:\1.Work\VS\LibISR\Dependency\Kinect\lib\amd64 /LIBPATH:C:\OpenCV2.4\opencv\build\x64\vc11\lib opencv_core2410.lib opencv_imgproc2410.lib opencv_highgui2410.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\VS\LibISR\x64\Release\LibISR.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\VS\LibISR\x64\Release\LibISR.lib" /MACHINE:X64 x64\Release\ISRTrackingEngine.obj
+         x64\Release\ISRPose.obj
+         x64\Release\main.obj
+         Generating code
+         Finished generating code
+         LibISR.vcxproj -> D:\VS\LibISR\x64\Release\LibISR.exe
+     1>Done Building Project "D:\VS\LibISR\LibISR\LibISR.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.01
+Time Elapsed 00:00:01.25

@@ -151,24 +151,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="IOUtil.h" />
-    <ClCompile Include="ISRTrackingEngine.cpp" />
+    <ClCompile Include="CoreISR\Engine\ISRTrackingEngine.cpp" />
+    <ClCompile Include="CoreISR\Objects\ISRPose.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ISRFrame.h" />
-    <ClInclude Include="ISRHistogram.h" />
-    <ClInclude Include="ISRImage.h" />
-    <ClInclude Include="ISRKinectCapture.h" />
-    <ClInclude Include="ISROptimizationHelper.h" />
-    <ClInclude Include="ISRPoints.h" />
-    <ClInclude Include="ISRPose.h" />
-    <ClInclude Include="ISRShape.h" />
-    <ClInclude Include="ISRShapeUnion.h" />
-    <ClInclude Include="ISRTrackingEngine.h" />
-    <ClInclude Include="LibISRDefine.h" />
-    <ClInclude Include="MathUtils.h" />
-    <ClInclude Include="Timer.h" />
+    <ClInclude Include="CoreISR\Engine\ISRTrackingEngine.h" />
+    <ClInclude Include="CoreISR\LibISR.h" />
+    <ClInclude Include="CoreISR\Objects\ISRFrame.h" />
+    <ClInclude Include="CoreISR\Objects\ISRHistogram.h" />
+    <ClInclude Include="CoreISR\Objects\ISRImage.h" />
+    <ClInclude Include="CoreISR\Objects\ISROptimizationHelper.h" />
+    <ClInclude Include="CoreISR\Objects\ISRPoints.h" />
+    <ClInclude Include="CoreISR\Objects\ISRPose.h" />
+    <ClInclude Include="CoreISR\Objects\ISRShape.h" />
+    <ClInclude Include="CoreISR\Objects\ISRShapeUnion.h" />
+    <ClInclude Include="CoreISR\Utils\LibISRDefine.h" />
+    <ClInclude Include="CoreISR\Utils\MathUtils.h" />
+    <ClInclude Include="Engine\ISRKinectCapture.h" />
+    <ClInclude Include="Utils\IOUtil.h" />
+    <ClInclude Include="Utils\Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
