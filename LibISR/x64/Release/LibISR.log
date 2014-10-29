@@ -1,7 +1,28 @@
-﻿Build started 10/29/2014 12:40:38 PM.
-     1>Project "D:\VS\LibISR\LibISR\LibISR.vcxproj" on node 2 (Build target(s)).
+﻿Build started 10/29/2014 12:44:07 PM.
+     1>Project "D:\VS\LibISR\LibISR\LibISR.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\CL.exe /c /ID:\1.Work\VS\LibISR\Dependency\Kinect\inc /ID:\1.Work\VS\LibISR\Dependency\OpenCV /Zi /nologo /W3 /WX- /O2 /Oi /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Release\\" /Fd"x64\Release\vc120.pdb" /Gd /TP /errorReport:prompt main.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\CL.exe /c /ID:\1.Work\VS\LibISR\Dependency\Kinect\inc /ID:\1.Work\VS\LibISR\Dependency\OpenCV /Zi /nologo /W3 /WX- /O2 /Oi /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Release\\" /Fd"x64\Release\vc120.pdb" /Gd /TP /errorReport:prompt CoreISR\Engine\ISRTrackingEngine.cpp CoreISR\Objects\ISRPose.cpp main.cpp
+         ISRTrackingEngine.cpp
+     1>d:\vs\libisr\libisr\coreisr\engine\..//Objects//ISRHistogram.h(53): warning C4101: 'idx_mask' : unreferenced local variable
+     1>d:\vs\libisr\libisr\coreisr\engine\..//Objects//ISRShape.h(55): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+     1>d:\vs\libisr\libisr\coreisr\engine\..//Objects//ISRShape.h(84): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>d:\vs\libisr\libisr\coreisr\engine\..//Objects//ISRShape.h(123): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>d:\vs\libisr\libisr\coreisr\engine\..//Objects//ISRShape.h(124): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>d:\vs\libisr\libisr\coreisr\engine\..//Objects//ISRShape.h(125): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>d:\vs\libisr\libisr\coreisr\engine\..//Objects//ISRShape.h(135): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>d:\vs\libisr\libisr\coreisr\engine\..//Objects//ISRShape.h(136): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>d:\vs\libisr\libisr\coreisr\engine\..//Objects//ISRShape.h(137): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>d:\vs\libisr\libisr\coreisr\engine\..//Objects//ISRShapeUnion.h(109): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+     1>d:\vs\libisr\libisr\coreisr\engine\..//Objects//ISRShapeUnion.h(110): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+     1>d:\vs\libisr\libisr\coreisr\engine\..//Objects//ISRShapeUnion.h(119): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>CoreISR\Engine\ISRTrackingEngine.cpp(19): warning C4101: 'tempT3' : unreferenced local variable
+     1>CoreISR\Engine\ISRTrackingEngine.cpp(19): warning C4101: 'tempR3' : unreferenced local variable
+     1>CoreISR\Engine\ISRTrackingEngine.cpp(95): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+     1>CoreISR\Engine\ISRTrackingEngine.cpp(96): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+     1>CoreISR\Engine\ISRTrackingEngine.cpp(97): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+     1>CoreISR\Engine\ISRTrackingEngine.cpp(336): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+         ISRPose.cpp
          main.cpp
      1>d:\vs\libisr\libisr\coreisr\Objects\\ISRHistogram.h(53): warning C4101: 'idx_mask' : unreferenced local variable
      1>d:\vs\libisr\libisr\coreisr\Objects\\ISRShape.h(55): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
@@ -61,8 +82,8 @@
          Generating code
          Finished generating code
          LibISR.vcxproj -> D:\VS\LibISR\x64\Release\LibISR.exe
-     1>Done Building Project "D:\VS\LibISR\LibISR\LibISR.vcxproj" (Build target(s)).
+     1>Done Building Project "D:\VS\LibISR\LibISR\LibISR.vcxproj" (Rebuild target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:01.25
+Time Elapsed 00:00:01.14
