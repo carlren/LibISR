@@ -80,10 +80,6 @@
 #endif
 
 
-#ifndef ISRUCharImage
-#define ISRUCharImage ISRImage<unsigned char>
-#endif
-
 #ifndef ISRFloatImage
 #define ISRFloatImage ISRImage<float>
 #endif
@@ -92,21 +88,46 @@
 #define ISRFloat2Image ISRImage<Vector2f>
 #endif
 
+#ifndef ISRFloat4Image
+#define ISRFloat4Image ISRImage<Vector4f>
+#endif
+
+#ifndef ISRShortImage
+#define ISRShortImage ISRImage<short>
+#endif
+
+#ifndef ISRShort3Image
+#define ISRShort3Image ISRImage<Vector3s>
+#endif
+
+#ifndef ISRShort4Image
+#define ISRShort4Image ISRImage<Vector4s>
+#endif
+
+#ifndef ISRUShortImage
+#define ISRUShortImage ISRImage<ushort>
+#endif
+
+#ifndef ISRUIntImage
+#define ISRUIntImage ISRImage<uint>
+#endif
+
+#ifndef ISRIntImage
+#define ISRIntImage ISRImage<int>
+#endif
+
+#ifndef ISRUCharImage
+#define ISRUCharImage ISRImage<uchar>
+#endif
+
 #ifndef ISRUChar4Image
 #define ISRUChar4Image ISRImage<Vector4u>
 #endif
 
-#ifndef ISRUShortImage
-#define ISRUShortImage ISRImage<unsigned short>
+#ifndef ISRBoolImage
+#define ISRBoolImage ISRImage<bool>
 #endif
 
-#ifndef ISRInt3Image
-#define ISRInt3Image ISRImage<Vector3i>
-#endif
-
-#ifndef ISRFloat3Image
-#define ISRFloat3Image ISRImage<Vector3f>
-#endif
 
 #ifndef VOLVAL
 #define VOLVAL(vol,x,y,z) (vol[((z) * DT_VOL_SIZE + (y)) * DT_VOL_SIZE + (x)])

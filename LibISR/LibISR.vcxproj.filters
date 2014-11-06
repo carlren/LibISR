@@ -8,6 +8,15 @@
     <ClCompile Include="CoreISR\Engine\ISRTrackingEngine.cpp">
       <Filter>CoreISR\Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Utils\IOUtil.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\ImageSourceEngine.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="CoreISR\Utils\ISRCalibIO.cpp">
+      <Filter>CoreISR\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -81,7 +90,6 @@
     <ClInclude Include="CoreISR\Objects\ISRIntrinsics.h">
       <Filter>CoreISR\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="CoreISR\Objects\ISRExtrinsics.h" />
     <ClInclude Include="CoreISR\Utils\ISRMatrix.h">
       <Filter>CoreISR\Utils</Filter>
     </ClInclude>
@@ -89,6 +97,27 @@
       <Filter>CoreISR\Utils</Filter>
     </ClInclude>
     <ClInclude Include="CoreISR\Utils\ISRVector.h">
+      <Filter>CoreISR\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Objects\ISRExtrinsics.h">
+      <Filter>CoreISR\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Objects\ISRExHomography.h">
+      <Filter>CoreISR\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Objects\ISRDisparityCalib.h">
+      <Filter>CoreISR\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Objects\ISRView.h">
+      <Filter>CoreISR\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Utils\LibISRCUDADefine.h">
+      <Filter>CoreISR\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ImageSourceEngine.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Utils\ISRCalibIO.h">
       <Filter>CoreISR\Utils</Filter>
     </ClInclude>
   </ItemGroup>

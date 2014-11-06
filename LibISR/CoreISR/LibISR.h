@@ -1,12 +1,16 @@
-#ifndef __ISR_LIB__
-#define __ISR_LIB__
+#pragma once
 
-#include"Objects\\ISRHistogram.h"
-#include"Objects\\ISRShape.h"
-#include"Objects\\ISRImage.h"
-#include"Objects\\ISRPose.h"
-#include"Objects\\ISRFrame.h"
+#include "Objects\\ISRHistogram.h"
+#include "Objects\\ISRShape.h"
+#include "Objects\\ISRImage.h"
+#include "Objects\\ISRPose.h"
+#include "Objects\\ISRFrame.h"
+#include "Objects\ISRCalib.h"
+#include "Objects\\ISRView.h"
+
+#include "Utils\\ISRCalibIO.h"
 
 #include"Engine\\ISRTrackingEngine.h"
 
-#endif
+using namespace CoreISR::Objects;
+using namespace CoreISR::Engine;

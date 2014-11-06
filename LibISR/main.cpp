@@ -73,22 +73,14 @@ int main(void)
 	ISRFrame *myFrame = new ISRFrame(640, 480);
 	Vector3d myVolSize; myVolSize.x = 200; myVolSize.y = 200; myVolSize.z = 200;
 
-	//ISRShapeUnion *myShapeUnion = new ISRShapeUnion(1);
-	//myShapeUnion->shapes[0] = new ISRShape(myVolSize, 2, 0);
-	//myShapeUnion->shapes[0]->LoadShapeFromFile("../Data/newCut.bin");
+	float rH[9] = { 1.44222043401605f, 0.0224968194843458f, 60.8747851772631f,
+		-0.0207371618019255f, 1.46227330363573f, 48.2429634968192f,
+		-3.09022577581801e-05f, 5.63097673183537e-05f, 1.63774981727871f };
+	float rT[3] = { 11.6739429499538f, -8.81340702835841f, -0.0311516255635917f };
 
-	//ISRShapeUnion *myShapeUnion = new ISRShapeUnion(2);
 
-	//myShapeUnion->shapes[0] = new ISRShape(myVolSize, 2, 0);
-	//myShapeUnion->shapes[1] = new ISRShape(myVolSize, 2, 0);
-
-	//myShapeUnion->shapes[0]->LoadShapeFromFile("../Data/newCut.bin");
-	//myShapeUnion->shapes[1]->LoadShapeFromFile("../Data/newCut.bin");
-
-	float A[9] = { 592.8291f, 0.0f, 321.1862f,
-		0.0f, 596.1464f, 236.3956f,
-		0.0f, 0.0f, 1.0000f };
-	myFrame->intrinsics->SetFrom(A);
+	myFrame->intrinsics->SetFrom(592.8291f, 596.1464f, 321.1862f, 236.3956f);
+	myFrame->extrinsics->
 
 	int objCount = 2;
 

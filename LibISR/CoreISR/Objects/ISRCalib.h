@@ -1,6 +1,9 @@
 #pragma once
 
 #include "ISRIntrinsics.h"
+#include "ISRExtrinsics.h"
+#include "ISRDisparityCalib.h"
+#include "ISRExHomography.h"
 
 namespace CoreISR
 {
@@ -24,9 +27,12 @@ namespace CoreISR
 			camera coordinate system to the depth camera
 			coordinate system.
 			*/
-			ITMExtrinsics trafo_rgb_to_depth;
-			/// Calibration information to compute depth from disparity images.
-			ITMDisparityCalib disparityCalib;
+			ISRExtrinsics trafo_rgb_to_depth;
+
+			ISRExHomography homo_depth_to_color;
+
+			ISRDisparityCalib disparityCalib;
+			
 		};
 	}
 }

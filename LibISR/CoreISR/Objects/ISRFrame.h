@@ -7,7 +7,7 @@
 #include "..//Utils//MathUtils.h"
 
 #include "..//Objects//ISRHistogram.h"
-#include "..//Objects//ISRImage.h"
+#include "..//Objects//ISRView.h"
 
 using namespace CoreISR::Objects;
 
@@ -16,57 +16,22 @@ namespace CoreISR
 {
 	namespace Objects
 	{
-		class ISRExtrinsics
-		{
-		public:
-			float rH[9], rT[3];
-
-			void SetFrom(float *rH, float *rT)
-			{
-				for (int i=0; i<9; i++) this->rH[i] = (float)rH[i];
-				for (int i=0; i<3; i++) this->rT[i] = (float)rT[i];
-			}
-
-			ISRExtrinsics() { }
-			~ISRExtrinsics() { }
-		};
-
-		class ISRIntrinsics
-		{
-		public:
-			float A[9];
-			float invA[9];
-			
-			void SetFrom(float *A)
-			{
-				for (int i=0; i<9; i++) this->A[i] = (float)A[i];
-				ISRInvMatrix3(this->A, this->invA);
-			}
-
-			ISRIntrinsics() { }
-			~ISRIntrinsics() { }
-		};
 
 		class ISRFrame
 		{
 		public:
-			int width,height;
 
-			ISRIntrinsics *intrinsics;
-			ISRExtrinsics *extrinsics;
+			int height;
+			int width;
 
-			ISRUChar4Image *colorImage;
-			ISRUShortImage *rawDepthImage;
+			ISRView* view;
 
 			ISRUChar4Image *displayDepthImage;
 			ISRUChar4Image *renderingImage;
-			ISRUChar4Image *alignedColorImage;
-			ISRFloatImage *depthImage;
 			ISRUCharImage *occMap;
 
 			ISRFloatImage *pfImage;
 			ISRFloatImage *idxImage;
-
 
 			ISRHistogram* histogram;
 			
@@ -105,7 +70,7 @@ namespace CoreISR
 				this->intrinsics = new ISRIntrinsics();
 				this->extrinsics = new ISRExtrinsics();
 
-				this->intrinsics->SetFrom(A);
+				
 				this->extrinsics->SetFrom(rH,rT);
 
 			}

@@ -22,6 +22,9 @@ namespace CoreISR
 				float fx, fy, px, py;
 			} projectionParamsSimple;
 
+			Matrix3f A;
+			Matrix3f invA;
+
 			/** Setup all the internal members of this class from
 			the given parameters. Everything is in pixel
 			coordinates.
@@ -32,7 +35,16 @@ namespace CoreISR
 			@param sizeX Image size in x direction
 			@param sizeY Image size in y direction
 			*/
-			void SetFrom(float fx, float fy, float cx, float cy, float sizeX, float sizeY);
+			void SetFrom(float fx, float fy, float cx, float cy)
+			{
+				projectionParamsSimple.fx = fx; projectionParamsSimple.fy = fy;
+				projectionParamsSimple.px = cx; projectionParamsSimple.py = cy;
+
+				A.setZeros();
+				A.m00 = fx; A.m20 = cx; A.m11 = fy; A.m21 = cy; A.m22 = 1;
+				A.inv(invA);
+				
+			}
 
 			ISRIntrinsics(void);
 		};

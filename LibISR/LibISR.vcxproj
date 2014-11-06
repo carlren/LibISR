@@ -52,6 +52,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 6.5.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -101,7 +102,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\1.Work\VS\LibISR\Dependency\Kinect\inc;D:\1.Work\VS\LibISR\Dependency\OpenCV;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,7 +140,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\1.Work\VS\LibISR\Dependency\Kinect\inc;D:\1.Work\VS\LibISR\Dependency\OpenCV;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -153,12 +154,17 @@
   <ItemGroup>
     <ClCompile Include="CoreISR\Engine\ISRTrackingEngine.cpp" />
     <ClCompile Include="CoreISR\Objects\ISRPose.cpp" />
+    <ClCompile Include="CoreISR\Utils\ISRCalibIO.cpp" />
+    <ClCompile Include="Engine\ImageSourceEngine.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Utils\IOUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CoreISR\Engine\ISRTrackingEngine.h" />
     <ClInclude Include="CoreISR\LibISR.h" />
     <ClInclude Include="CoreISR\Objects\ISRCalib.h" />
+    <ClInclude Include="CoreISR\Objects\ISRDisparityCalib.h" />
+    <ClInclude Include="CoreISR\Objects\ISRExHomography.h" />
     <ClInclude Include="CoreISR\Objects\ISRExtrinsics.h" />
     <ClInclude Include="CoreISR\Objects\ISRFrame.h" />
     <ClInclude Include="CoreISR\Objects\ISRHistogram.h" />
@@ -169,10 +175,14 @@
     <ClInclude Include="CoreISR\Objects\ISRPose.h" />
     <ClInclude Include="CoreISR\Objects\ISRShape.h" />
     <ClInclude Include="CoreISR\Objects\ISRShapeUnion.h" />
+    <ClInclude Include="CoreISR\Objects\ISRView.h" />
+    <ClInclude Include="CoreISR\Utils\ISRCalibIO.h" />
     <ClInclude Include="CoreISR\Utils\ISRMath.h" />
     <ClInclude Include="CoreISR\Utils\ISRMatrix.h" />
     <ClInclude Include="CoreISR\Utils\ISRVector.h" />
+    <ClInclude Include="CoreISR\Utils\LibISRCUDADefine.h" />
     <ClInclude Include="CoreISR\Utils\LibISRDefine.h" />
+    <ClInclude Include="Engine\ImageSourceEngine.h" />
     <ClInclude Include="Engine\ISRKinectCapture.h" />
     <ClInclude Include="Engine\UIEngine.h" />
     <ClInclude Include="Utils\IOUtil.h" />
@@ -180,5 +190,6 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 6.5.targets" />
   </ImportGroup>
 </Project>

@@ -1,5 +1,3 @@
-// Copyright 2014 Isis Innovation Limited and the authors of InfiniTAM
-
 #pragma once
 
 #include "../Utils/LibISRDefine.h"
@@ -14,7 +12,7 @@ namespace CoreISR
 		Represents the extrinsic calibration between RGB and depth
 		cameras
 		*/
-		class ITMExtrinsics
+		class ISRExtrinsics
 		{
 		public:
 			/** The transformation matrix representing the
@@ -29,6 +27,7 @@ namespace CoreISR
 			are expected to contain a rotation and m30...m32
 			contain the translation.
 			*/
+
 			void SetFrom(const Matrix4f & src)
 			{
 				this->calib = src;
@@ -41,7 +40,7 @@ namespace CoreISR
 				}
 			}
 
-			ITMExtrinsics()
+			ISRExtrinsics()
 			{
 				Matrix4f m;
 				m.setZeros();
