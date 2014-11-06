@@ -25,7 +25,11 @@ namespace CoreISR
 				params.x = a; params.y = b;
 			}
 
-			ISRDisparityCalib(void);
+			ISRDisparityCalib(void)
+			{
+				// standard calibration parameters, not very accurate...
+				params.x = 1090.f; params.y = 0.075f;
+			}
 		};
 	}
 }

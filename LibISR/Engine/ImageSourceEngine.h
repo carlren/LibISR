@@ -31,6 +31,8 @@ namespace LibISR
 			ISRShortImage *cached_depth;
 			
 			void loadIntoCache();
+			int cachedFrameNo;
+
 		public:
 			int currentFrameNo;
 

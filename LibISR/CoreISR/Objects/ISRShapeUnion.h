@@ -38,7 +38,7 @@ namespace CoreISR
 				float* T = pose->t->v;
 
 				float *invH = pose->invH->m;
-				float* A = intrinsic->A;
+				float* A = intrinsic->A.m;
 
 				for (int i = 0; i<8; i++)
 				{
@@ -103,15 +103,15 @@ namespace CoreISR
 				frame->occMap->Clear();
 				for (int i = 0; i < nShapesCount; i++)
 				{
-					GetBoundingBox(&BB, shapes[i]->pose, frame->intrinsics);
+					GetBoundingBox(&BB, shapes[i]->pose, &(frame->view->calib->intrinsics_d));
 
 					for (int j = BB.y; j < BB.z; j++)
 						for (int k = BB.w; k < BB.x; k++)
 						{
 							int idx = j*frame->width + k;
 
-							tmpSkipCount += (1 - frame->occMap->data[idx]);
-							frame->occMap->data[idx] = 1;
+							//tmpSkipCount += (1 - frame->occMap->data[idx]);
+							//frame->occMap->data[idx] = 1;
 						}
 				}
 

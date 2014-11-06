@@ -5,9 +5,6 @@
     <ClCompile Include="CoreISR\Objects\ISRPose.cpp">
       <Filter>CoreISR\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="CoreISR\Engine\ISRTrackingEngine.cpp">
-      <Filter>CoreISR\Engine</Filter>
-    </ClCompile>
     <ClCompile Include="Utils\IOUtil.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
@@ -71,9 +68,6 @@
     </ClInclude>
     <ClInclude Include="CoreISR\Utils\LibISRDefine.h">
       <Filter>CoreISR\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="CoreISR\Engine\ISRTrackingEngine.h">
-      <Filter>CoreISR\Engine</Filter>
     </ClInclude>
     <ClInclude Include="CoreISR\LibISR.h">
       <Filter>CoreISR</Filter>

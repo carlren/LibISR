@@ -25,6 +25,8 @@ namespace CoreISR
 			Matrix3f A;
 			Matrix3f invA;
 
+			int width, height;
+
 			/** Setup all the internal members of this class from
 			the given parameters. Everything is in pixel
 			coordinates.
@@ -43,10 +45,25 @@ namespace CoreISR
 				A.setZeros();
 				A.m00 = fx; A.m20 = cx; A.m11 = fy; A.m21 = cy; A.m22 = 1;
 				A.inv(invA);
-				
 			}
 
-			ISRIntrinsics(void);
+			void SetFrom(float fx, float fy, float cx, float cy, int w, int h)
+			{
+				projectionParamsSimple.fx = fx; projectionParamsSimple.fy = fy;
+				projectionParamsSimple.px = cx; projectionParamsSimple.py = cy;
+
+				A.setZeros();
+				A.m00 = fx; A.m20 = cx; A.m11 = fy; A.m21 = cy; A.m22 = 1;
+				A.inv(invA);
+				this->width = w;
+				this->height = h;
+			}
+
+			ISRIntrinsics(void)
+			{
+				SetFrom(580, 580, 320, 240, 640, 480);
+
+			}
 		};
 	}
 }

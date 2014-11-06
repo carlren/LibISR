@@ -20,6 +20,7 @@ ImageFileReader::ImageFileReader(const char *calibFilename, const char *rgbImage
 	strncpy(this->depthImageMask, depthImageMask, BUF_SIZE);
 
 	currentFrameNo = 0;
+	cachedFrameNo = -1;
 
 	cached_rgb = NULL;
 	cached_depth = NULL;

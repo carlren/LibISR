@@ -3,12 +3,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "..//Utils//LibISRDefine.h"
-#include "..//Utils//MathUtils.h"
+#include "../Utils/LibISRDefine.h"
+#include "../Utils/MathUtils.h"
 
-#include "..//Objects//ISRHistogram.h"
-#include "..//Objects//ISRImage.h"
-#include "../Objects//ISRCalib.h"
+#include "../Objects/ISRHistogram.h"
+#include "../Objects/ISRImage.h"
+#include "../Objects/ISRCalib.h"
 
 using namespace CoreISR::Objects;
 
@@ -46,7 +46,7 @@ namespace CoreISR
 			ISRUChar4Image *alignedRgb;
 
 
-			ISRView(const ISRCalib &calib, Vector2i rgb_size, Vector2i d_size, bool useGPU)
+			ISRView(const ISRCalib &calib, Vector2i rgb_size, Vector2i d_size, bool  useGPU = false)
 			{
 				this->calib = new ISRCalib(calib);
 				this->rgb = new ISRUChar4Image(rgb_size, useGPU);

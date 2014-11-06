@@ -56,18 +56,22 @@ namespace CoreISR
 				float sumHistogramForeground = 0; 
 				float sumHistogramBackground = 0;
 
-				Vector4u *pixels = (Vector4u*) color->data;
+				Vector4u *pixels = color->GetData(false);
+				unsigned char* maskdata = mask->GetData(false);
 
-				for (int j = 0; j < mask->height; j++) for (int i = 0; i < mask->width; i++)
+				int height = mask->noDims.x;
+				int width = mask->noDims.y;
+
+				for (int j = 0; j < height; j++) for (int i = 0; i < width; i++)
 				{
-					int idx = i + j * mask->width;
+					int idx = i + j * width;
 
 					ru = pixels[idx].r / noBins; 
 					gu = pixels[idx].g / noBins; 
 					bu = pixels[idx].b / noBins;
 					pidx = ru*noBins*noBins + gu * noBins + bu; 
 
-					switch (mask->data[idx])
+					switch (maskdata[idx])
 					{
 					case WHITE: case 254: 
 						data_notnormalised[pidx].x++; sumHistogramForeground++; break; // white is forground
