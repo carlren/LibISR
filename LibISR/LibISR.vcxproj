@@ -154,14 +154,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CoreISR\Engine\ISRCoreEngine.cpp" />
+    <ClCompile Include="CoreISR\Engine\ISRTrackingEngine.cpp" />
     <ClCompile Include="CoreISR\Objects\ISRPose.cpp" />
     <ClCompile Include="CoreISR\Utils\ISRCalibIO.cpp" />
     <ClCompile Include="Engine\ImageSourceEngine.cpp" />
+    <ClCompile Include="Engine\UIEngine.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Utils\IOUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CoreISR\LibISR.h" />
+    <ClInclude Include="CoreISR\Engine\ISRCoreEngine.h" />
+    <ClInclude Include="CoreISR\Engine\ISRTrackingEngine.h" />
+    <ClInclude Include="CoreISR\CoreISR.h" />
     <ClInclude Include="CoreISR\Objects\ISRCalib.h" />
     <ClInclude Include="CoreISR\Objects\ISRDisparityCalib.h" />
     <ClInclude Include="CoreISR\Objects\ISRExHomography.h" />
@@ -177,6 +182,7 @@
     <ClInclude Include="CoreISR\Objects\ISRShapeUnion.h" />
     <ClInclude Include="CoreISR\Objects\ISRView.h" />
     <ClInclude Include="CoreISR\Utils\ISRCalibIO.h" />
+    <ClInclude Include="CoreISR\Utils\ISRLibSettings.h" />
     <ClInclude Include="CoreISR\Utils\ISRMath.h" />
     <ClInclude Include="CoreISR\Utils\ISRMatrix.h" />
     <ClInclude Include="CoreISR\Utils\ISRVector.h" />
@@ -186,6 +192,7 @@
     <ClInclude Include="Engine\ISRKinectCapture.h" />
     <ClInclude Include="Engine\UIEngine.h" />
     <ClInclude Include="Utils\IOUtil.h" />
+    <ClInclude Include="Utils\NVTimer.h" />
     <ClInclude Include="Utils\Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

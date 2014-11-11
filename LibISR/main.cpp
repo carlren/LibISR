@@ -1,11 +1,12 @@
 #include <stdio.h>
 
-#include "CoreISR/LibISR.h"
+#include "CoreISR/CoreISR.h"
+
+#include "Engine/ImageSourceEngine.h"
+#include "Engine/UIEngine.h"
 
 #include "Utils/IOUtil.h"
 #include "Utils/Timer.h"
-
-#include "Engine/ImageSourceEngine.h"
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/core/core.hpp"
@@ -15,56 +16,54 @@
 
 using namespace LibISR::Engine;
 
-//void loadISRU4Image(char* fileName, ISRUChar4Image* outImage)
-//{
-//	IplImage* tmpImg = cvLoadImage(fileName, CV_LOAD_IMAGE_UNCHANGED);
-//
-//	for (int i = 0; i < 480; i++) for (int j = 0; j < 640; j++)
-//	{
-//		int idx = i * 640 + j;
-//		outImage->data[idx].x = tmpImg->imageData[idx * 3];
-//		outImage->data[idx].y = tmpImg->imageData[idx * 3 + 1];
-//		outImage->data[idx].z = tmpImg->imageData[idx * 3 + 2];
-//	}
-//
-//	cvReleaseImage(&tmpImg);
-//}
-
-int main(void)
+int main(int argc, char** argv)
 {
 	const char *calibFile = "../Data/calib.txt";
-	const char *colorImgSource = "../Data/K1_cut/c-%%04i.ppm";
-	const char *depthImgSource = "../Data/K1_cut/d-%%04i.pgm";
+	const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
+	const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
 
 	ImageSourceEngine *imageSource = new ImageFileReader(calibFile, colorImgSource, depthImgSource);
-
 	
+	ISRLibSettings isrSettings;
+	isrSettings.noHistogramDim = 16;
+	isrSettings.noTrackingObj = 2;
+	isrSettings.singleAappearanceModel = true;
+	isrSettings.useGPU = false;
 
-	ISRView *myView = new ISRView(imageSource->calib, imageSource->getRGBImageSize(), imageSource->getDepthImageSize());
+	ISRCoreEngine *coreEngine = new ISRCoreEngine(&isrSettings, &imageSource->calib,imageSource->getDepthImageSize(),imageSource->getRGBImageSize());
 
+	UIEngine::Instance()->Initialise(argc, argv, imageSource, coreEngine, " ");
+	UIEngine::Instance()->Run();
+	UIEngine::Instance()->Shutdown();
 
-	cvNamedWindow("Color", 0);
-	cvNamedWindow("Depth", 0);
+	//cvNamedWindow("Color", 0);
+	//cvNamedWindow("Depth", 0);
 
-	IplImage* colorFrame = cvCreateImage(cvSize(640, 480), 8, 4);
-	IplImage* depthFrame = cvCreateImage(cvSize(640, 480), 16, 1);
+	//IplImage* colorFrame = cvCreateImage(cvSize(640, 480), 8, 4);
+	//IplImage* depthFrame = cvCreateImage(cvSize(640, 480), 16, 1);
 
-	int key;
-	while ((key = cvWaitKey(10)) != 27)
-	{
-		imageSource->getImages(myView);
+	//Timer myTimer;
 
-		memcpy(depthFrame->imageData, myView->rawDepth->GetData(false), 640 * 480 * sizeof(short));
-		memcpy(colorFrame->imageData, myView->rgb->GetData(false), 640 * 480 * sizeof(Vector4u));
+	//myTimer.start();
 
-		cvShowImage("Color", colorFrame);
-		cvShowImage("Depth", depthFrame);
+	//int key;
+	//while ((key = cvWaitKey(1)) != 27)
+	//{
+	//	myTimer.restart();
+	//	imageSource->getImages(coreEngine->GetView());
+	//	myTimer.check();
 
-	}
+	//	memcpy(depthFrame->imageData, coreEngine->GetView()->rawDepth->GetData(false), 640 * 480 * sizeof(short));
+	//	memcpy(colorFrame->imageData, coreEngine->GetView()->rgb->GetData(false), 640 * 480 * sizeof(Vector4u));
 
-	cvDestroyAllWindows();
-	cvReleaseImage(&colorFrame);
-	cvReleaseImage(&depthFrame);
+	//	cvShowImage("Color", colorFrame);
+	//	cvShowImage("Depth", depthFrame);
+
+	//}
+
+	//cvDestroyAllWindows();
+	//cvReleaseImage(&colorFrame);
+	//cvReleaseImage(&depthFrame);
 
 	//ISRFrame *myFrame = new ISRFrame(640, 480);
 	//Vector3d myVolSize; myVolSize.x = 200; myVolSize.y = 200; myVolSize.z = 200;

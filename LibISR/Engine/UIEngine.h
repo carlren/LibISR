@@ -1,46 +1,69 @@
 #pragma once
 
-#include "../CoreISR/LibISR.h"
+#include "../CoreISR/CoreISR.h"
+#include "../Utils/NVTimer.h"
+
+#include "ImageSourceEngine.h"
+
 
 namespace LibISR
 {
 	namespace Engine
 	{
-		class ImageSourceEngine
+		class UIEngine
 		{
+			static UIEngine* instance;
+
+			enum MainLoopAction
+			{
+				PROCESS_PAUSED, PROCESS_FRAME, PROCESS_VIDEO, EXIT, SAVE_TO_DISK
+			}mainLoopAction;
+
+			ImageSourceEngine *imageSource;
+			
+			StopWatchInterface *timer;
+
+			ISRCoreEngine *mainEngine;
+
+		private: // For UI layout
+			static const int NUM_WIN = 3;
+			Vector4f winReg[NUM_WIN]; // (x1, y1, x2, y2)
+			Vector2i winSize;
+			uint textureId[NUM_WIN];
+			ISRUChar4Image *outImage[NUM_WIN];
+			
+			int mouseState;
+			Vector2i mouseLastClick;
+
+			int currentFrameNo; bool isRecording;
 		public:
-			ITMRGBDCalib calib;
+			static UIEngine* Instance(void) {
+				if (instance == NULL) instance = new UIEngine();
+				return instance;
+			}
 
-			ImageSourceEngine(const char *calibFilename);
-			virtual ~ImageSourceEngine() {}
+			static void glutDisplayFunction();
+			static void glutIdleFunction();
+			static void glutKeyUpFunction(unsigned char key, int x, int y);
 
-			virtual bool hasMoreImages(void) = 0;
-			virtual void getImages(ITMView *out) = 0;
-			virtual Vector2i getDepthImageSize(void) = 0;
-			virtual Vector2i getRGBImageSize(void) = 0;
-		};
+			const Vector2i & getWindowSize(void) const
+			{
+				return winSize;
+			}
 
-		class ImageFileReader : public ImageSourceEngine
-		{
-		private:
-			static const int BUF_SIZE = 2048;
-			char rgbImageMask[BUF_SIZE];
-			char depthImageMask[BUF_SIZE];
+			float processedTime;
+			int processedFrameNo;
+			char *outFolder;
+			bool needsRefresh;
 
-			ITMUChar4Image *cached_rgb;
-			ITMShortImage *cached_depth;
+			void Initialise(int & argc, char** argv, ImageSourceEngine *imageSource, ISRCoreEngine* mainEngine ,const char *outFolder);
+			void Shutdown();
 
-			void loadIntoCache();
-		public:
-			int currentFrameNo;
+			void Run();
+			void ProcessFrame();
 
-			ImageFileReader(const char *calibFilename, const char *rgbImageMask, const char *depthImageMask);
-			~ImageFileReader();
-
-			bool hasMoreImages(void);
-			void getImages(ITMView *out);
-			Vector2i getDepthImageSize(void);
-			Vector2i getRGBImageSize(void);
+			void GetScreenshot(ISRUChar4Image *dest) const;
+			void SaveScreenshot(const char *filename) const;
 		};
 	}
 }

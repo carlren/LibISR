@@ -45,7 +45,6 @@ namespace CoreISR
 			ISRFloatImage *depth;
 			ISRUChar4Image *alignedRgb;
 
-
 			ISRView(const ISRCalib &calib, Vector2i rgb_size, Vector2i d_size, bool  useGPU = false)
 			{
 				this->calib = new ISRCalib(calib);

@@ -3,11 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "..//Utils//LibISRDefine.h"
-#include "..//Utils//MathUtils.h"
+#include "../Utils/LibISRDefine.h"
+#include "../Utils/MathUtils.h"
 
-#include "..//Objects//ISRHistogram.h"
-#include "..//Objects//ISRView.h"
+#include "../Objects/ISRHistogram.h"
+#include "../Objects/ISRView.h"
 
 using namespace CoreISR::Objects;
 
@@ -24,46 +24,36 @@ namespace CoreISR
 			int height;
 			int width;
 
+			Vector2i d_size;
+
 			ISRView* view;
 
-			ISRUChar4Image *displayDepthImage;
-			ISRUChar4Image *renderingImage;
 			ISRUCharImage *occMap;
-
 			ISRFloatImage *pfImage;
 			ISRFloatImage *idxImage;
 
-			ISRHistogram* histogram;
-			
 			int samplingRate;
 
-			ISRFrame(int w, int h)
+			ISRFrame(const ISRCalib &calib, Vector2i rgb_size, Vector2i d_size, bool  useGPU = false)
 			{
-				this->width = w;
-				this->height = h;
-				this->samplingRate = 1;
-
-				this->displayDepthImage = new ISRUChar4Image(w,h);
-				this->renderingImage = new ISRUChar4Image(w,h);
-				this->occMap = new ISRUCharImage(w, h);
+				this->d_size = d_size;
+				this->occMap = new ISRUCharImage(d_size, useGPU);
 				this->occMap->Clear(1);
+
+				this->pfImage = new ISRFloatImage(d_size,useGPU);
+				this->idxImage = new ISRFloatImage(d_size, useGPU);
+				this->view = new ISRView(calib, rgb_size, d_size, useGPU);
 				
-				this->pfImage = new ISRFloatImage(w, h);
-				this->idxImage = new ISRFloatImage(w, h);
-
-				this->histogram = new ISRHistogram(HISTOGRAM_BIN);
-
+				this->samplingRate = 1;
 			}
+
 
 			~ISRFrame()
 			{
-				delete this->displayDepthImage;
-				delete this->renderingImage;
 				delete this->occMap;
 				delete this->pfImage;
 				delete this->idxImage;
 				delete this->view;
-				delete this->histogram;
 
 			}
 

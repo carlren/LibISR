@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../CoreISR/LibISR.h"
+#include "../CoreISR/CoreISR.h"
 
 namespace LibISR
 {
@@ -43,6 +43,7 @@ namespace LibISR
 			void getImages(ISRView *out);
 			Vector2i getDepthImageSize(void);
 			Vector2i getRGBImageSize(void);
+			
 		};
 	}
 }

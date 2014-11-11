@@ -14,6 +14,15 @@
     <ClCompile Include="CoreISR\Utils\ISRCalibIO.cpp">
       <Filter>CoreISR\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\UIEngine.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="CoreISR\Engine\ISRTrackingEngine.cpp">
+      <Filter>CoreISR\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="CoreISR\Engine\ISRCoreEngine.cpp">
+      <Filter>CoreISR\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -69,9 +78,6 @@
     <ClInclude Include="CoreISR\Utils\LibISRDefine.h">
       <Filter>CoreISR\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="CoreISR\LibISR.h">
-      <Filter>CoreISR</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\UIEngine.h">
       <Filter>Engine</Filter>
     </ClInclude>
@@ -112,6 +118,21 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="CoreISR\Utils\ISRCalibIO.h">
+      <Filter>CoreISR\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\NVTimer.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Engine\ISRTrackingEngine.h">
+      <Filter>CoreISR\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Engine\ISRCoreEngine.h">
+      <Filter>CoreISR\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\CoreISR.h">
+      <Filter>CoreISR</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreISR\Utils\ISRLibSettings.h">
       <Filter>CoreISR\Utils</Filter>
     </ClInclude>
   </ItemGroup>

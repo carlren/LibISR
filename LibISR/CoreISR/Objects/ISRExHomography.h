@@ -38,7 +38,7 @@ namespace CoreISR
 			{
 				H.setZeros();
 				H.m00 = H.m11 = H.m22 = 1.0f;
-				T.setValues(0);
+				T=Vector3f(0.0f);
 			}
 		};
 	}

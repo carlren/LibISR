@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "..//CoreISR//LibISR.h"
+#include "../CoreISR/CoreISR.h"
 
 void SaveImageToFile(const ISRUChar4Image* image, const char* fileName, bool flipVertical = false);
 void SaveImageToFile(const ISRShortImage* image, const char* fileName);

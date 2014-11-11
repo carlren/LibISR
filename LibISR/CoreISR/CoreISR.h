@@ -5,6 +5,9 @@
 #include "./Objects/ISRView.h"
 #include "./Objects/ISRCalib.h"
 
+#include "./Engine/ISRCoreEngine.h"
+
+
 #include "./Utils/ISRCalibIO.h"
 
 //#include "Objects\\ISRHistogram.h"
@@ -13,5 +16,6 @@
 //
 //#include"Engine\\ISRTrackingEngine.h"
 
+
 using namespace CoreISR::Objects;
-//using namespace CoreISR::Engine;
+using namespace CoreISR::Engine;
