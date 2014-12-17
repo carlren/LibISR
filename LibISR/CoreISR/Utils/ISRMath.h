@@ -1,5 +1,6 @@
 #pragma once
 #include <ostream>
+#include <stdlib.h>
 
 typedef unsigned char uchar;
 typedef unsigned short ushort;
@@ -234,108 +235,12 @@ static inline float sdDelta(float x, float heavisideScale)
 }
 
 
-static inline void GetRotationMatrixFromMRP(Matrix3f *outRR, Vector3f* rr)
-{
-	float *outR = outRR->m;
-	float *r = rr->v;
-
-	float t1 = r[0];
-	float t2 = r[1];
-	float t3 = r[2];
-
-	float tsq = t1*t1 + t2*t2 + t3*t3;
-
-	float tsum = 1 - tsq;
-
-	outR[0] = 4 * t1*t1 - 4 * t2*t2 - 4 * t3*t3 + tsum*tsum;	outR[1] = 8 * t1*t2 - 4 * t3*tsum;	outR[2] = 8 * t1*t3 + 4 * t2*tsum;
-	outR[3] = 8 * t1*t2 + 4 * t3*tsum;	outR[4] = 4 * t2*t2 - 4 * t1*t1 - 4 * t3*t3 + tsum*tsum;	outR[5] = 8 * t2*t3 - 4 * t1*tsum;
-	outR[6] = 8 * t1*t3 - 4 * t2*tsum;	outR[7] = 8 * t2*t3 + 4 * t1*tsum;	outR[8] = 4 * t3*t3 - 4 * t2*t2 - 4 * t1*t1 + tsum*tsum;
-
-	for (int i = 0; i<9; i++) outR[i] /= ((1 + tsq)*(1 + tsq));
-}
-
-static inline void UpdateRT(Matrix3f* oldRR, Vector3f* oldTT, float* dR, float* dT)
-{
-	float *oldR = oldRR->m;
-	float *oldT = oldTT->v;
-
-	float newR[9];
-	float newT[3];
-
-	UnimindMatrixMul3(dR, oldR, newR);
-
-	newT[0] = dR[0] * oldT[0] + dR[1] * oldT[1] + dR[2] * oldT[2] + dT[0];
-	newT[1] = dR[3] * oldT[0] + dR[4] * oldT[1] + dR[5] * oldT[2] + dT[1];
-	newT[2] = dR[6] * oldT[0] + dR[7] * oldT[1] + dR[8] * oldT[2] + dT[2];
-
-	memcpy(oldR, newR, 9 * sizeof(float));
-	memcpy(oldT, newT, 3 * sizeof(float));
-}
-
-
-
 
 static inline bool almostZero(float sum)
 {
 	return(sum*sum<1.0e-25);
 }
 
-static inline int UnimindCHdecompose(const float *input, int size, float *output)
-{
-	int i, j, k;
-	float sum;
-	bool divide;
-	int ret = 0;
-	for (i = 0; i<size; i++) {
-		divide = true;
-		for (j = 0; j<i; j++) output[j*size + i] = 0.0;
-		for (; j<size; j++) {
-			sum = input[i*size + j];
-			for (k = i - 1; k >= 0; k--) sum -= output[i*size + k] * output[j*size + k];
-			if (i == j) {
-				/* The following applies if A, with rounding errors, is not positive definite.*/
-				if (almostZero(sum)) {
-					output[i*size + i] = 0.0;
-					divide = false;
-				}
-				else if (sum<0.0) {
-					output[i*size + i] = 0.0;
-					divide = false;
-					printf("choldc failed: sqrt(%f)\n", sum);
-					ret = -1;
-				}
-				else {
-					output[i*size + i] = sqrt(sum);
-				}
-			}
-			else {
-				if (!divide) output[j*size + i] = 0.0;
-				else output[j*size + i] = sum / output[i*size + i];
-			}
-		}
-	}
-	return ret;
-}
-
-static inline void UnimindCHsolveDecomposed(const float *A, int size, const float *b, float *x, int num = 1, int ldb = -1)
-{
-	int i, k;
-	float sum;
-	// Solve L y = b, storing y in x.
-	for (int eq = 0; eq<num; ++eq) {
-		for (i = 0; i<size; i++) {
-			for (sum = b[i + eq*ldb], k = i - 1; k >= 0; k--) sum -= A[i*size + k] * x[k + eq*ldb];
-			x[i + eq*ldb] = sum / A[i*size + i];
-		}
-	}
-	// Solve LT x = y
-	for (int eq = 0; eq<num; ++eq) {
-		for (i = size - 1; i >= 0; i--) {
-			for (sum = x[i + eq*ldb], k = i + 1; k<size; k++) sum -= A[k*size + i] * x[k + eq*ldb];
-			x[i + eq*ldb] = sum / A[i*size + i];
-		}
-	}
-}
 
 static inline void UnimindGetMRPfromDegree(float *outR, float *inR)
 {

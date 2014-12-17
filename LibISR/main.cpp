@@ -3,7 +3,9 @@
 #include "CoreISR/CoreISR.h"
 
 #include "Engine/ImageSourceEngine.h"
+#include "Engine/OpenNIEngine.h"
 #include "Engine/UIEngine.h"
+
 
 #include "Utils/IOUtil.h"
 #include "Utils/Timer.h"
@@ -22,8 +24,9 @@ int main(int argc, char** argv)
 	const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
 	const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
 
-	ImageSourceEngine *imageSource = new ImageFileReader(calibFile, colorImgSource, depthImgSource);
-	
+	//ImageSourceEngine *imageSource = new ImageFileReader(calibFile, colorImgSource, depthImgSource);
+	ImageSourceEngine *imageSource = new OpenNIEngine(calibFile,NULL,true);
+
 	ISRLibSettings isrSettings;
 	isrSettings.noHistogramDim = 16;
 	isrSettings.noTrackingObj = 2;

@@ -1,6 +1,7 @@
 //#include "ISRTrackingEngine.h"
 //
 //using namespace CoreISR::Engine;
+//using namespace CoreISR::Objects;
 //
 //ISRTrackingEngine *ISRTrackingEngine::instance;
 //
@@ -18,12 +19,10 @@
 //	bool converged = false;
 //	Matrix3f tempR3; Vector3f tempT3;
 //	ISRPose* tmpPose = new ISRPose();
-//
 //	
 //	shapeUnion->UpdateOccMapOnFrame(frame);
-//	
 //
-//	this->GetPfMap(frame);
+//	GetPfMap(frame);
 //	
 //
 //	//char tmpName[100];
@@ -32,14 +31,13 @@
 //	//tmpcount++;
 //
 //	
-//	this->UnprojectRGBDImgPts(frame, shapeUnion);
+//	UnprojectRGBDImgPts(frame, shapeUnion);
 //
 //	//PrintPointListToFile("d:\\tmp\\camPtList.txt", shapeUnion->sharedCamPoints->data, shapeUnion->nPtCount);
 //
 //	for (int i = 0; i < shapeUnion->nShapesCount; i++)
 //	{
-//
-//		TransformRT(shapeUnion->sharedCamPoints, shapeUnion->shapes[i]->unprojectedPts, shapeUnion->shapes[i]->pose);
+//		TransformRT(shapeUnion->sharedCamPoints, shapeUnion->shapes[i]->unprojectedPts, &shapeUnion->shapes[i]->pose);
 //		shapeUnion->shapes[i]->tmpUnprojectPts->CopyFrom(shapeUnion->shapes[i]->unprojectedPts);
 //
 //	}
@@ -71,7 +69,7 @@
 //			{
 //				for (int i = 0; i < shapeUnion->nShapesCount; i++)
 //				{
-//					shapeUnion->shapes[i]->unprojectedPts->CopyFrom(shapeUnion->shapes[i]->tmpUnprojectPts);
+//					shapeUnion->shapes[i]->unprojectedPts->CopyFrom(*shapeUnion->shapes[i]->tmpUnprojectPts);
 //					lastEnergy = currentEnergy;
 //					lambda /= 10;
 //					shapeUnion->shapes[i]->pose->UpdateFromStep(&(ophelper->finalStep[i*6]));
@@ -107,12 +105,12 @@
 //// done!
 //int	ISRTrackingEngine::UnprojectRGBDImgPts(ISRFrame *frame, ISRShapeUnion *shapes)
 //{
-//	unsigned char *occMap = frame->occMap->data;
-//	float *depthMap = frame->depthImage->data;
-//	float *pfMap = frame->pfImage->data;
-//	float *colorIdxMap = frame->idxImage->data;
+//	unsigned char *occMap = frame->occMap->GetData(false);
+//	float *depthMap = frame->view->depth->GetData(false);
+//	float *pfMap = frame->pfImage->GetData(false);
+//	float *colorIdxMap = frame->idxImage->GetData(false);
 //
-//	float *invA = frame->intrinsics->invA;
+//	Matrix3f invA = frame->view->calib->intrinsics_d.invA;
 //
 //	float x, y, z;
 //
@@ -135,9 +133,9 @@
 //			x = (j + 1)*z;
 //			y = (i + 1)*z;
 //
-//			camPoints[pixCount].x = invA[0] * x + invA[1] * y + invA[2] * z;
-//			camPoints[pixCount].y = invA[3] * x + invA[4] * y + invA[5] * z;
-//			camPoints[pixCount].z = invA[6] * x + invA[7] * y + invA[8] * z;
+//			camPoints[pixCount].x = invA.m00 * x + invA.m10 * y + invA.m20 * z;
+//			camPoints[pixCount].y = invA.m01 * x + invA.m11 * y + invA.m21 * z;
+//			camPoints[pixCount].z = invA.m02 * x + invA.m12 * y + invA.m22 * z;
 //
 //			pfPoints[pixCount] = pfMap[idx];
 //			colorIdx[pixCount] = (int)colorIdxMap[idx];
@@ -151,7 +149,7 @@
 //}
 //
 //// done!
-//void ISRTrackingEngine::TransformRT(ISRPoints *inPoints, ISRPoints *outPoints, ISRPose *pose)
+//void ISRTrackingEngine::TransformRT(const ISRPoints &inPoints, ISRPoints outPoints, const ISRPose &pose)
 //{
 //	Vector3f *outPts = outPoints->data;
 //	Vector3f *inPts = inPoints->data;
@@ -221,7 +219,7 @@
 //}
 //
 //
-//void ISRTrackingEngine::ComputeJacobianAndHessian(ISRShapeUnion *shapeUnion, ISROptimizationHelper *opHelper)
+//void ISRTrackingEngine::ComputeJacobianAndHessian(const ISRShapeUnion &shapeUnion, ISROptimizationHelper &opHelper)
 //{
 //
 //	ISRShape *currentShape;
@@ -237,7 +235,7 @@
 //	Vector3f pt;
 //
 //	int minIdx;
-//	int DoF = opHelper->nDof;
+//	int DoF = opHelper.nDof;
 //
 //	float prefix;
 //	float jacobian[6];
@@ -247,20 +245,20 @@
 //	//Vector3i tmpIdx;
 //	int tmpIdx;
 //
-//	int nPtCount = shapeUnion->nPtCount;
+//	int nPtCount = shapeUnion.nPtCount;
 //
-//	opHelper->Clear();
+//	opHelper.Clear();
 //
 //	for (int i = 0; i < nPtCount; i++)
 //	{
 //		dt = 121.0f; // max dt for 200*200*200 vol
 //		minFound = false;
 //
-//		pf = shapeUnion->pfList[i];
+//		pf = shapeUnion.pfList[i];
 //
-//		for (int j = 0; j < shapeUnion->nShapesCount; j++)
+//		for (int j = 0; j < shapeUnion.nShapesCount; j++)
 //		{
-//			currentShape = shapeUnion->shapes[j];
+//			currentShape = shapeUnion.shapes[j];
 //			currentPtList = currentShape->unprojectedPts->data;
 //
 //			tmpIdx = Pt2IntIdx(currentPtList[i]);
@@ -307,26 +305,27 @@
 //}
 //
 //// done!
-//void ISRTrackingEngine::GetPfMap(ISRFrame *frame)
+//void ISRTrackingEngine::GetPfMap(ISRFrame &frame)
 //{
-//	frame->pfImage->Clear();
-//	Vector4u *pixels = (Vector4u*)frame->alignedColorImage->data;
+//	frame.pfImage->Clear();
+//	Vector4u *pixels = (Vector4u*)frame.view->alignedRgb->GetData(false);
 //	
-//	float* pfMap = frame->pfImage->data;
-//	float* idxMap = frame->idxImage->data;
+//	float* pfMap = frame.pfImage->GetData(false);
+//	float* idxMap = frame.idxImage->GetData(false);
+//	uchar* occMap = frame.occMap->GetData(false);
 //
-//	ISRHistogram* histogram = frame->histogram;
+//	ISRHistogram* histogram = frame.histogram;
 //	int noBins = histogram->noBins;
 //	int dim = histogram->dim;
 //	int ru, gu, bu;
 //	int pidx;
 //
-//	for (int i = 0; i < frame->height; i++) 
-//		for (int j = 0; j < frame->width; j++)
+//	for (int i = 0; i < frame.height; i++) 
+//		for (int j = 0; j < frame.width; j++)
 //		{
-//			int idx = i*frame->width + j;
+//			int idx = i*frame.width + j;
 //
-//			if (frame->occMap->data[idx]>0)
+//			if (occMap[idx]>0)
 //			{
 //				ru = pixels[idx].r / noBins;
 //				gu = pixels[idx].g / noBins;
@@ -339,18 +338,17 @@
 //		}
 //}
 //
-//
-//void ISRTrackingEngine::UpdateHistogramFromPoints(ISRHistogram* histogram, ISRShapeUnion *shapeUnion)
+//void ISRTrackingEngine::UpdateHistogramFromPoints(ISRHistogram &histogram, const ISRShapeUnion &shapeUnion)
 //{
-//	int* idxList = shapeUnion->colorIdxList;
-//	int* surfHashList = shapeUnion->surfHashList;
+//	int* idxList = shapeUnion.colorIdxList;
+//	int* surfHashList = shapeUnion.surfHashList;
 //
 //	ISRHistogram* tmpHistogram = new ISRHistogram(HISTOGRAM_BIN);
 //
 //	float sumHistogramForeground = 0;
 //	float sumHistogramBackground = 0;
 //
-//	for (int i = 0; i < shapeUnion->nPtCount; i++)
+//	for (int i = 0; i < shapeUnion.nPtCount; i++)
 //	{
 //		int pidx = idxList[i];
 //		if (surfHashList[i] == 1)
@@ -368,11 +366,11 @@
 //	sumHistogramForeground = (sumHistogramForeground != 0) ? 1.0f / sumHistogramForeground : 0;
 //	sumHistogramBackground = (sumHistogramBackground != 0) ? 1.0f / sumHistogramBackground : 0;
 //
-//	for (int i = 0; i < histogram->dim; i++)
+//	for (int i = 0; i < histogram.dim; i++)
 //	{
 //		tmpHistogram->data_normalised[i].x = tmpHistogram->data_notnormalised[i].x * sumHistogramForeground + 0.0001f;
 //		tmpHistogram->data_normalised[i].y = tmpHistogram->data_notnormalised[i].y * sumHistogramBackground + 0.0001f;
 //	}
 //
-//	histogram->UpdateHistogram(tmpHistogram, 0.05f, 0.3f);
+//	histogram.UpdateHistogram(tmpHistogram, 0.05f, 0.3f);
 //}

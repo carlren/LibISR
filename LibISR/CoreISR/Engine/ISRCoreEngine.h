@@ -4,6 +4,9 @@
 #include "../Objects/ISRFrame.h"
 #include "../Objects/ISRView.h"
 #include "../Objects/ISRHistogram.h"
+#include "../Objects/ISRShapeUnion.h"
+#include "../Objects/ISROptimizationHelper.h"
+
 
 namespace CoreISR
 {
@@ -19,7 +22,8 @@ namespace CoreISR
 		public:
 			
 			ISRFrame *frame;
-			ISRHistogram **histograms;
+			ISRShapeUnion* shapeUnion;
+			ISROptimizationHelper *optimizationHelper;
 
 			ISRView* GetView(){ return frame->view;};
 
@@ -30,8 +34,8 @@ namespace CoreISR
 			~ISRCoreEngine()
 			{
 				delete this->frame;
-				for (int i = 0; i < this->settings->noHistogramDim; i++) 
-					delete this->histograms[i];
+				delete this->shapeUnion;
+				delete this->optimizationHelper;
 			}
 		};
 	}

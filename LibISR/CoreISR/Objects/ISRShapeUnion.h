@@ -2,10 +2,10 @@
 
 #include <stdio.h>
 
-#include "..//Utils//LibISRDefine.h"
-#include "..//Utils//MathUtils.h"
-#include "..//Objects//ISRShape.h"
-#include "..//Objects//ISRFrame.h"
+#include "../Utils/LibISRDefine.h"
+#include "../Utils/MathUtils.h"
+#include "../Objects/ISRShape.h"
+#include "../Objects/ISRFrame.h"
 
 using namespace CoreISR::Objects;
 
@@ -17,55 +17,45 @@ namespace CoreISR
 		{
 		private:
 
-			void GetBoundingBox(Vector4f *BB, ISRPose* pose, ISRIntrinsics* intrinsic)
+			Vector4f GetBoundingBox(const ISRPose &pose, const ISRIntrinsics &intrinsic)
 			{
-				BB->w = 639.0f; BB->x = 1.0f; BB->y = 479.0f; BB->z = 1.0f;
+				Vector4f BB;
+				BB.w = 639.0f; BB.x = 1.0f; BB.y = 479.0f; BB.z = 1.0f;
 
+				Vector3f cornerPts[8], imgPts[8];
 				float halfSize = 0.1f;
+				int idx = 0;
+				for (int i = -1; i <= 1; i += 2) for (int j = -1; j <= 1; j += 2) for (int k = -1; k <= 1; k += 2)
+				{
+					cornerPts[idx].x = halfSize * i;
+					cornerPts[idx].y = halfSize * j;
+					cornerPts[idx].z = halfSize * k;
+				}
 
-				float cornerPts[24] = { halfSize, halfSize, halfSize, 
-										halfSize, halfSize, -halfSize, 
-										halfSize, -halfSize, halfSize,
-										halfSize, -halfSize, -halfSize, 
-										-halfSize, halfSize, halfSize, 
-										-halfSize, halfSize, -halfSize,
-										-halfSize, -halfSize, halfSize, 
-										-halfSize, -halfSize, -halfSize };
-
-				float imgPts[24];
-
-				float* R = pose->R->m;
-				float* T = pose->t->v;
-
-				float *invH = pose->invH->m;
-				float* A = intrinsic->A.m;
+				Matrix4f invH = pose.invH;
+				Matrix3f A = intrinsic.A;
 
 				for (int i = 0; i<8; i++)
 				{
-					int offsetIdx = i * 3;
+					imgPts[i] = A*(invH*cornerPts[8]);
 
-					imgPts[offsetIdx] = invH[0] * cornerPts[offsetIdx] + invH[1] * cornerPts[offsetIdx + 1] + invH[2] * cornerPts[offsetIdx + 2] + invH[3];
-					imgPts[offsetIdx+1] = invH[4] * cornerPts[offsetIdx] + invH[5] * cornerPts[offsetIdx + 1] + invH[6] * cornerPts[offsetIdx + 2] + invH[7];
-					imgPts[offsetIdx+2] = invH[8] * cornerPts[offsetIdx] + invH[9] * cornerPts[offsetIdx + 1] + invH[10] * cornerPts[offsetIdx + 2] + invH[11];
-					
-					if (imgPts[offsetIdx + 2] != 0)
+					if (imgPts[i].z != 0)
 					{
-						imgPts[offsetIdx] = A[0] * (imgPts[offsetIdx] / imgPts[offsetIdx + 2]) + A[2];
-						imgPts[offsetIdx + 1] = A[4] * (imgPts[offsetIdx + 1] / imgPts[offsetIdx + 2]) + A[5];
+						imgPts[i].x /= imgPts[i].z;
+						imgPts[i].y /= imgPts[i].z;
 					}
 
-					BB->w = imgPts[offsetIdx] < BB->w ? imgPts[offsetIdx] : BB->w;
-					BB->x = imgPts[offsetIdx] > BB->x ? imgPts[offsetIdx] : BB->x;
-					BB->y = imgPts[offsetIdx + 1] < BB->y ? imgPts[offsetIdx + 1] : BB->y;
-					BB->z = imgPts[offsetIdx + 1] > BB->z ? imgPts[offsetIdx + 1] : BB->z;
+					BB.w = imgPts[i].x < BB.w ? imgPts[i].x : BB.w;
+					BB.x = imgPts[i].x > BB.x ? imgPts[i].x : BB.x;
+					BB.y = imgPts[i].y < BB.y ? imgPts[i].y : BB.y;
+					BB.z = imgPts[i].z > BB.z ? imgPts[i].z : BB.z;
 
 				}
 
-				BB->w = BB->w < 0 ? 0 : BB->w;
-				BB->x = BB->x > 639 ? 639 : BB->x;
-				BB->y = BB->y < 0 ? 0 : BB->y;
-				BB->z = BB->z > 479 ? 479 : BB->z;
-
+				BB.w = BB.w < 0 ? 0 : BB.w;
+				BB.x = BB.x > 639 ? 639 : BB.x;
+				BB.y = BB.y < 0 ? 0 : BB.y;
+				BB.z = BB.z > 479 ? 479 : BB.z;
 			}
 
 		public:
@@ -101,17 +91,19 @@ namespace CoreISR
 				tmpSkipCount = 0;
 
 				frame->occMap->Clear();
+				uchar* occMap = frame->occMap->GetData(false);
+
 				for (int i = 0; i < nShapesCount; i++)
 				{
-					GetBoundingBox(&BB, shapes[i]->pose, &(frame->view->calib->intrinsics_d));
+					Vector4f BB = GetBoundingBox(shapes[i]->pose, frame->view->calib->intrinsics_d);
 
 					for (int j = BB.y; j < BB.z; j++)
 						for (int k = BB.w; k < BB.x; k++)
 						{
 							int idx = j*frame->width + k;
 
-							//tmpSkipCount += (1 - frame->occMap->data[idx]);
-							//frame->occMap->data[idx] = 1;
+							tmpSkipCount += (1 - occMap[idx]);
+							occMap[idx] = 1;
 						}
 				}
 

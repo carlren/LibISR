@@ -2,9 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="CoreISR\Objects\ISRPose.cpp">
-      <Filter>CoreISR\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="Utils\IOUtil.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
@@ -22,6 +19,9 @@
     </ClCompile>
     <ClCompile Include="CoreISR\Engine\ISRCoreEngine.cpp">
       <Filter>CoreISR\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\OpenNIEngine.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -81,9 +81,6 @@
     <ClInclude Include="Engine\UIEngine.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\ISRKinectCapture.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="CoreISR\Objects\ISRCalib.h">
       <Filter>CoreISR\Objects</Filter>
     </ClInclude>
@@ -134,6 +131,9 @@
     </ClInclude>
     <ClInclude Include="CoreISR\Utils\ISRLibSettings.h">
       <Filter>CoreISR\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\OpenNIEngine.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

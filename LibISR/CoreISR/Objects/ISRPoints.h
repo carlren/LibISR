@@ -2,8 +2,8 @@
 
 #include <stdlib.h>
 
-#include "..//Utils//LibISRDefine.h"
-#include "..//Utils//MathUtils.h"
+#include "../Utils/LibISRDefine.h"
+#include "../Utils/ISRMath.h"
 
 namespace CoreISR
 {
@@ -26,13 +26,11 @@ namespace CoreISR
 				isAllocated = true;
 			}
 
-			void CopyFrom(ISRPoints* inPoints)
+			void CopyFrom(const ISRPoints &inPoints)
 			{
-				this->count = inPoints->count;
-				memcpy(this->data,inPoints->data, inPoints->count*sizeof(Vector3f));
+				this->count = inPoints.count;
+				memcpy(this->data,inPoints.data, inPoints.count*sizeof(Vector3f));
 			}
-
-			
 
 			void Clear(unsigned char defaultValue = 0) { memset(data, defaultValue, maxSize * sizeof(Vector3f)); }
 

@@ -156,9 +156,9 @@
   <ItemGroup>
     <ClCompile Include="CoreISR\Engine\ISRCoreEngine.cpp" />
     <ClCompile Include="CoreISR\Engine\ISRTrackingEngine.cpp" />
-    <ClCompile Include="CoreISR\Objects\ISRPose.cpp" />
     <ClCompile Include="CoreISR\Utils\ISRCalibIO.cpp" />
     <ClCompile Include="Engine\ImageSourceEngine.cpp" />
+    <ClCompile Include="Engine\OpenNIEngine.cpp" />
     <ClCompile Include="Engine\UIEngine.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Utils\IOUtil.cpp" />
@@ -189,7 +189,7 @@
     <ClInclude Include="CoreISR\Utils\LibISRCUDADefine.h" />
     <ClInclude Include="CoreISR\Utils\LibISRDefine.h" />
     <ClInclude Include="Engine\ImageSourceEngine.h" />
-    <ClInclude Include="Engine\ISRKinectCapture.h" />
+    <ClInclude Include="Engine\OpenNIEngine.h" />
     <ClInclude Include="Engine\UIEngine.h" />
     <ClInclude Include="Utils\IOUtil.h" />
     <ClInclude Include="Utils\NVTimer.h" />

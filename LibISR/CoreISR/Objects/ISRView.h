@@ -32,6 +32,7 @@ namespace CoreISR
 				ISR_DEPTH_ONLY,
 				ISR_RGBD_EXTRINSIC,
 				ISR_RGBD_HOMOGRAPHY,
+				ISR_RGBD_REGISTERED,
 			};
 
 			InputDepthType inputDepthType;

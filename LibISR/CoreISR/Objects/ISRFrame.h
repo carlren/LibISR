@@ -28,6 +28,8 @@ namespace CoreISR
 
 			ISRView* view;
 
+			ISRHistogram *histogram;
+
 			ISRUCharImage *occMap;
 			ISRFloatImage *pfImage;
 			ISRFloatImage *idxImage;
