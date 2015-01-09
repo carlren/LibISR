@@ -24,8 +24,8 @@ int main(int argc, char** argv)
 	const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
 	const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
 
-	//ImageSourceEngine *imageSource = new ImageFileReader(calibFile, colorImgSource, depthImgSource);
-	ImageSourceEngine *imageSource = new OpenNIEngine(calibFile,NULL,true);
+	ImageSourceEngine *imageSource = new ImageFileReader(calibFile, colorImgSource, depthImgSource);
+	//ImageSourceEngine *imageSource = new OpenNIEngine(calibFile,NULL,true);
 
 	ISRLibSettings isrSettings;
 	isrSettings.noHistogramDim = 16;

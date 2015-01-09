@@ -7,7 +7,6 @@
 
 #include "./Engine/ISRCoreEngine.h"
 
-
 #include "./Utils/ISRCalibIO.h"
 
 //#include "Objects\\ISRHistogram.h"
