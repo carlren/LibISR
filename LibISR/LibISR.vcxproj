@@ -18,6 +18,37 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Engines\ISRCoreEngine.cpp" />
+    <ClCompile Include="Engines\ISRTrackingEngine.cpp" />
+    <ClCompile Include="Utils\ISRCalibIO.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Engines\ISRCoreEngine.h" />
+    <ClInclude Include="Engines\ISRTrackingEngine.h" />
+    <ClInclude Include="Objects\ISRCalib.h" />
+    <ClInclude Include="Objects\ISRDisparityCalib.h" />
+    <ClInclude Include="Objects\ISRExHomography.h" />
+    <ClInclude Include="Objects\ISRExtrinsics.h" />
+    <ClInclude Include="Objects\ISRFrame.h" />
+    <ClInclude Include="Objects\ISRHistogram.h" />
+    <ClInclude Include="Objects\ISRImage.h" />
+    <ClInclude Include="Objects\ISRIntrinsics.h" />
+    <ClInclude Include="Objects\ISROptimizationHelper.h" />
+    <ClInclude Include="Objects\ISRPoints.h" />
+    <ClInclude Include="Objects\ISRPose.h" />
+    <ClInclude Include="Objects\ISRShape.h" />
+    <ClInclude Include="Objects\ISRShapeUnion.h" />
+    <ClInclude Include="Objects\ISRView.h" />
+    <ClInclude Include="Utils\ISRCalibIO.h" />
+    <ClInclude Include="Utils\ISRLibSettings.h" />
+    <ClInclude Include="Utils\ISRMath.h" />
+    <ClInclude Include="Utils\ISRMatrix.h" />
+    <ClInclude Include="Utils\ISRVector.h" />
+    <ClInclude Include="Utils\LibISRCUDADefine.h" />
+    <ClInclude Include="Utils\LibISRDefine.h" />
+    <ClInclude Include="Utils\MathUtils.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1268D747-6F6D-4522-A928-1E158331B255}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -153,48 +184,6 @@
       </AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="CoreISR\Engine\ISRCoreEngine.cpp" />
-    <ClCompile Include="CoreISR\Engine\ISRTrackingEngine.cpp" />
-    <ClCompile Include="CoreISR\Utils\ISRCalibIO.cpp" />
-    <ClCompile Include="Engine\ImageSourceEngine.cpp" />
-    <ClCompile Include="Engine\OpenNIEngine.cpp" />
-    <ClCompile Include="Engine\UIEngine.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Utils\IOUtil.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="CoreISR\Engine\ISRCoreEngine.h" />
-    <ClInclude Include="CoreISR\Engine\ISRTrackingEngine.h" />
-    <ClInclude Include="CoreISR\CoreISR.h" />
-    <ClInclude Include="CoreISR\Objects\ISRCalib.h" />
-    <ClInclude Include="CoreISR\Objects\ISRDisparityCalib.h" />
-    <ClInclude Include="CoreISR\Objects\ISRExHomography.h" />
-    <ClInclude Include="CoreISR\Objects\ISRExtrinsics.h" />
-    <ClInclude Include="CoreISR\Objects\ISRFrame.h" />
-    <ClInclude Include="CoreISR\Objects\ISRHistogram.h" />
-    <ClInclude Include="CoreISR\Objects\ISRImage.h" />
-    <ClInclude Include="CoreISR\Objects\ISRIntrinsics.h" />
-    <ClInclude Include="CoreISR\Objects\ISROptimizationHelper.h" />
-    <ClInclude Include="CoreISR\Objects\ISRPoints.h" />
-    <ClInclude Include="CoreISR\Objects\ISRPose.h" />
-    <ClInclude Include="CoreISR\Objects\ISRShape.h" />
-    <ClInclude Include="CoreISR\Objects\ISRShapeUnion.h" />
-    <ClInclude Include="CoreISR\Objects\ISRView.h" />
-    <ClInclude Include="CoreISR\Utils\ISRCalibIO.h" />
-    <ClInclude Include="CoreISR\Utils\ISRLibSettings.h" />
-    <ClInclude Include="CoreISR\Utils\ISRMath.h" />
-    <ClInclude Include="CoreISR\Utils\ISRMatrix.h" />
-    <ClInclude Include="CoreISR\Utils\ISRVector.h" />
-    <ClInclude Include="CoreISR\Utils\LibISRCUDADefine.h" />
-    <ClInclude Include="CoreISR\Utils\LibISRDefine.h" />
-    <ClInclude Include="Engine\ImageSourceEngine.h" />
-    <ClInclude Include="Engine\OpenNIEngine.h" />
-    <ClInclude Include="Engine\UIEngine.h" />
-    <ClInclude Include="Utils\IOUtil.h" />
-    <ClInclude Include="Utils\NVTimer.h" />
-    <ClInclude Include="Utils\Timer.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 6.5.targets" />

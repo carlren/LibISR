@@ -1,0 +1,144 @@
+﻿Build started 2015/1/11 16:00:27.
+     1>Project "D:\Work\LibISR\LibISRUtils\LibISRUtils.vcxproj" on node 3 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt IOUtil.cpp
+         IOUtil.cpp
+     1>d:\work\libisr\libisrutils\IOUtil.h(7): error C2653: 'ORUtils' : is not a class or namespace name
+     1>d:\work\libisr\libisrutils\IOUtil.h(7): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>d:\work\libisr\libisrutils\IOUtil.h(7): error C2143: syntax error : missing ',' before '*'
+     1>d:\work\libisr\libisrutils\IOUtil.h(8): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>d:\work\libisr\libisrutils\IOUtil.h(8): error C2143: syntax error : missing ',' before '*'
+     1>d:\work\libisr\libisrutils\IOUtil.h(9): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>d:\work\libisr\libisrutils\IOUtil.h(9): error C2143: syntax error : missing ',' before '*'
+     1>d:\work\libisr\libisrutils\IOUtil.h(10): error C2065: 'ISRUChar4Image' : undeclared identifier
+     1>d:\work\libisr\libisrutils\IOUtil.h(10): error C2065: 'image' : undeclared identifier
+     1>d:\work\libisr\libisrutils\IOUtil.h(10): error C2059: syntax error : 'const'
+     1>d:\work\libisr\libisrutils\IOUtil.h(11): error C2065: 'ISRShortImage' : undeclared identifier
+     1>d:\work\libisr\libisrutils\IOUtil.h(11): error C2065: 'image' : undeclared identifier
+     1>d:\work\libisr\libisrutils\IOUtil.h(11): error C2059: syntax error : 'const'
+     1>d:\work\libisr\libisrutils\IOUtil.h(99): error C2061: syntax error : identifier 'Vector3f'
+     1>d:\work\libisr\libisrutils\IOUtil.h(103): error C2065: 'nCount' : undeclared identifier
+     1>d:\work\libisr\libisrutils\IOUtil.h(105): error C2065: 'data' : undeclared identifier
+     1>d:\work\libisr\libisrutils\IOUtil.h(105): error C2228: left of '.x' must have class/struct/union
+     1>d:\work\libisr\libisrutils\IOUtil.h(106): error C2065: 'data' : undeclared identifier
+     1>d:\work\libisr\libisrutils\IOUtil.h(106): error C2228: left of '.y' must have class/struct/union
+     1>d:\work\libisr\libisrutils\IOUtil.h(107): error C2065: 'data' : undeclared identifier
+     1>d:\work\libisr\libisrutils\IOUtil.h(107): error C2228: left of '.z' must have class/struct/union
+     1>IOUtil.cpp(134): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>IOUtil.cpp(134): error C2143: syntax error : missing ',' before '*'
+     1>IOUtil.cpp(136): error C2065: 'fileName' : undeclared identifier
+     1>IOUtil.cpp(137): error C2065: 'image' : undeclared identifier
+     1>IOUtil.cpp(137): error C2227: left of '->noDims' must point to class/struct/union/generic type
+                 type is 'unknown-type'
+     1>IOUtil.cpp(137): error C2228: left of '.x' must have class/struct/union
+     1>IOUtil.cpp(137): error C2228: left of '.y' must have class/struct/union
+     1>IOUtil.cpp(137): error C2660: 'pnm_writeheader' : function does not take 2 arguments
+     1>IOUtil.cpp(141): error C2065: 'image' : undeclared identifier
+     1>IOUtil.cpp(141): error C2227: left of '->noDims' must point to class/struct/union/generic type
+                 type is 'unknown-type'
+     1>IOUtil.cpp(141): error C2228: left of '.x' must have class/struct/union
+     1>IOUtil.cpp(141): error C2228: left of '.y' must have class/struct/union
+     1>IOUtil.cpp(143): error C2065: 'Vector2i' : undeclared identifier
+     1>IOUtil.cpp(143): error C2146: syntax error : missing ';' before identifier 'noDims'
+     1>IOUtil.cpp(143): error C2065: 'noDims' : undeclared identifier
+     1>IOUtil.cpp(143): error C2065: 'image' : undeclared identifier
+     1>IOUtil.cpp(143): error C2227: left of '->noDims' must point to class/struct/union/generic type
+                 type is 'unknown-type'
+     1>IOUtil.cpp(145): error C2065: 'flipVertical' : undeclared identifier
+     1>IOUtil.cpp(147): error C2065: 'noDims' : undeclared identifier
+     1>IOUtil.cpp(147): error C2228: left of '.y' must have class/struct/union
+                 type is 'unknown-type'
+     1>IOUtil.cpp(147): error C2228: left of '.x' must have class/struct/union
+                 type is 'unknown-type'
+     1>IOUtil.cpp(150): error C2065: 'noDims' : undeclared identifier
+     1>IOUtil.cpp(150): error C2228: left of '.x' must have class/struct/union
+                 type is 'unknown-type'
+     1>IOUtil.cpp(151): error C2065: 'noDims' : undeclared identifier
+     1>IOUtil.cpp(151): error C2228: left of '.y' must have class/struct/union
+                 type is 'unknown-type'
+     1>IOUtil.cpp(151): error C2228: left of '.x' must have class/struct/union
+                 type is 'unknown-type'
+     1>IOUtil.cpp(153): error C2065: 'image' : undeclared identifier
+     1>IOUtil.cpp(153): error C2227: left of '->GetData' must point to class/struct/union/generic type
+                 type is 'unknown-type'
+     1>IOUtil.cpp(153): error C2228: left of '.r' must have class/struct/union
+     1>IOUtil.cpp(154): error C2065: 'image' : undeclared identifier
+     1>IOUtil.cpp(154): error C2227: left of '->GetData' must point to class/struct/union/generic type
+                 type is 'unknown-type'
+     1>IOUtil.cpp(154): error C2228: left of '.g' must have class/struct/union
+     1>IOUtil.cpp(155): error C2065: 'image' : undeclared identifier
+     1>IOUtil.cpp(155): error C2227: left of '->GetData' must point to class/struct/union/generic type
+                 type is 'unknown-type'
+     1>IOUtil.cpp(155): error C2228: left of '.b' must have class/struct/union
+     1>IOUtil.cpp(160): error C2065: 'noDims' : undeclared identifier
+     1>IOUtil.cpp(160): error C2228: left of '.x' must have class/struct/union
+                 type is 'unknown-type'
+     1>IOUtil.cpp(160): error C2228: left of '.y' must have class/struct/union
+                 type is 'unknown-type'
+     1>IOUtil.cpp(161): error C2065: 'image' : undeclared identifier
+     1>IOUtil.cpp(161): error C2227: left of '->GetData' must point to class/struct/union/generic type
+                 type is 'unknown-type'
+     1>IOUtil.cpp(161): error C2228: left of '.r' must have class/struct/union
+     1>IOUtil.cpp(162): error C2065: 'image' : undeclared identifier
+     1>IOUtil.cpp(162): error C2227: left of '->GetData' must point to class/struct/union/generic type
+                 type is 'unknown-type'
+     1>IOUtil.cpp(162): error C2228: left of '.g' must have class/struct/union
+     1>IOUtil.cpp(163): error C2065: 'image' : undeclared identifier
+     1>IOUtil.cpp(163): error C2227: left of '->GetData' must point to class/struct/union/generic type
+                 type is 'unknown-type'
+     1>IOUtil.cpp(163): error C2228: left of '.b' must have class/struct/union
+     1>IOUtil.cpp(167): error C2065: 'image' : undeclared identifier
+     1>IOUtil.cpp(167): error C2227: left of '->noDims' must point to class/struct/union/generic type
+                 type is 'unknown-type'
+     1>IOUtil.cpp(167): error C2228: left of '.x' must have class/struct/union
+     1>IOUtil.cpp(167): error C2228: left of '.y' must have class/struct/union
+     1>IOUtil.cpp(167): error C2660: 'pnm_writedata' : function does not take 3 arguments
+     1>IOUtil.cpp(172): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>IOUtil.cpp(172): error C2143: syntax error : missing ',' before '*'
+     1>IOUtil.cpp(173): error C2084: function 'void SaveImageToFile(const int)' already has a body
+                 d:\work\libisr\libisrutils\IOUtil.h(7) : see previous definition of 'SaveImageToFile'
+     1>IOUtil.cpp(174): error C2065: 'fileName' : undeclared identifier
+     1>IOUtil.cpp(175): error C2065: 'image' : undeclared identifier
+     1>IOUtil.cpp(175): error C2227: left of '->noDims' must point to class/struct/union/generic type
+                 type is 'unknown-type'
+     1>IOUtil.cpp(175): error C2228: left of '.x' must have class/struct/union
+     1>IOUtil.cpp(175): error C2228: left of '.y' must have class/struct/union
+     1>IOUtil.cpp(175): error C2660: 'pnm_writeheader' : function does not take 2 arguments
+     1>IOUtil.cpp(178): error C2065: 'image' : undeclared identifier
+     1>IOUtil.cpp(178): error C2227: left of '->noDims' must point to class/struct/union/generic type
+                 type is 'unknown-type'
+     1>IOUtil.cpp(178): error C2228: left of '.x' must have class/struct/union
+     1>IOUtil.cpp(178): error C2228: left of '.y' must have class/struct/union
+     1>IOUtil.cpp(178): error C2227: left of '->GetData' must point to class/struct/union/generic type
+                 type is 'unknown-type'
+     1>IOUtil.cpp(178): error C2660: 'pnm_writedata' : function does not take 2 arguments
+     1>IOUtil.cpp(182): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>IOUtil.cpp(182): error C2143: syntax error : missing ',' before '*'
+     1>IOUtil.cpp(184): error C2065: 'image' : undeclared identifier
+     1>IOUtil.cpp(184): error C2227: left of '->dataSize' must point to class/struct/union/generic type
+                 type is 'unknown-type'
+     1>IOUtil.cpp(185): error C2065: 'image' : undeclared identifier
+     1>IOUtil.cpp(185): error C2227: left of '->dataSize' must point to class/struct/union/generic type
+                 type is 'unknown-type'
+     1>IOUtil.cpp(187): error C2065: 'image' : undeclared identifier
+     1>IOUtil.cpp(187): error C2227: left of '->GetData' must point to class/struct/union/generic type
+                 type is 'unknown-type'
+     1>IOUtil.cpp(191): error C2065: 'fileName' : undeclared identifier
+     1>IOUtil.cpp(192): error C2065: 'image' : undeclared identifier
+     1>IOUtil.cpp(192): error C2227: left of '->noDims' must point to class/struct/union/generic type
+                 type is 'unknown-type'
+     1>IOUtil.cpp(192): error C2228: left of '.x' must have class/struct/union
+     1>IOUtil.cpp(192): error C2228: left of '.y' must have class/struct/union
+     1>IOUtil.cpp(192): error C2660: 'pnm_writeheader' : function does not take 2 arguments
+     1>IOUtil.cpp(195): error C2065: 'image' : undeclared identifier
+     1>IOUtil.cpp(195): error C2227: left of '->noDims' must point to class/struct/union/generic type
+                 type is 'unknown-type'
+     1>IOUtil.cpp(195): error C2228: left of '.x' must have class/struct/union
+     1>IOUtil.cpp(195): error C2228: left of '.y' must have class/struct/union
+     1>IOUtil.cpp(195): error C2660: 'pnm_writedata' : function does not take 3 arguments
+     1>IOUtil.cpp(195): fatal error C1003: error count exceeds 100; stopping compilation
+     1>Done Building Project "D:\Work\LibISR\LibISRUtils\LibISRUtils.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.39
