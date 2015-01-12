@@ -3,13 +3,12 @@
 #include <stdio.h>
 
 #include "../Utils/LibISRDefine.h"
-#include "../Utils/MathUtils.h"
 #include "../Objects/ISRShape.h"
 #include "../Objects/ISRFrame.h"
 
 using namespace CoreISR::Objects;
 
-namespace CoreISR
+namespace LibISR
 {
 	namespace Objects
 	{

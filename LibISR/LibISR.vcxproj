@@ -24,6 +24,7 @@
     <ClCompile Include="Utils\ISRCalibIO.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LibISR.h" />
     <ClInclude Include="Engines\ISRCoreEngine.h" />
     <ClInclude Include="Engines\ISRTrackingEngine.h" />
     <ClInclude Include="Objects\ISRCalib.h" />
@@ -32,7 +33,6 @@
     <ClInclude Include="Objects\ISRExtrinsics.h" />
     <ClInclude Include="Objects\ISRFrame.h" />
     <ClInclude Include="Objects\ISRHistogram.h" />
-    <ClInclude Include="Objects\ISRImage.h" />
     <ClInclude Include="Objects\ISRIntrinsics.h" />
     <ClInclude Include="Objects\ISROptimizationHelper.h" />
     <ClInclude Include="Objects\ISRPoints.h" />
@@ -42,12 +42,7 @@
     <ClInclude Include="Objects\ISRView.h" />
     <ClInclude Include="Utils\ISRCalibIO.h" />
     <ClInclude Include="Utils\ISRLibSettings.h" />
-    <ClInclude Include="Utils\ISRMath.h" />
-    <ClInclude Include="Utils\ISRMatrix.h" />
-    <ClInclude Include="Utils\ISRVector.h" />
-    <ClInclude Include="Utils\LibISRCUDADefine.h" />
     <ClInclude Include="Utils\LibISRDefine.h" />
-    <ClInclude Include="Utils\MathUtils.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1268D747-6F6D-4522-A928-1E158331B255}</ProjectGuid>
@@ -62,7 +57,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -75,7 +70,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -109,6 +104,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -117,7 +114,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\1.Work\VS\LibISR\Dependency\Kinect\inc;D:\1.Work\VS\LibISR\Dependency\OpenCV;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

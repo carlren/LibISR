@@ -2,12 +2,10 @@
 
 #include <string.h>
 
-#include "..//Utils//LibISRDefine.h"
-#include "..//Utils//MathUtils.h"
-#include "..//Objects//ISRImage.h"
+#include "../Utils/LibISRDefine.h"
 
 
-namespace CoreISR
+namespace LibISR
 {
 	namespace Objects
 	{

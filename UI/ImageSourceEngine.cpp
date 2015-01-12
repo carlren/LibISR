@@ -1,11 +1,11 @@
 #include "ImageSourceEngine.h"
 
-#include "../Utils/IOUtil.h"
+#include "../LibISRUtils/IOUtil.h"
 
 #include <stdio.h>
 
-using namespace LibISR::Engine;
-
+using namespace LibISRUtils;
+using namespace LibISR::Objects;
 
 ImageSourceEngine::ImageSourceEngine(const char *calibFilename)
 {

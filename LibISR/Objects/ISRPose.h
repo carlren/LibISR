@@ -1,11 +1,10 @@
 #pragma once
 
 #include "../Utils/LibISRDefine.h"
-#include "../Utils/MathUtils.h"
 
 // ok, we use the openGL column major matrix now
 
-namespace CoreISR
+namespace LibISR
 {
 	namespace Objects
 	{

@@ -1,70 +1,66 @@
 #pragma once
 
-#include "../CoreISR/CoreISR.h"
-#include "../Utils/NVTimer.h"
+#include "../LibISR/LibISR.h"
+#include "../LibISRUtils/NVTimer.h"
 
 #include "ImageSourceEngine.h"
 
-
-namespace LibISR
+namespace LibISRUtils
 {
-	namespace Engine
+	class UIEngine
 	{
-		class UIEngine
+		static UIEngine* instance;
+
+		enum MainLoopAction
 		{
-			static UIEngine* instance;
+			PROCESS_PAUSED, PROCESS_FRAME, PROCESS_VIDEO, EXIT, SAVE_TO_DISK
+		}mainLoopAction;
 
-			enum MainLoopAction
-			{
-				PROCESS_PAUSED, PROCESS_FRAME, PROCESS_VIDEO, EXIT, SAVE_TO_DISK
-			}mainLoopAction;
+		ImageSourceEngine *imageSource;
 
-			ImageSourceEngine *imageSource;
-			
-			StopWatchInterface *timer;
+		StopWatchInterface *timer;
 
-			ISRCoreEngine *mainEngine;
+		LibISR::Engine::ISRCoreEngine *mainEngine;
 
-		private: // For UI layout
-			static const int NUM_WIN = 3;
-			Vector4f winReg[NUM_WIN]; // (x1, y1, x2, y2)
-			Vector2i winSize;
-			uint textureId[NUM_WIN];
-			ISRUChar4Image *outImage[NUM_WIN];
-			
-			int mouseState;
-			Vector2i mouseLastClick;
+	private: // For UI layout
+		static const int NUM_WIN = 3;
+		Vector4f winReg[NUM_WIN]; // (x1, y1, x2, y2)
+		Vector2i winSize;
+		uint textureId[NUM_WIN];
+		ISRUChar4Image *outImage[NUM_WIN];
 
-			int currentFrameNo; bool isRecording;
-		public:
-			static UIEngine* Instance(void) {
-				if (instance == NULL) instance = new UIEngine();
-				return instance;
-			}
+		int mouseState;
+		Vector2i mouseLastClick;
 
-			static void glutDisplayFunction();
-			static void glutIdleFunction();
-			static void glutKeyUpFunction(unsigned char key, int x, int y);
+		int currentFrameNo; bool isRecording;
+	public:
+		static UIEngine* Instance(void) {
+			if (instance == NULL) instance = new UIEngine();
+			return instance;
+		}
 
-			const Vector2i & getWindowSize(void) const
-			{
-				return winSize;
-			}
+		static void glutDisplayFunction();
+		static void glutIdleFunction();
+		static void glutKeyUpFunction(unsigned char key, int x, int y);
 
-			float processedTime;
-			int processedFrameNo;
-			char *outFolder;
-			bool needsRefresh;
+		const Vector2i & getWindowSize(void) const
+		{
+			return winSize;
+		}
 
-			void Initialise(int & argc, char** argv, ImageSourceEngine *imageSource, ISRCoreEngine* mainEngine ,const char *outFolder);
-			void Shutdown();
+		float processedTime;
+		int processedFrameNo;
+		char *outFolder;
+		bool needsRefresh;
 
-			void Run();
-			void ProcessFrame();
+		void Initialise(int & argc, char** argv, ImageSourceEngine *imageSource, LibISR::Engine::ISRCoreEngine* mainEngine, const char *outFolder);
+		void Shutdown();
 
-			void GetScreenshot(ISRUChar4Image *dest) const;
-			void SaveScreenshot(const char *filename) const;
-		};
-	}
+		void Run();
+		void ProcessFrame();
+
+		void GetScreenshot(ISRUChar4Image *dest) const;
+		void SaveScreenshot(const char *filename) const;
+	};
 }
 

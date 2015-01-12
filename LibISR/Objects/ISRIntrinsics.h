@@ -1,10 +1,11 @@
 #pragma once
 
+
 #include <string>
 
 #include "../Utils/LibISRDefine.h"
 
-namespace CoreISR
+namespace LibISR
 {
 	namespace Objects
 	{
@@ -55,6 +56,7 @@ namespace CoreISR
 				A.setZeros();
 				A.m00 = fx; A.m20 = cx; A.m11 = fy; A.m21 = cy; A.m22 = 1;
 				A.inv(invA);
+
 				this->width = w;
 				this->height = h;
 			}

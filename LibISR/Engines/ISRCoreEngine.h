@@ -8,7 +8,7 @@
 #include "../Objects/ISROptimizationHelper.h"
 
 
-namespace CoreISR
+namespace LibISR
 {
 	namespace Engine
 	{
@@ -21,15 +21,15 @@ namespace CoreISR
 
 		public:
 			
-			ISRFrame *frame;
-			ISRShapeUnion* shapeUnion;
-			ISROptimizationHelper *optimizationHelper;
+			Objects::ISRFrame *frame;
+			Objects::ISRShapeUnion* shapeUnion;
+			Objects::ISROptimizationHelper *optimizationHelper;
 
-			ISRView* GetView(){ return frame->view;};
+			Objects::ISRView* GetView(){ return frame->view;};
 
 			void ProcessFrame(void);
 
-			ISRCoreEngine(const ISRLibSettings *settings, const ISRCalib *calib, Vector2i d_dize, Vector2i rgb_size);
+			ISRCoreEngine(const ISRLibSettings *settings, const Objects::ISRCalib *calib, Vector2i d_dize, Vector2i rgb_size);
 			
 			~ISRCoreEngine()
 			{

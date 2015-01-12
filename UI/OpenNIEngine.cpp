@@ -1,11 +1,12 @@
-
 #include "OpenNIEngine.h"
-#include "../Utils/IOUtil.h"
+
+#include "../LibISRUtils/IOUtil.h"
 
 #include <OpenNI.h>
 
 
-using namespace LibISR::Engine;
+using namespace LibISRUtils;
+using namespace LibISR::Objects;
 
 class OpenNIEngine::PrivateData {
 public:
@@ -187,7 +188,7 @@ OpenNIEngine::~OpenNIEngine()
 	openni::OpenNI::shutdown();
 }
 
-void OpenNIEngine::getImages(ISRView *out)
+void OpenNIEngine::getImages(LibISR::Objects::ISRView *out)
 {
 	int changedIndex, waitStreamCount;
 	if (depthAvailable && colorAvailable) waitStreamCount = 2;

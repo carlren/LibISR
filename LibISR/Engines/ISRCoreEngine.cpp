@@ -1,6 +1,7 @@
 #include "ISRCoreEngine.h"
 
-using namespace CoreISR::Engine;
+using namespace LibISR::Engine;
+using namespace LibISR::Objects;
 
 ISRCoreEngine::ISRCoreEngine(const ISRLibSettings *settings, const ISRCalib *calib, Vector2i d_dize, Vector2i rgb_size)
 {

@@ -1,14 +1,12 @@
 #pragma once
-
 #include <stdio.h>
 
 #include "../Utils/LibISRDefine.h"
-#include "../Utils/ISRMath.h"
 
 #include "../Objects/ISRPose.h"
 #include "../Objects/ISRPoints.h"
 
-namespace CoreISR
+namespace LibISR
 {
 	namespace Objects
 	{

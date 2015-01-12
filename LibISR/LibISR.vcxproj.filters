@@ -35,22 +35,7 @@
     <ClInclude Include="Utils\ISRLibSettings.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\ISRMath.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\ISRMatrix.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\ISRVector.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\LibISRCUDADefine.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Utils\LibISRDefine.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\MathUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="Objects\ISRCalib.h">
@@ -69,9 +54,6 @@
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="Objects\ISRHistogram.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\ISRImage.h">
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="Objects\ISRIntrinsics.h">
@@ -95,5 +77,6 @@
     <ClInclude Include="Objects\ISRView.h">
       <Filter>Objects</Filter>
     </ClInclude>
+    <ClInclude Include="LibISR.h" />
   </ItemGroup>
 </Project>

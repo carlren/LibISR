@@ -51,3 +51,8 @@ inline void matmul(const float *A, const float *b, float *x, int numRows, int nu
 		x[r] = res;
 	}
 }
+
+inline bool almostZero(float sum)
+{
+	return(sum*sum<1.0e-25);
+}

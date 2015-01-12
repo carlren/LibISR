@@ -4,15 +4,11 @@
 #include <stdlib.h>
 
 #include "../Utils/LibISRDefine.h"
-#include "../Utils/MathUtils.h"
 
 #include "../Objects/ISRHistogram.h"
-#include "../Objects/ISRImage.h"
 #include "../Objects/ISRCalib.h"
 
-using namespace CoreISR::Objects;
-
-namespace CoreISR
+namespace LibISR
 {
 	namespace Objects
 	{

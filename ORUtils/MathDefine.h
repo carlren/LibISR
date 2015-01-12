@@ -1,13 +1,17 @@
 #pragma once
-
-#include "Vector.h"
-#include "Matrix.h"
-#include "MathUtils.h"
-
 typedef unsigned char uchar;
 typedef unsigned short ushort;
 typedef unsigned int uint;
 typedef unsigned long ulong;
+
+#if defined(__CUDACC__) && defined(__CUDA_ARCH__)
+#define _CPU_AND_GPU_CODE_ __device__	// for CUDA device code
+#else
+#define _CPU_AND_GPU_CODE_ 
+#endif
+
+#include "Vector.h"
+#include "Matrix.h"
 
 #ifndef NULL
 #define NULL 0

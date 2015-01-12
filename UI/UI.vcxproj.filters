@@ -14,9 +14,6 @@
     <ClInclude Include="ImageSourceEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ISRKinectCapture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="OpenNIEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -1,14 +1,12 @@
 #include <stdio.h>
 
-#include "CoreISR/CoreISR.h"
+#include "../LibISR/LibISR.h"
+#include "ImageSourceEngine.h"
+#include "OpenNIEngine.h"
+#include "UIEngine.h"
 
-#include "Engine/ImageSourceEngine.h"
-#include "Engine/OpenNIEngine.h"
-#include "Engine/UIEngine.h"
-
-
-#include "Utils/IOUtil.h"
-#include "Utils/Timer.h"
+#include "../LibISRUtils/IOUtil.h"
+#include "../LibISRUtils/Timer.h"
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/core/core.hpp"
@@ -17,6 +15,7 @@
 #pragma comment( lib, "opencv_highgui2410.lib" )
 
 using namespace LibISR::Engine;
+using namespace LibISRUtils;
 
 int main(int argc, char** argv)
 {

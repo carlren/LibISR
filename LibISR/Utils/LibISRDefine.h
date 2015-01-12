@@ -3,15 +3,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "../../ORUtils/Image.h"
 #include "../../ORUtils/MathDefine.h"
+#include "../../ORUtils/Image.h"
 #include "../../ORUtils/MathUtils.h"
-
-#if defined(__CUDACC__) && defined(__CUDA_ARCH__)
-#define _CPU_AND_GPU_CODE_ __device__	// for CUDA device code
-#else
-#define _CPU_AND_GPU_CODE_ 
-#endif
 
 //////////////////////////////////////////////////////////////////////////
 // Some settings for LibISR, some of them will be moved to an setting class
@@ -21,9 +15,11 @@
 #define HISTOGRAM_BIN 16
 #define MAX_IMG_PTS 307200
 #define DT_VOL_SIZE 128
+#define VOL_SCALE 1000
 #define BLOCK_SIZE_SDF 8
 #define BLOCK_SIZE_IMG 16
 #define KINECT_PLAYER_INDEX_SHIFT          3
+
 
 //////////////////////////////////////////////////////////////////////////
 // Types for mask images

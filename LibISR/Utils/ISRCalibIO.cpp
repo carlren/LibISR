@@ -4,9 +4,9 @@
 
 #include <fstream>
 
-using namespace CoreISR::Objects;
+using namespace LibISR::Objects;
 
-bool CoreISR::Objects::readIntrinsics(std::istream & src, ISRIntrinsics & dest)
+bool LibISR::Objects::readIntrinsics(std::istream & src, ISRIntrinsics & dest)
 {
 	float sizeX, sizeY;
 	float focalLength[2], centerPoint[2];
@@ -20,13 +20,13 @@ bool CoreISR::Objects::readIntrinsics(std::istream & src, ISRIntrinsics & dest)
 	return true;
 }
 
-bool CoreISR::Objects::readIntrinsics(const char *fileName, ISRIntrinsics & dest)
+bool LibISR::Objects::readIntrinsics(const char *fileName, ISRIntrinsics & dest)
 {
 	std::ifstream f(fileName);
-	return CoreISR::Objects::readIntrinsics(f, dest);
+	return LibISR::Objects::readIntrinsics(f, dest);
 }
 
-bool CoreISR::Objects::readExtrinsics(std::istream & src, ISRExtrinsics & dest)
+bool LibISR::Objects::readExtrinsics(std::istream & src, ISRExtrinsics & dest)
 {
 	Matrix4f calib;
 	src >> calib.m00 >> calib.m10 >> calib.m20 >> calib.m30;
@@ -39,13 +39,13 @@ bool CoreISR::Objects::readExtrinsics(std::istream & src, ISRExtrinsics & dest)
 	return true;
 }
 
-bool CoreISR::Objects::readExtrinsics(const char *fileName, ISRExtrinsics & dest)
+bool LibISR::Objects::readExtrinsics(const char *fileName, ISRExtrinsics & dest)
 {
 	std::ifstream f(fileName);
-	return CoreISR::Objects::readExtrinsics(f, dest);
+	return LibISR::Objects::readExtrinsics(f, dest);
 }
 
-bool CoreISR::Objects::readHomographyCalib(std::istream & src, ISRExHomography & dest)
+bool LibISR::Objects::readHomographyCalib(std::istream & src, ISRExHomography & dest)
 {
 	Matrix3f calib;
 	src >> calib.m00 >> calib.m10 >> calib.m20;
@@ -61,13 +61,13 @@ bool CoreISR::Objects::readHomographyCalib(std::istream & src, ISRExHomography &
 	return true;
 }
 
-bool CoreISR::Objects::readHomographyCalib(const char *fileName, ISRExHomography & dest)
+bool LibISR::Objects::readHomographyCalib(const char *fileName, ISRExHomography & dest)
 {
 	std::ifstream f(fileName);
-	return CoreISR::Objects::readHomographyCalib(f, dest);
+	return LibISR::Objects::readHomographyCalib(f, dest);
 }
 
-bool CoreISR::Objects::readDisparityCalib(std::istream & src, ISRDisparityCalib & dest)
+bool LibISR::Objects::readDisparityCalib(std::istream & src, ISRDisparityCalib & dest)
 {
 	float a, b;
 	src >> a >> b;
@@ -77,35 +77,35 @@ bool CoreISR::Objects::readDisparityCalib(std::istream & src, ISRDisparityCalib 
 	return true;
 }
 
-bool CoreISR::Objects::readDisparityCalib(const char *fileName, ISRDisparityCalib & dest)
+bool LibISR::Objects::readDisparityCalib(const char *fileName, ISRDisparityCalib & dest)
 {
 	std::ifstream f(fileName);
-	return CoreISR::Objects::readDisparityCalib(f, dest);
+	return LibISR::Objects::readDisparityCalib(f, dest);
 }
 
-bool CoreISR::Objects::readRGBDCalib(std::istream & src, ISRCalib & dest)
+bool LibISR::Objects::readRGBDCalib(std::istream & src, ISRCalib & dest)
 {
-	if (!CoreISR::Objects::readIntrinsics(src, dest.intrinsics_rgb)) return false;
-	if (!CoreISR::Objects::readIntrinsics(src, dest.intrinsics_d)) return false;
-	if (!CoreISR::Objects::readExtrinsics(src, dest.trafo_rgb_to_depth)) return false;
-	if (!CoreISR::Objects::readDisparityCalib(src, dest.disparityCalib)) return false;
-	if (!CoreISR::Objects::readHomographyCalib(src, dest.homo_depth_to_color)) return false;
+	if (!LibISR::Objects::readIntrinsics(src, dest.intrinsics_rgb)) return false;
+	if (!LibISR::Objects::readIntrinsics(src, dest.intrinsics_d)) return false;
+	if (!LibISR::Objects::readExtrinsics(src, dest.trafo_rgb_to_depth)) return false;
+	if (!LibISR::Objects::readDisparityCalib(src, dest.disparityCalib)) return false;
+	if (!LibISR::Objects::readHomographyCalib(src, dest.homo_depth_to_color)) return false;
 	return true;
 }
 
-bool CoreISR::Objects::readRGBDCalib(const char *fileName, ISRCalib & dest)
+bool LibISR::Objects::readRGBDCalib(const char *fileName, ISRCalib & dest)
 {
 	std::ifstream f(fileName);
-	return CoreISR::Objects::readRGBDCalib(f, dest);
+	return LibISR::Objects::readRGBDCalib(f, dest);
 }
 
-bool CoreISR::Objects::readRGBDCalib(const char *rgbIntrinsicsFile, const char *depthIntrinsicsFile, const char *disparityCalibFile, const char *extrinsicsFile, ISRCalib & dest)
+bool LibISR::Objects::readRGBDCalib(const char *rgbIntrinsicsFile, const char *depthIntrinsicsFile, const char *disparityCalibFile, const char *extrinsicsFile, ISRCalib & dest)
 {
 	bool ret = true;
-	ret &= CoreISR::Objects::readIntrinsics(rgbIntrinsicsFile, dest.intrinsics_rgb);
-	ret &= CoreISR::Objects::readIntrinsics(depthIntrinsicsFile, dest.intrinsics_d);
-	ret &= CoreISR::Objects::readExtrinsics(extrinsicsFile, dest.trafo_rgb_to_depth);
-	ret &= CoreISR::Objects::readDisparityCalib(disparityCalibFile, dest.disparityCalib);
+	ret &= LibISR::Objects::readIntrinsics(rgbIntrinsicsFile, dest.intrinsics_rgb);
+	ret &= LibISR::Objects::readIntrinsics(depthIntrinsicsFile, dest.intrinsics_d);
+	ret &= LibISR::Objects::readExtrinsics(extrinsicsFile, dest.trafo_rgb_to_depth);
+	ret &= LibISR::Objects::readDisparityCalib(disparityCalibFile, dest.disparityCalib);
 	return ret;
 }
 

@@ -4,28 +4,25 @@
 
 #pragma comment(lib, "OpenNI2")
 
-namespace LibISR
+namespace LibISRUtils
 {
-	namespace Engine
+	class OpenNIEngine : public ImageSourceEngine
 	{
-		class OpenNIEngine : public ImageSourceEngine
-		{
-		private:
-			class PrivateData;
-			PrivateData *data;
-			Vector2i imageSize_rgb, imageSize_d;
-			bool colorAvailable, depthAvailable;
-		public:
-			OpenNIEngine(const char *calibFilename, const char *deviceURI = NULL, const bool useInternalCalibration = false,
-				Vector2i imageSize_rgb = Vector2i(640, 480), Vector2i imageSize_d = Vector2i(640, 480));
+	private:
+		class PrivateData;
+		PrivateData *data;
+		Vector2i imageSize_rgb, imageSize_d;
+		bool colorAvailable, depthAvailable;
+	public:
+		OpenNIEngine(const char *calibFilename, const char *deviceURI = NULL, const bool useInternalCalibration = false,
+			Vector2i imageSize_rgb = Vector2i(640, 480), Vector2i imageSize_d = Vector2i(640, 480));
 
-			~OpenNIEngine();
+		~OpenNIEngine();
 
-			bool hasMoreImages(void);
-			void getImages(ISRView *out);
-			Vector2i getDepthImageSize(void);
-			Vector2i getRGBImageSize(void);
-		};
-	}
+		bool hasMoreImages(void);
+		void getImages(LibISR::Objects::ISRView *out);
+		Vector2i getDepthImageSize(void);
+		Vector2i getRGBImageSize(void);
+	};
 }
 

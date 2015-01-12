@@ -4,7 +4,7 @@
 
 #include <stdlib.h>
 
-namespace CoreISR
+namespace LibISR
 {
 	namespace Objects
 	{

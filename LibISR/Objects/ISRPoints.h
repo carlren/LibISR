@@ -3,9 +3,8 @@
 #include <stdlib.h>
 
 #include "../Utils/LibISRDefine.h"
-#include "../Utils/ISRMath.h"
 
-namespace CoreISR
+namespace LibISR
 {
 	namespace Objects
 	{

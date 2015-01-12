@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-namespace CoreISR
+namespace LibISR
 {
 	namespace Objects
 	{

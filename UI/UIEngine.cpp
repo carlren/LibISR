@@ -13,9 +13,11 @@
 #include <GL/freeglut.h>
 #endif
 
-#include "../Utils/IOUtil.h"
+#include "../LibISRUtils/IOUtil.h"
 
+using namespace LibISRUtils;
 using namespace LibISR::Engine;
+
 UIEngine* UIEngine::instance;
 
 static void safe_glutBitmapString(void *font, const char *str)
