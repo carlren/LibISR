@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "../../../ORUtils/Image.h"
-#include "../../../ORUtils/MathDefine.h"
-#include "../../../ORUtils/MathUtils.h"
+#include "../../ORUtils/Image.h"
+#include "../../ORUtils/MathDefine.h"
+#include "../../ORUtils/MathUtils.h"
 
 #if defined(__CUDACC__) && defined(__CUDA_ARCH__)
 #define _CPU_AND_GPU_CODE_ __device__	// for CUDA device code
