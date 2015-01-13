@@ -10,6 +10,15 @@
 
 namespace LibISR
 {
+	/**
+	\brief
+		view carries the basic image information
+		including RGB, depth, raw depth and aligned RGB
+		also includes the calibration parameters
+
+		refactored: Jan/13/2015
+	*/
+
 	namespace Objects
 	{
 

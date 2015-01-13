@@ -9,6 +9,13 @@ namespace LibISR
 {
 	namespace Objects
 	{
+		/**
+		\biref
+			color histogram as appearance model
+			
+			refactored: Jan/13/2015
+		*/
+
 		class ISRHistogram
 		{
 		public:
@@ -43,7 +50,6 @@ namespace LibISR
 				}
 
 			}
-
 
 			void BuildHistogram(ISRUChar4Image *color, ISRUCharImage *mask)
 			{
@@ -96,7 +102,6 @@ namespace LibISR
 				this->initialised = true;
 			}
 			
-
 			void ClearNormalised() { memset(this->data_normalised, 0, sizeof(Vector2f) * this->dim);  }
 			void ClearNotNormalised() { memset(this->data_notnormalised, 0, sizeof(Vector2f) * this->dim); }
 			void ClearPosterior() {memset(this->posterior,0,sizeof(float) * this->dim);}

@@ -151,7 +151,7 @@ static inline bool minimizeLM(ISRRGBDTracker & tracker, ISRPose** initialization
 
 
 
-			tracker.applyPoseChange(d);
+			//tracker.applyPoseChange(d,);
 
 			// check whether step reduces error function and
 			// compute a new value of lambda
