@@ -10,23 +10,38 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{2c698d70-b16a-4058-9890-dce5bba943da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engines\DeviceSpecific">
+      <UniqueIdentifier>{b66af51d-af1f-4419-b5bc-7937ebe44a57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engines\DeviceAgnostic">
+      <UniqueIdentifier>{0f466ca4-ad43-46ba-9d53-3ec43c8d3cf8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engines\DeviceSpecific\CPU">
+      <UniqueIdentifier>{bf0b1d2f-548b-4087-a567-0d9eac081f11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engines\DeviceSpecific\GPU">
+      <UniqueIdentifier>{e5cfc05d-7c98-4b55-bf3e-465677077b76}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engines\ISRCoreEngine.cpp">
       <Filter>Engines</Filter>
     </ClCompile>
-    <ClCompile Include="Engines\ISRTrackingEngine.cpp">
-      <Filter>Engines</Filter>
-    </ClCompile>
     <ClCompile Include="Utils\ISRCalibIO.cpp">
       <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Engines\ISRDepthTracker.cpp">
+      <Filter>Engines</Filter>
+    </ClCompile>
+    <ClCompile Include="Engines\ISRRGBDTracker.cpp">
+      <Filter>Engines</Filter>
+    </ClCompile>
+    <ClCompile Include="Engines\DeviceSpecific\CPU\ISRRGBDTracker_CPU.cpp">
+      <Filter>Engines\DeviceSpecific\CPU</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engines\ISRCoreEngine.h">
-      <Filter>Engines</Filter>
-    </ClInclude>
-    <ClInclude Include="Engines\ISRTrackingEngine.h">
       <Filter>Engines</Filter>
     </ClInclude>
     <ClInclude Include="Utils\ISRCalibIO.h">
@@ -78,5 +93,25 @@
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="LibISR.h" />
+    <ClInclude Include="Engines\ISRDepthTracker.h">
+      <Filter>Engines</Filter>
+    </ClInclude>
+    <ClInclude Include="Engines\ISRRGBDTracker.h">
+      <Filter>Engines</Filter>
+    </ClInclude>
+    <ClInclude Include="Engines\ISRTracker.h">
+      <Filter>Engines</Filter>
+    </ClInclude>
+    <ClInclude Include="Engines\DeviceSpecific\CPU\ISRRGBDTracker_CPU.h">
+      <Filter>Engines\DeviceSpecific\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Engines\DeviceSpecific\GPU\ISRRGBDTracker_GPU.h">
+      <Filter>Engines\DeviceSpecific\GPU</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="Engines\DeviceSpecific\GPU\ISRRGBDTracker_GPU.cu">
+      <Filter>Engines\DeviceSpecific\GPU</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>

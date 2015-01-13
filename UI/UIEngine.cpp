@@ -322,7 +322,6 @@ void UIEngine::ProcessFrame()
 	outImage[2]->SetFrom(mainEngine->GetView()->rgb);
 	DepthToUchar4(outImage[1], mainEngine->GetView()->rawDepth);
 	
-
 	sdkStopTimer(&timer); processedTime = sdkGetTimerValue(&timer);
 
 	currentFrameNo++;

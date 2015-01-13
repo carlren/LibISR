@@ -19,14 +19,20 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Engines\DeviceSpecific\CPU\ISRRGBDTracker_CPU.cpp" />
     <ClCompile Include="Engines\ISRCoreEngine.cpp" />
-    <ClCompile Include="Engines\ISRTrackingEngine.cpp" />
+    <ClCompile Include="Engines\ISRDepthTracker.cpp" />
+    <ClCompile Include="Engines\ISRRGBDTracker.cpp" />
     <ClCompile Include="Utils\ISRCalibIO.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engines\DeviceSpecific\CPU\ISRRGBDTracker_CPU.h" />
+    <ClInclude Include="Engines\DeviceSpecific\GPU\ISRRGBDTracker_GPU.h" />
+    <ClInclude Include="Engines\ISRDepthTracker.h" />
+    <ClInclude Include="Engines\ISRRGBDTracker.h" />
+    <ClInclude Include="Engines\ISRTracker.h" />
     <ClInclude Include="LibISR.h" />
     <ClInclude Include="Engines\ISRCoreEngine.h" />
-    <ClInclude Include="Engines\ISRTrackingEngine.h" />
     <ClInclude Include="Objects\ISRCalib.h" />
     <ClInclude Include="Objects\ISRDisparityCalib.h" />
     <ClInclude Include="Objects\ISRExHomography.h" />
@@ -43,6 +49,9 @@
     <ClInclude Include="Utils\ISRCalibIO.h" />
     <ClInclude Include="Utils\ISRLibSettings.h" />
     <ClInclude Include="Utils\LibISRDefine.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="Engines\DeviceSpecific\GPU\ISRRGBDTracker_GPU.cu" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1268D747-6F6D-4522-A928-1E158331B255}</ProjectGuid>

@@ -12,7 +12,10 @@ namespace LibISR
 {
 	namespace Objects
 	{
-
+		/** \brief
+		Represents intermediat data for a RGB-D frame, 
+		including occlusion map, per-pixel forground map
+		*/
 		class ISRFrame
 		{
 		public:

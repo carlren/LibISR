@@ -51,13 +51,14 @@ namespace LibISR
 				this->alignedRgb = new ISRUChar4Image(d_size, useGPU);
 			}
 
-
 			~ISRView()
 			{
 				delete calib;
+
 				delete rgb;
-				delete rawDepth;
 				delete depth;
+
+				delete rawDepth;
 				delete alignedRgb;
 			}
 

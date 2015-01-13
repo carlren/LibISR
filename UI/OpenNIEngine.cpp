@@ -223,11 +223,9 @@ void OpenNIEngine::getImages(LibISR::Objects::ISRView *out)
 		memcpy(depth, depthImagePix, out->rawDepth->dataSize * sizeof(short));
 	}
 	else memset(depth, 0, out->rawDepth->dataSize * sizeof(short));
-	//WriteToTXT((short*)depthImagePix, 307200, "d:/temp/dd.txt");
-	//exit(1);
 
 	out->inputDepthType = ISRView::ISR_SHORT_DEPTH;
-	out->inputImageType = ISRView::ISR_RGBD_EXTRINSIC;
+	out->inputImageType = ISRView::ISR_RGBD_REGISTERED;
 
 	return /*true*/;
 }
