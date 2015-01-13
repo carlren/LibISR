@@ -18,10 +18,9 @@ namespace LibISR
 		public:
 			/** Track the 6-DoF poses of all the objects in the shape union.
 			*/
-			virtual void TrackObjects(LibISR::Objects::ISRFrame &frame, LibISR::Objects::ISRShapeUnion &shapeUnion) = 0;
+			virtual void TrackObjects(LibISR::Objects::ISRFrame *frame, LibISR::Objects::ISRShapeUnion *shapeUnion) = 0;
 
 			virtual ~ISRTracker(void) {}
 		};
 	}
 }
-

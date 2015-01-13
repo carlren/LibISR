@@ -18,6 +18,12 @@ namespace LibISR
 			// energy fucntion is always evaluated on this set of poses
 			Objects::ISRPose **tmpPoses;
 
+			// pointer to the current set of shapes
+			Objects::ISRShapeUnion *shapeUnion;
+
+			// pointer to the current frame
+			Objects::ISRFrame *frame;
+
 			// copy the pose from the shape union to 
 			void loadPosesFromShapeUnion();
 
@@ -33,6 +39,8 @@ namespace LibISR
 			// size of the Hessian
 			int ATA_size;
 
+
+
 		protected:
 
 			// Hessian procximated with JTJ
@@ -43,7 +51,7 @@ namespace LibISR
 
 			// evaluate the energy given current poses and shapes
 			// the poses are always taken from tmpPoses
-			virtual void evaluateEnergy(float *energy, LibISR::Objects::ISRShapeUnion &shapes, LibISR::Objects::ISRFrame &frame) = 0;
+			virtual void evaluateEnergy(float *energy, Objects::ISRPose **poses) = 0;
 
 			// compute the Hesssian and the Jacobian given the current poses and shape
 			// the poses are always taken from tmpPoses
@@ -51,10 +59,10 @@ namespace LibISR
 
 		public:
 
-			// apply a increamental pose change to current set of pose
-			// d_pose * acceptedPoses -> tmpPoses
-			void applyPoseChange(const float* d_pose) const;
+			int numParameters() const { return ATb_Size; }
 
+			// apply a increamental pose change to current set of pose
+			void applyPoseChange(const float* d_pose, ISRPose** oldPoses, ISRPose** newPoses);
 
 			// evaluation point for LM optimization
 			class EvaluationPoint
@@ -64,7 +72,7 @@ namespace LibISR
 				float *cacheNabla;
 				float *cacheHessian;
 
-				Objects::ISRPose *mPoses;
+				Objects::ISRPose **mPoses;
 				const ISRRGBDTracker *mParent;
 
 				void computeGradients(bool requiresHessian);
@@ -75,9 +83,9 @@ namespace LibISR
 				const float* nabla_energy(){if (cacheNabla == NULL) computeGradients(false); return cacheNabla; }
 				const float* hessian_GN() { if (cacheHessian == NULL) computeGradients(true); return cacheHessian; }
 			
-				const Objects::ISRPose* getPoses() const { return mPoses; }
+				const Objects::ISRPose** getPoses() const { return mPoses; }
 
-				EvaluationPoint(Objects::ISRPose* pos, const ISRRGBDTracker *f_parent);
+				EvaluationPoint(Objects::ISRPose** poses, const ISRRGBDTracker *f_parent);
 				~EvaluationPoint(void)
 				{
 					delete mPoses;
@@ -86,12 +94,12 @@ namespace LibISR
 				}
 			};
 
-			EvaluationPoint* evaluateAt(Objects::ISRPose *poses) const
+			EvaluationPoint* evaluateAt(Objects::ISRPose **poses) const
 			{
 				return new EvaluationPoint(poses, this);
 			}
 
-			void TrackObjects(LibISR::Objects::ISRFrame &frame, LibISR::Objects::ISRShapeUnion &shapes) = 0;
+			void TrackObjects(LibISR::Objects::ISRFrame *frame, LibISR::Objects::ISRShapeUnion *shapes) = 0;
 
 			ISRRGBDTracker(int nObjs, bool useGPU);
 			~ISRRGBDTracker();
