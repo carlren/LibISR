@@ -74,12 +74,6 @@
     <ClInclude Include="Objects\ISRIntrinsics.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\ISROptimizationHelper.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\ISRPoints.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
     <ClInclude Include="Objects\ISRPose.h">
       <Filter>Objects</Filter>
     </ClInclude>
@@ -107,6 +101,12 @@
     </ClInclude>
     <ClInclude Include="Engines\DeviceSpecific\GPU\ISRRGBDTracker_GPU.h">
       <Filter>Engines\DeviceSpecific\GPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Engines\DeviceAgnostic\ISRRGBDTracker_DA.h">
+      <Filter>Engines\DeviceAgnostic</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\ISRPoseSet.h">
+      <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

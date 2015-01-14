@@ -26,6 +26,7 @@
     <ClCompile Include="Utils\ISRCalibIO.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engines\DeviceAgnostic\ISRRGBDTracker_DA.h" />
     <ClInclude Include="Engines\DeviceSpecific\CPU\ISRRGBDTracker_CPU.h" />
     <ClInclude Include="Engines\DeviceSpecific\GPU\ISRRGBDTracker_GPU.h" />
     <ClInclude Include="Engines\ISRDepthTracker.h" />
@@ -40,10 +41,9 @@
     <ClInclude Include="Objects\ISRFrame.h" />
     <ClInclude Include="Objects\ISRHistogram.h" />
     <ClInclude Include="Objects\ISRIntrinsics.h" />
-    <ClInclude Include="Objects\ISROptimizationHelper.h" />
-    <ClInclude Include="Objects\ISRPoints.h" />
     <ClInclude Include="Objects\ISRPose.h" />
     <ClInclude Include="Objects\ISRShape.h" />
+    <ClInclude Include="Objects\ISRPoseSet.h" />
     <ClInclude Include="Objects\ISRShapeUnion.h" />
     <ClInclude Include="Objects\ISRView.h" />
     <ClInclude Include="Utils\ISRCalibIO.h" />
