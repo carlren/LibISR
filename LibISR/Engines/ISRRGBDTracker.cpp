@@ -7,12 +7,10 @@
 using namespace LibISR::Engine;
 using namespace LibISR::Objects;
 
-////////////////////////////////////////////////////////////
-// static function used
-////////////////////////////////////////////////////////////
 
 static inline bool minimizeLM(const ISRRGBDTracker *tracker, ISRPose** initialization);
 static inline double stepQuality(ISRRGBDTracker::EvaluationPoint *x, ISRRGBDTracker::EvaluationPoint *x2, const float *step, const float *grad, const float *B, int numPara);
+
 
 
 ISRRGBDTracker::ISRRGBDTracker(int nObjs, bool useGPU)

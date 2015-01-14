@@ -5,7 +5,6 @@
 #include "../../ORUtils/CUDADefines.h"
 
 #include "../Objects/ISRPose.h"
-#include "../Objects/ISRPoints.h"
 
 namespace LibISR
 {

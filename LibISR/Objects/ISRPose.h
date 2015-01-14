@@ -109,6 +109,8 @@ namespace LibISR
 			~ISRPose(void) { }
 
 		};
-	}
+
+		typedef ISRPose* ISRPose_ptr;
+}
 }
 
