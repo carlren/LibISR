@@ -8,12 +8,9 @@ using namespace LibISR::Engine;
 using namespace LibISR::Objects;
 
 
-static inline bool minimizeLM(const ISRRGBDTracker *tracker, ISRPose** initialization);
-static inline double stepQuality(ISRRGBDTracker::EvaluationPoint *x, ISRRGBDTracker::EvaluationPoint *x2, const float *step, const float *grad, const float *B, int numPara);
+static inline bool minimizeLM(const ISRRGBDTracker &tracker, ISRTrackingState *initialization);
 
-
-
-ISRRGBDTracker::ISRRGBDTracker(int nObjs, bool useGPU)
+LibISR::Engine::ISRRGBDTracker::ISRRGBDTracker(int nObjs, bool useGPU)
 {
 	nObjects = nObjs;
 	ATb_Size = nObjs * 6;
@@ -22,55 +19,35 @@ ISRRGBDTracker::ISRRGBDTracker(int nObjs, bool useGPU)
 	ATb_host = (float*)malloc(ATb_Size*sizeof(float));
 	ATA_host = (float*)malloc(ATA_size*sizeof(float));
 
-	acceptedPoses = (ISRPose**)malloc(nObjects*sizeof(ISRPose**));
-	tmpPoses = (ISRPose**)malloc(nObjects*sizeof(ISRPose**));
+	accpetedState = new Objects::ISRTrackingState(nObjs);
+	tempState = new Objects::ISRTrackingState(nObjs);
 }
 
-ISRRGBDTracker::~ISRRGBDTracker()
+LibISR::Engine::ISRRGBDTracker::~ISRRGBDTracker()
 {
 	free(ATb_host);
 	free(ATA_host);
 
-	free(acceptedPoses);
-	free(tmpPoses);
+	delete accpetedState;
+	delete tempState;
 }
 
-// // this is only used if carl's LM is used
-//void ComputeSingleStep(float *step, float *ATA, float *ATb, float lambda)
-//{
-//	float tmpATA[6 * 6];
-//	memcpy(tmpATA, ATA, 6 * 6 * sizeof(float));
-//	memset(step, 0, 6 * sizeof(float));
-//
-//	for (int i = 0; i < 6 * 6; i += 7) tmpATA[i] += lambda * ATA[i];
-//	for (int i = 0; i < 6; i++) step[i] = 0;
-//
-//	ORUtils::Cholesky cholA(tmpATA, 6);
-//	cholA.Backsub(step, ATb);
-//
-//	for (int i = 0; i < 6; i++) step[i] = -step[i];
-//}
-
-
-void ISRRGBDTracker::applyPoseChange(const float* d_pose, ISRPose** oldPoses, ISRPose** newPoses)
+void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion *shapeUnion, ISRTrackingState *trackerState)
 {
-	for (int i = 0, j = 0; i < nObjects; i++, j+=6)
-	{
-		newPoses[i] = oldPoses[i];
-		newPoses[i]->applyIncrementalChangeToInvH(&d_pose[j]);
-	}
+	minimizeLM(*this, trackerState);
 }
 
-ISRRGBDTracker::EvaluationPoint::EvaluationPoint(ISRPose** poses, const ISRRGBDTracker *f_parent)
+LibISR::Engine::ISRRGBDTracker::EvaluationPoint::EvaluationPoint(ISRTrackingState * trackerState, const ISRRGBDTracker *f_parent)
 {
-	mPoses = poses;
+	mState = trackerState;
 	mParent = f_parent;
-	
+
 	ISRRGBDTracker *parent = (ISRRGBDTracker*)mParent;
-	parent->evaluateEnergy(&cacheEnergy, mPoses);
+	parent->evaluateEnergy(&cacheEnergy, mState);
 
 	cacheHessian = NULL; cacheNabla = NULL;
 }
+
 
 static inline double stepQuality(ISRRGBDTracker::EvaluationPoint *x, ISRRGBDTracker::EvaluationPoint *x2, const float *step, const float *grad, const float *B, int numPara)
 {
@@ -86,7 +63,7 @@ static inline double stepQuality(ISRRGBDTracker::EvaluationPoint *x, ISRRGBDTrac
 	return actual_reduction / predicted_reduction;
 }
 
-static inline bool minimizeLM(ISRRGBDTracker & tracker, ISRPose** initialization)
+static inline bool minimizeLM(const ISRRGBDTracker &tracker, ISRTrackingState* initialization)
 {
 	// These are some sensible default parameters for Levenberg Marquardt.
 	// The first three control the convergence criteria, the others might
@@ -100,6 +77,7 @@ static inline bool minimizeLM(ISRRGBDTracker & tracker, ISRPose** initialization
 	static const float TR_REGION_DECREASE = 0.3f;
 
 	int numPara = tracker.numParameters();
+	
 	float *d = new float[numPara];
 	float lambda = 1000.0f;
 	int step_counter = 0;
@@ -147,9 +125,11 @@ static inline bool minimizeLM(ISRRGBDTracker & tracker, ISRPose** initialization
 			if (MAXnorm < MIN_STEP) break;
 			for (int i = 0; i < numPara; i++) d[i] = -d[i];
 
-
-
-			//tracker.applyPoseChange(d,);
+			
+			ISRTrackingState tmpState = *x->getState();
+			tmpState.applyIncrementalPoseChangesToInvH(d);
+			
+			x2 = tracker.evaluateAt(&tmpState);
 
 			// check whether step reduces error function and
 			// compute a new value of lambda
@@ -175,7 +155,7 @@ static inline bool minimizeLM(ISRRGBDTracker & tracker, ISRPose** initialization
 		{
 			// accept step
 			bool continueIteration = true;
-			if (!(x2->f() < (x->f() - fabs(x->f()) * MIN_DECREASE))) continueIteration = false;
+			if (!(x2->energy() < (x->energy() - fabs(x->energy()) * MIN_DECREASE))) continueIteration = false;
 
 
 			delete x;
@@ -187,10 +167,11 @@ static inline bool minimizeLM(ISRRGBDTracker & tracker, ISRPose** initialization
 		if (step_counter++ >= MAX_STEPS - 1) break;
 	} while (true);
 
-	initialization.SetFrom(&(x->getParameter()));
+	*initialization = *x->getState();
 	delete x;
 
 	delete[] d;
 
 	return true;
 }
+

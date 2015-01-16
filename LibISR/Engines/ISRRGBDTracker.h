@@ -9,14 +9,14 @@ namespace LibISR
 		{
 		private:
 
-			// the current accepted set of pose
-			// increamental change of pose will always
-			// be applied to this pose
-			Objects::ISRPose **acceptedPoses;
+			// the current accepted tracker's state
+			// incremental change of poses will always
+			// be applied to this state
+			Objects::ISRTrackingState * accpetedState;
 
-			// temp poses after applying the increamental pose change
-			// energy fucntion is always evaluated on this set of poses
-			Objects::ISRPose **tmpPoses;
+			// temp tracker state after applying the incremental pose change
+			// energy function is always evaluated on this set of poses
+			Objects::ISRTrackingState * tempState;
 
 			// pointer to the current set of shapes
 			Objects::ISRShapeUnion *shapeUnion;
@@ -24,26 +24,18 @@ namespace LibISR
 			// pointer to the current frame
 			Objects::ISRFrame *frame;
 
-			// copy the pose from the shape union to 
-			void loadPosesFromShapeUnion();
-
-			// copy poses back to the shape union
-			void copyPosesToShapeUnion();
-
 			// number of objects
 			int nObjects;
 
 			// size of the gradient
-			int ATb_Size;
+			int ATb_Size; // (6*nObjects)
 
 			// size of the Hessian
-			int ATA_size;
-
-
+			int ATA_size; // (Atb_size^2)
 
 		protected:
 
-			// Hessian procximated with JTJ
+			// Hessian approximated with JTJ
 			float* ATA_host;
 
 			// gradient
@@ -51,18 +43,16 @@ namespace LibISR
 
 			// evaluate the energy given current poses and shapes
 			// the poses are always taken from tmpPoses
-			virtual void evaluateEnergy(float *energy, Objects::ISRPose **poses) = 0;
+			virtual void evaluateEnergy(float *energy, Objects::ISRTrackingState * trackerState) = 0;
 
-			// compute the Hesssian and the Jacobian given the current poses and shape
+			// compute the Hessian and the Jacobian given the current poses and shape
 			// the poses are always taken from tmpPoses
-			virtual void computeJacobianAndHessian(float *gradient, float *hessian, LibISR::Objects::ISRShapeUnion &shapes, LibISR::Objects::ISRFrame &frame) const = 0;
+			virtual void computeJacobianAndHessian(float *gradient, float *hessian, Objects::ISRTrackingState * trackerState) const = 0;
 
 		public:
 
 			int numParameters() const { return ATb_Size; }
-
-			// apply a increamental pose change to current set of pose
-			void applyPoseChange(const float* d_pose, ISRPose** oldPoses, ISRPose** newPoses);
+			int numObjects() const { return nObjects;  };
 
 			// evaluation point for LM optimization
 			class EvaluationPoint
@@ -72,7 +62,7 @@ namespace LibISR
 				float *cacheNabla;
 				float *cacheHessian;
 
-				Objects::ISRPose **mPoses;
+				Objects::ISRTrackingState * mState;
 				const ISRRGBDTracker *mParent;
 
 				void computeGradients(bool requiresHessian);
@@ -83,23 +73,23 @@ namespace LibISR
 				const float* nabla_energy(){if (cacheNabla == NULL) computeGradients(false); return cacheNabla; }
 				const float* hessian_GN() { if (cacheHessian == NULL) computeGradients(true); return cacheHessian; }
 			
-				const Objects::ISRPose** getPoses() const { return mPoses; }
+				const Objects::ISRTrackingState* getState() const { return mState; }
 
-				EvaluationPoint(Objects::ISRPose** poses, const ISRRGBDTracker *f_parent);
+				EvaluationPoint(Objects::ISRTrackingState * trackerState, const ISRRGBDTracker *f_parent);
 				~EvaluationPoint(void)
 				{
-					delete mPoses;
+					delete mState;
 					if (cacheNabla != NULL) delete[] cacheNabla;
 					if (cacheHessian != NULL) delete[] cacheHessian;
 				}
 			};
 
-			EvaluationPoint* evaluateAt(Objects::ISRPose **poses) const
+			EvaluationPoint* evaluateAt(Objects::ISRTrackingState * trackerState) const
 			{
-				return new EvaluationPoint(poses, this);
+				return new EvaluationPoint(trackerState, this);
 			}
 
-			void TrackObjects(LibISR::Objects::ISRFrame *frame, LibISR::Objects::ISRShapeUnion *shapes) = 0;
+			void  TrackObjects(Objects::ISRFrame *frame, Objects::ISRShapeUnion *shapeUnion, Objects::ISRTrackingState *trackerState) = 0;
 
 			ISRRGBDTracker(int nObjs, bool useGPU);
 			~ISRRGBDTracker();

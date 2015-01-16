@@ -80,7 +80,7 @@ namespace LibISR
 			Matrix4f* getInvH() { return &invH; }
 
 
-			// apply incremental change to matrix
+			// apply incremental change to back projection matrix
 			void applyIncrementalChangeToInvH(const Vector3f &dr, const Vector3f &dt)
 			{
 				Matrix4f deltaM = getProjectionMatrixFromRT(dr, dt);
@@ -93,6 +93,7 @@ namespace LibISR
 				invH = deltaM*invH; invH.inv(H);
 			}
 
+			// apply incremental change to projection matrix
 			void applyIncrementalChangeToH(const Vector3f &dr, const Vector3f &dt)
 			{
 				Matrix4f deltaM = getProjectionMatrixFromRT(dr, dt);

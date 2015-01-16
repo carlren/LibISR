@@ -105,7 +105,7 @@
     <ClInclude Include="Engines\DeviceAgnostic\ISRRGBDTracker_DA.h">
       <Filter>Engines\DeviceAgnostic</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\ISRPoseSet.h">
+    <ClInclude Include="Objects\ISRTrackingState.h">
       <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>

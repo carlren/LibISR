@@ -12,7 +12,7 @@ namespace LibISR
 	{
 		/**
 		\brief
-			Stores a set of shapes and their corrisponding poses
+			Stores a set of shapes and their corresponding poses
 			Very simple now, should be more useful in the future
 
 			refactored: Jan/13/2015
@@ -20,28 +20,33 @@ namespace LibISR
 
 		class ISRShapeUnion
 		{
+		private:
+
+			ISRShape_ptr *shapes;
 
 		public:
 
-			ISRShape **shapes;
-			ISRPose **poses;
-
 			int nObjs;
+			bool useGPU;
 
-			ISRShapeUnion(int count)
+			const ISRShape_ptr* getShapeList() const { return shapes; }
+
+			const ISRShape_ptr getShape(int id) const { return shapes[id]; }
+			ISRShape_ptr getShape(int id) { return shapes[id]; }
+
+
+			ISRShapeUnion(int count, bool useGPU)
 			{
 				nObjs = count;
-				shapes = (ISRShape**)malloc(count*sizeof(ISRShape*));
-				poses = (ISRPose**)malloc(count*sizeof(ISRPose*));
+				shapes = (ISRShape_ptr*)malloc(nObjs*sizeof(ISRShape_ptr));
+				for (int i = 0; i < nObjs; i++) shapes[i] = new ISRShape(useGPU);
 			}
-
 
 			~ISRShapeUnion()
 			{
 				for (int i = 0; i < nObjs; i++)
 				{
 					delete shapes[i];
-					delete poses[i];
 				}
 			}
 

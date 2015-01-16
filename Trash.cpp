@@ -121,3 +121,20 @@ static inline void WriteMatlabTXTImg(char* fileName, unsigned char *imgData, int
 	fclose(fid);
 }
 
+
+// // this is only used if Carl's LM is used
+//void ComputeSingleStep(float *step, float *ATA, float *ATb, float lambda)
+//{
+//	float tmpATA[6 * 6];
+//	memcpy(tmpATA, ATA, 6 * 6 * sizeof(float));
+//	memset(step, 0, 6 * sizeof(float));
+//
+//	for (int i = 0; i < 6 * 6; i += 7) tmpATA[i] += lambda * ATA[i];
+//	for (int i = 0; i < 6; i++) step[i] = 0;
+//
+//	ORUtils::Cholesky cholA(tmpATA, 6);
+//	cholA.Backsub(step, ATb);
+//
+//	for (int i = 0; i < 6; i++) step[i] = -step[i];
+//}
+

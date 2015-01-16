@@ -43,7 +43,7 @@
     <ClInclude Include="Objects\ISRIntrinsics.h" />
     <ClInclude Include="Objects\ISRPose.h" />
     <ClInclude Include="Objects\ISRShape.h" />
-    <ClInclude Include="Objects\ISRPoseSet.h" />
+    <ClInclude Include="Objects\ISRTrackingState.h" />
     <ClInclude Include="Objects\ISRShapeUnion.h" />
     <ClInclude Include="Objects\ISRView.h" />
     <ClInclude Include="Utils\ISRCalibIO.h" />

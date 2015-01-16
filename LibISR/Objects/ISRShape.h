@@ -11,11 +11,11 @@ namespace LibISR
 	namespace Objects
 	{
 		/**
-		\bief
+		\brief
 			object SDF
-			this version dont contain any pose
-			gradiant of SDF are computed on the fly,
-			so no gradient volume is kepted
+			this version don't contain any pose
+			radiant of SDF are computed on the fly,
+			so no gradient volume is kept
 
 			refactored: Jan/13/2015
 		*/
@@ -28,7 +28,7 @@ namespace LibISR
 		public:
 
 			int objectId;
-			Vector3d volSize;
+			Vector3i volSize;
 			int allocatedSize;
 
 			bool useGPU;
@@ -38,8 +38,11 @@ namespace LibISR
 			_CPU_AND_GPU_CODE_ inline float* getSDFVoxel(){ return dt; }
 			_CPU_AND_GPU_CODE_ inline const float* getSDFVoxel() const { return dt; }
 
-			void loadShapeFromFile(char* fileName)
+			void  loadShapeFromFile(char* fileName, Vector3i size)
 			{
+				volSize = size;
+				allocatedSize = size.x*size.y*size.z;
+
 				float *dt_host = (float*)malloc(sizeof(float) * allocatedSize);
 				
 				FILE* f;
@@ -63,7 +66,7 @@ namespace LibISR
 				modelShared = false;
 			}
 
-			void loadShapeFromExistingShape(const ISRShape &shape)
+			void  loadShapeFromExistingShape(const ISRShape &shape)
 			{
 				volSize = shape.volSize;
 				allocatedSize = shape.allocatedSize;
@@ -84,7 +87,7 @@ namespace LibISR
 				modelShared = false;
 			}
 
-			void shareSDFWithExistingShape(ISRShape &shape)
+			void  shareSDFWithExistingShape(ISRShape &shape)
 			{
 				volSize = shape.volSize;
 				allocatedSize = shape.allocatedSize;
@@ -96,11 +99,9 @@ namespace LibISR
 				modelShared = true;
 			}
 
-			ISRShape(Vector3d size, int id, bool useGPU)
+			ISRShape(bool useGPU)
 			{
 				objectId = objectId;
-				volSize = size;
-				allocatedSize = size.x*size.y*size.z;
 				this->useGPU = useGPU;
 
 				modelLoaded = false;
@@ -113,5 +114,7 @@ namespace LibISR
 					if (useGPU) ORcudaSafeCall(cudaFree(dt)); else free(dt);
 			}
 		};
+
+		typedef ISRShape* ISRShape_ptr;
 	}
 }

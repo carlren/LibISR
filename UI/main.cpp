@@ -17,6 +17,7 @@
 #pragma comment( lib, "opencv_highgui2410.lib" )
 
 using namespace LibISR::Engine;
+using namespace LibISR::Objects;
 using namespace LibISRUtils;
 
 int main(int argc, char** argv)

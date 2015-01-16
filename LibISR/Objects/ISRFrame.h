@@ -13,8 +13,8 @@ namespace LibISR
 	namespace Objects
 	{
 		/** \brief
-		Represents intermediat data for a RGB-D frame, 
-		including occlusion map, per-pixel forground map
+		Represents intermediate data for a RGB-D frame, 
+		including occlusion map, pointCloud
 
 		refactored: Jan/13/2015
 		*/
@@ -32,7 +32,11 @@ namespace LibISR
 
 			ISRHistogram *histogram;
 
-			ISRUCharImage *occMap;
+			ISRBoolImage *occMap;
+			
+			ISRFloat4Image *ptCloud;
+			ISRIntImage *rgbIdxImage;
+
 			ISRFloatImage *pfImage;
 			ISRFloatImage *idxImage;
 
@@ -41,11 +45,10 @@ namespace LibISR
 				depth_size = d_size;
 				rgb_size = color_size;
 
-				occMap = new ISRUCharImage(d_size, useGPU);
-				occMap->Clear(1);
+				occMap = new ISRBoolImage(d_size, useGPU); occMap->Clear(true);
+				ptCloud = new ISRFloat4Image(d_size, useGPU);
+				rgbIdxImage = new ISRIntImage(d_size, useGPU);
 
-				pfImage = new ISRFloatImage(d_size,useGPU);
-				idxImage = new ISRFloatImage(d_size, useGPU);
 				view = new ISRView(calib, color_size, d_size, useGPU);
 			}
 

@@ -4,6 +4,7 @@
 
 #include "../Objects/ISRFrame.h"
 #include "../Objects/ISRShapeUnion.h"
+#include "../Objects/ISRTrackingState.h"
 
 namespace LibISR
 {
@@ -18,7 +19,7 @@ namespace LibISR
 		public:
 			/** Track the 6-DoF poses of all the objects in the shape union.
 			*/
-			virtual void TrackObjects(LibISR::Objects::ISRFrame *frame, LibISR::Objects::ISRShapeUnion *shapeUnion) = 0;
+			virtual void TrackObjects(Objects::ISRFrame *frame, Objects::ISRShapeUnion *shapeUnion, Objects::ISRTrackingState *trackerState) = 0;
 
 			virtual ~ISRTracker(void) {}
 		};

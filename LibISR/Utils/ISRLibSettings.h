@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace CoreISR
+namespace LibISR
 {
 	namespace Objects
 	{
@@ -17,7 +17,7 @@ namespace CoreISR
 			bool singleAappearanceModel;
 
 			ISRLibSettings(void){}
-			~ISRLibSettings(void) { }
+			~ISRLibSettings(void){}
 		};
 	}
 }
