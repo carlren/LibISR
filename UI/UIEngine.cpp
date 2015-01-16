@@ -301,7 +301,7 @@ static inline void  DepthToUchar4(ISRUChar4Image *dst, ISRShortImage *src)
 void UIEngine::ProcessFrame()
 {
 	if (!imageSource->hasMoreImages()) return;
-	imageSource->getImages(mainEngine->GetView());
+	imageSource->getImages(mainEngine->getView());
 
 	sdkResetTimer(&timer); sdkStartTimer(&timer);
 
@@ -319,8 +319,8 @@ void UIEngine::ProcessFrame()
 	//actual processing on the mailEngine
 	mainEngine->ProcessFrame();
 
-	outImage[2]->SetFrom(mainEngine->GetView()->rgb);
-	DepthToUchar4(outImage[1], mainEngine->GetView()->rawDepth);
+	outImage[2]->SetFrom(mainEngine->getView()->alignedRgb);
+	DepthToUchar4(outImage[1], mainEngine->getView()->rawDepth);
 	
 	sdkStopTimer(&timer); processedTime = sdkGetTimerValue(&timer);
 

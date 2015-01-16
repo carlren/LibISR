@@ -34,9 +34,12 @@ _CPU_AND_GPU_CODE_ inline float computePerPixelEnergy(const Vector4f &inpt, LibI
 	{
 		Vector3f objpt = *state->getPose(i)->getInvH()*pt;
 		idx = pt2IntIdx(objpt);
-		voxelBlocks = shapeunion->getShape(i)->getSDFVoxel();
-		partdt = idx>-1 ? voxelBlocks[idx] : MAX_SDF;
-		dt = partdt < dt ? partdt : dt; // now use a hard min to approximate
+		if (idx>=0)
+		{
+			voxelBlocks = shapeunion->getShape(i)->getSDFVoxel();
+			partdt = idx>-1 ? voxelBlocks[idx] : MAX_SDF;
+			dt = partdt < dt ? partdt : dt; // now use a hard min to approximate
+		}
 	}
 
 	float exp_dt = expf(-dt * DTUNE);

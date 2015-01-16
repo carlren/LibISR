@@ -23,12 +23,12 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::createCamCordPointCloud(ISRFloat4Ima
 
 }
 
-void LibISR::Engine::ISRLowlevelEngine_CPU::createCamCordPointCloud(ISRFloat4Image *ptcloud_out, ISRUShortImage *raw_depth_in, Vector4f instrinsic)
+void LibISR::Engine::ISRLowlevelEngine_CPU::createCamCordPointCloud(ISRFloat4Image *ptcloud_out, ISRShortImage *raw_depth_in, Vector4f instrinsic)
 {
 	int w = raw_depth_in->noDims.width;
 	int h = raw_depth_in->noDims.height;
 
-	ushort* depth_ptr = raw_depth_in->GetData(false);
+	short* depth_ptr = raw_depth_in->GetData(false);
 	Vector4f* ptcloud_ptr = ptcloud_out->GetData(false);
 
 	for (int i = 0; i < h; i++) for (int j = 0; j < w; j++)
@@ -83,12 +83,12 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::createAlignedRGBImage(ISRUChar4Image
 	}
 }
 
-void LibISR::Engine::ISRLowlevelEngine_CPU::createAlignedRGBImage(ISRUChar4Image *rgb_out, ISRUShortImage *raw_depth_in, ISRUChar4Image *rgb_in, Objects::ISRExHomography *home)
+void LibISR::Engine::ISRLowlevelEngine_CPU::createAlignedRGBImage(ISRUChar4Image *rgb_out, ISRShortImage *raw_depth_in, ISRUChar4Image *rgb_in, Objects::ISRExHomography *home)
 {
 	int w = raw_depth_in->noDims.width;
 	int h = raw_depth_in->noDims.height;
 
-	ushort* depth_ptr = raw_depth_in->GetData(false);
+	short* depth_ptr = raw_depth_in->GetData(false);
 	Vector4u* rgb_in_ptr = rgb_in->GetData(false);
 	Vector4u* rgb_out_ptr = rgb_out->GetData(false);
 
@@ -100,14 +100,19 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::createAlignedRGBImage(ISRUChar4Image
 
 		if (z > 0)
 		{
-			Vector3f imgPt = home->H*Vector3f(i*z, j*z, z) + home->T;
+			Vector3f imgPt = home->H*Vector3f(j*z, i*z, z) + home->T;
 
 			int ix = (int)(imgPt.x / imgPt.z);
 			int iy = (int)(imgPt.y / imgPt.z);
 
-			if (ix >= 0 && ix < w && iy >= 0 && iy < h)	rgb_out_ptr[iy * w + ix] = rgb_in_ptr[idx];
-			else rgb_out_ptr[iy * w + ix] = Vector4u((uchar)0);
+			if (ix >= 0 && ix < w && iy >= 0 && iy < h)
+			{
+				rgb_out_ptr[idx] = rgb_in_ptr[iy * w + ix];
+				continue;
+			}
 		}
+
+		rgb_out_ptr[idx] = Vector4u((uchar)0);
 	}
 }
 
@@ -133,12 +138,12 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::createPointCloudWithPf(ISRFloat4Imag
 	}
 }
 
-void LibISR::Engine::ISRLowlevelEngine_CPU::createPointCloudWithPf(ISRFloat4Image *ptcloud_out, ISRUShortImage *raw_depth_in, ISRUChar4Image *rgb_in, Vector4f intrinsic, Objects::ISRHistogram *histogram)
+void LibISR::Engine::ISRLowlevelEngine_CPU::createPointCloudWithPf(ISRFloat4Image *ptcloud_out, ISRShortImage *raw_depth_in, ISRUChar4Image *rgb_in, Vector4f intrinsic, Objects::ISRHistogram *histogram)
 {
 	int w = raw_depth_in->noDims.width;
 	int h = raw_depth_in->noDims.height;
 
-	ushort* depth_ptr = raw_depth_in->GetData(false);
+	short* depth_ptr = raw_depth_in->GetData(false);
 	Vector4f* ptcloud_ptr = ptcloud_out->GetData(false);
 	Vector4u* rgb_ptr = rgb_in->GetData(false);
 
@@ -156,12 +161,12 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::createPointCloudWithPf(ISRFloat4Imag
 	}
 }
 
-void LibISR::Engine::ISRLowlevelEngine_CPU::preparePointCloudForRGBDTrackerAllInOne(ISRFloat4Image *ptcloud_out, ISRUShortImage *raw_depth_in, ISRUChar4Image *rgb_in, Objects::ISRCalib* calib, Objects::ISRHistogram *histogram)
+void LibISR::Engine::ISRLowlevelEngine_CPU::preparePointCloudForRGBDTrackerAllInOne(ISRFloat4Image *ptcloud_out, ISRShortImage *raw_depth_in, ISRUChar4Image *rgb_in, Objects::ISRCalib* calib, Objects::ISRHistogram *histogram)
 {
 	int w = raw_depth_in->noDims.width;
 	int h = raw_depth_in->noDims.height;
 
-	ushort* depth_ptr = raw_depth_in->GetData(false);
+	short* depth_ptr = raw_depth_in->GetData(false);
 	Vector4f* ptcloud_ptr = ptcloud_out->GetData(false);
 	Vector4u* rgb_ptr = rgb_in->GetData(false);
 	Vector4f intrinsic = calib->intrinsics_d.getParam();
@@ -176,7 +181,7 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::preparePointCloudForRGBDTrackerAllIn
 		float z = rawdepth == 65535 ? 0 : ((float)rawdepth) / 1000.0f;
 		if (z > 0)
 		{
-			Vector3f dPt(i*z, j*z, z);
+			Vector3f dPt(j*z, i*z, z);
 			Vector3f imgPt = H*dPt + T;
 			int ix = (int)(imgPt.x / imgPt.z);
 			int iy = (int)(imgPt.y / imgPt.z);

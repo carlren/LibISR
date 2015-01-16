@@ -7,7 +7,7 @@ namespace LibISR
 	{
 		class ISRRGBDTracker : public ISRTracker
 		{
-		private:
+		protected:
 
 			// the current accepted tracker's state
 			// incremental change of poses will always
@@ -32,8 +32,6 @@ namespace LibISR
 
 			// size of the Hessian
 			int ATA_size; // (Atb_size^2)
-
-		protected:
 
 			// Hessian approximated with JTJ
 			float* ATA_host;
@@ -89,7 +87,7 @@ namespace LibISR
 				return new EvaluationPoint(trackerState, this);
 			}
 
-			void  TrackObjects(Objects::ISRFrame *frame, Objects::ISRShapeUnion *shapeUnion, Objects::ISRTrackingState *trackerState) = 0;
+			void  TrackObjects(Objects::ISRFrame *frame, Objects::ISRShapeUnion *shapeUnion, Objects::ISRTrackingState *trackerState);
 
 			ISRRGBDTracker(int nObjs, bool useGPU);
 			~ISRRGBDTracker();
