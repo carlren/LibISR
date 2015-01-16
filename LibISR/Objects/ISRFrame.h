@@ -38,7 +38,7 @@ namespace LibISR
 			ISRIntImage *rgbIdxImage;
 
 			ISRFloatImage *pfImage;
-			ISRFloatImage *idxImage;
+			ISRFloatImage *idxImage; // color index image
 
 			ISRFrame(const ISRCalib &calib, Vector2i color_size, Vector2i d_size, bool  useGPU = false)
 			{

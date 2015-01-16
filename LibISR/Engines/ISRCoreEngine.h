@@ -6,6 +6,14 @@
 #include "../Objects/ISRShapeUnion.h"
 #include "../Objects/ISRTrackingState.h"
 
+#include "ISRLowlevelEngine.h"
+#include "DeviceAgnostic/ISRLowlevelEngine_DA.h"
+#include "DeviceSpecific/CPU/ISRLowlevelEngine_CPU.h"
+
+#include "ISRRGBDTracker.h"
+#include "DeviceAgnostic/ISRRGBDTracker_DA.h"
+#include "DeviceSpecific/CPU/ISRRGBDTracker_CPU.h"
+
 
 namespace LibISR
 {

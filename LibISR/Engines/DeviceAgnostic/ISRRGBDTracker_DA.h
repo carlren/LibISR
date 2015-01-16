@@ -5,14 +5,6 @@
 #include "../../Objects/ISRTrackingState.h"
 #include "../../Objects/ISRShapeUnion.h"
 
-_CPU_AND_GPU_CODE_ inline void unprojectPtWithIntrinsic(const Vector4f &intrinsic, const Vector3f &inpt, Vector4f &outpt)
-{
-	outpt.x = intrinsic.x * inpt.x + intrinsic.z * inpt.z;
-	outpt.y = intrinsic.y * inpt.y + intrinsic.w * inpt.z;
-	outpt.z = inpt.z;
-	outpt.w = 1.0f;
-}
-
 _CPU_AND_GPU_CODE_ inline int pt2IntIdx(Vector3f pt)
 {
 	int x = pt.x * VOL_SCALE + DT_VOL_SIZE / 2 - 1;

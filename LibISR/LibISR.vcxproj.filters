@@ -39,6 +39,12 @@
     <ClCompile Include="Engines\DeviceSpecific\CPU\ISRRGBDTracker_CPU.cpp">
       <Filter>Engines\DeviceSpecific\CPU</Filter>
     </ClCompile>
+    <ClCompile Include="Engines\ISRLowlevelEngine.cpp">
+      <Filter>Engines</Filter>
+    </ClCompile>
+    <ClCompile Include="Engines\DeviceSpecific\CPU\ISRLowlevelEngine_CPU.cpp">
+      <Filter>Engines\DeviceSpecific\CPU</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engines\ISRCoreEngine.h">
@@ -107,6 +113,15 @@
     </ClInclude>
     <ClInclude Include="Objects\ISRTrackingState.h">
       <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Engines\ISRLowlevelEngine.h">
+      <Filter>Engines</Filter>
+    </ClInclude>
+    <ClInclude Include="Engines\DeviceAgnostic\ISRLowlevelEngine_DA.h">
+      <Filter>Engines\DeviceAgnostic</Filter>
+    </ClInclude>
+    <ClInclude Include="Engines\DeviceSpecific\CPU\ISRLowlevelEngine_CPU.h">
+      <Filter>Engines\DeviceSpecific\CPU</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

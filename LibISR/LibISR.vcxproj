@@ -19,17 +19,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Engines\DeviceSpecific\CPU\ISRLowlevelEngine_CPU.cpp" />
     <ClCompile Include="Engines\DeviceSpecific\CPU\ISRRGBDTracker_CPU.cpp" />
     <ClCompile Include="Engines\ISRCoreEngine.cpp" />
     <ClCompile Include="Engines\ISRDepthTracker.cpp" />
+    <ClCompile Include="Engines\ISRLowlevelEngine.cpp" />
     <ClCompile Include="Engines\ISRRGBDTracker.cpp" />
     <ClCompile Include="Utils\ISRCalibIO.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engines\DeviceAgnostic\ISRLowlevelEngine_DA.h" />
     <ClInclude Include="Engines\DeviceAgnostic\ISRRGBDTracker_DA.h" />
+    <ClInclude Include="Engines\DeviceSpecific\CPU\ISRLowlevelEngine_CPU.h" />
     <ClInclude Include="Engines\DeviceSpecific\CPU\ISRRGBDTracker_CPU.h" />
     <ClInclude Include="Engines\DeviceSpecific\GPU\ISRRGBDTracker_GPU.h" />
     <ClInclude Include="Engines\ISRDepthTracker.h" />
+    <ClInclude Include="Engines\ISRLowlevelEngine.h" />
     <ClInclude Include="Engines\ISRRGBDTracker.h" />
     <ClInclude Include="Engines\ISRTracker.h" />
     <ClInclude Include="LibISR.h" />

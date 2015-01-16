@@ -61,11 +61,14 @@ namespace LibISR
 				this->height = h;
 			}
 
+			const Vector4f& const getParam(){ return projectionParamsSimple.all; }
+
 			ISRIntrinsics(void)
 			{
 				SetFrom(580, 580, 320, 240, 640, 480);
 
 			}
+
 		};
 	}
 }
