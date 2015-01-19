@@ -1,6 +1,8 @@
 @echo off
 echo Cleaning Stuff ........
 
+rmdir Debug /s /q
+rmdir Release /s /q
 rmdir LibISR\Debug /s /q
 rmdir LibISR\Release /s /q
 rmdir LibISRUtils\Debug /s /q

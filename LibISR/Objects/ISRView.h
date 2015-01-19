@@ -63,8 +63,10 @@ namespace LibISR
 			~ISRView()
 			{
 				delete calib;
+
 				delete rgb;
 				delete depth;
+
 				delete rawDepth;
 				delete alignedRgb;
 			}

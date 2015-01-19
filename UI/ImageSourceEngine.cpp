@@ -90,8 +90,8 @@ void ImageFileReader::getImages(ISRView *out)
 	if (calib.disparityCalib.params.y == 0) out->inputDepthType = ISRView::ISR_SHORT_DEPTH;
 	else out->inputDepthType = ISRView::ISR_DISPARITY_DEPTH;
 
-	if (calib.homo_depth_to_color.T.x == 0) out->inputImageType = ISRView::ISR_RGBD_EXTRINSIC ;
-	else out->inputImageType = ISRView::ISR_RGBD_HOMOGRAPHY;
+	if (calib.homo_depth_to_color.T.x == 0) out->inputImageType = ISRView::ISR_RGBD_HOMOGRAPHY;
+	else out->inputImageType = ISRView::ISR_RGBD_EXTRINSIC;
 
 	++currentFrameNo;
 }

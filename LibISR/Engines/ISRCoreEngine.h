@@ -15,7 +15,6 @@
 #include "DeviceSpecific/CPU/ISRRGBDTracker_CPU.h"
 
 
-
 namespace LibISR
 {
 	namespace Engine
@@ -27,18 +26,16 @@ namespace LibISR
 
 			Objects::ISRLibSettings *settings;
 
-			ISRLowlevelEngine *lowlevelEngine;
-			ISRTracker *tracker;
-
 			Objects::ISRFrame *frame;
 			Objects::ISRShapeUnion* shapeUnion;
 			Objects::ISRTrackingState* trackingState;
 
-		public:
-			
+			Engine::ISRLowlevelEngine* lowLevelEngine;
 
-			Objects::ISRView* getView(){ return frame->view;}
-			Objects::ISRTrackingState* getTrackingState(){ return trackingState; }
+		public:
+
+
+			Objects::ISRView* getView(){ return frame->view;};
 
 			void ProcessFrame(void);
 

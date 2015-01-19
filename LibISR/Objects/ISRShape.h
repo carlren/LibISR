@@ -99,19 +99,18 @@ namespace LibISR
 				modelShared = true;
 			}
 
-			void initialize(bool usegpu, int id)
+			ISRShape(bool useGPU)
 			{
-				objectId = id;
-				useGPU = usegpu;
+				objectId = objectId;
+				this->useGPU = useGPU;
 
 				modelLoaded = false;
 				modelShared = false;
 			}
 
-			ISRShape(){}
 			~ISRShape()
 			{ 
-				if (modelLoaded && !modelShared && dt != NULL)
+				if (modelLoaded && !modelShared)
 					if (useGPU) ORcudaSafeCall(cudaFree(dt)); else free(dt);
 			}
 		};

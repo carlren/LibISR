@@ -22,29 +22,32 @@ namespace LibISR
 		{
 		private:
 
-			ISRShape_ptr shapes;
+			ISRShape_ptr *shapes;
 
 		public:
 
 			int nObjs;
 			bool useGPU;
 
-			const ISRShape_ptr getShapeList() const { return shapes; }
+			const ISRShape_ptr* getShapeList() const { return shapes; }
 
-			const ISRShape_ptr getShape(int id) const { return &shapes[id]; }
-			ISRShape_ptr getShape(int id) { return &shapes[id]; }
+			const ISRShape_ptr getShape(int id) const { return shapes[id]; }
+			ISRShape_ptr getShape(int id) { return shapes[id]; }
 
 
 			ISRShapeUnion(int count, bool useGPU)
 			{
 				nObjs = count;
-				shapes = new ISRShape[nObjs];
-				for (int i = 0; i < nObjs; i++) shapes[i].initialize(useGPU,i);
+				shapes = (ISRShape_ptr*)malloc(nObjs*sizeof(ISRShape_ptr));
+				for (int i = 0; i < nObjs; i++) shapes[i] = new ISRShape(useGPU);
 			}
 
 			~ISRShapeUnion()
 			{
-				for (int i = 0; i < nObjs; i++) delete &shapes[i];
+				for (int i = 0; i < nObjs; i++)
+				{
+					delete shapes[i];
+				}
 			}
 
 		};

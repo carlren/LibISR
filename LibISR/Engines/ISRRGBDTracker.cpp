@@ -16,6 +16,9 @@ LibISR::Engine::ISRRGBDTracker::ISRRGBDTracker(int nObjs, bool useGPU)
 	ATb_Size = nObjs * 6;
 	ATA_size = ATb_Size*ATb_Size;
 
+	//ATb_host = (float*)malloc(ATb_Size*sizeof(float));
+	//ATA_host = (float*)malloc(ATA_size*sizeof(float));
+
 	ATb_host = new float[ATb_Size];
 	ATA_host = new float[ATA_size];
 
@@ -46,15 +49,6 @@ LibISR::Engine::ISRRGBDTracker::EvaluationPoint::EvaluationPoint(ISRTrackingStat
 	parent->evaluateEnergy(&cacheEnergy, mState);
 
 	cacheHessian = NULL; cacheNabla = NULL;
-}
-
-void LibISR::Engine::ISRRGBDTracker::EvaluationPoint::computeGradients(bool requiresHessian)
-{
-	int numPara = mParent->numParameters();
-	cacheNabla = new float[numPara];
-	cacheHessian = new float[numPara*numPara];
-
-	mParent->computeJacobianAndHessian(cacheNabla, cacheHessian, mState);
 }
 
 
@@ -103,6 +97,8 @@ static inline bool minimizeLM(const ISRRGBDTracker &tracker, ISRTrackingState* i
 
 		grad = x->nabla_energy();
 		B = x->hessian_GN();
+
+
 
 		bool success;
 		{
