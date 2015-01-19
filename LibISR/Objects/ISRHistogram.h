@@ -4,13 +4,12 @@
 
 #include "../Utils/LibISRDefine.h"
 
-
 namespace LibISR
 {
 	namespace Objects
 	{
 		/**
-		\biref
+		\brief
 			color histogram as appearance model
 			
 			refactored: Jan/13/2015
@@ -37,10 +36,10 @@ namespace LibISR
 				this->data_normalised = (Vector2f*)malloc(sizeof(Vector2f) * this->dim);
 				this->posterior=(float*)malloc(sizeof(float) * this->dim);
 
-				this->Clear();
+				this->clear();
 			}
 
-			void UpdateHistogram(ISRHistogram *newHist, float rf, float rb)
+			void updateHistogram(ISRHistogram *newHist, float rf, float rb)
 			{
 				for (int i = 0; i < this->dim; i++)
 				{
@@ -51,7 +50,7 @@ namespace LibISR
 
 			}
 
-			void BuildHistogram(ISRUChar4Image *color, ISRUCharImage *mask)
+			void buildHistogram(ISRUChar4Image *color, ISRUCharImage *mask)
 			{
 				int idx_mask;
 				int ru, gu, bu;
@@ -101,16 +100,16 @@ namespace LibISR
 
 				this->initialised = true;
 			}
+
+			void clearNormalised() { memset(this->data_normalised, 0, sizeof(Vector2f) * this->dim);  }
+			void clearNotNormalised() { memset(this->data_notnormalised, 0, sizeof(Vector2f) * this->dim); }
+			void clearPosterior() {memset(this->posterior,0,sizeof(float) * this->dim);}
 			
-			void ClearNormalised() { memset(this->data_normalised, 0, sizeof(Vector2f) * this->dim);  }
-			void ClearNotNormalised() { memset(this->data_notnormalised, 0, sizeof(Vector2f) * this->dim); }
-			void ClearPosterior() {memset(this->posterior,0,sizeof(float) * this->dim);}
-			
-			void Clear()
+			void clear()
 			{
-				ClearNormalised();
-				ClearNotNormalised();
-				ClearPosterior();
+				clearNormalised();
+				clearNotNormalised();
+				clearPosterior();
 				this->initialised = false;
 			}		
 

@@ -46,6 +46,7 @@ int main(int argc, char** argv)
 	coreEngine->getTrackingState()->getPose(0)->setFromParam(pose1);
 	coreEngine->getTrackingState()->getPose(1)->setFromParam(pose2);
 
+
 	UIEngine::Instance()->Initialise(argc, argv, imageSource, coreEngine, " ");
 	UIEngine::Instance()->Run();
 	UIEngine::Instance()->Shutdown();

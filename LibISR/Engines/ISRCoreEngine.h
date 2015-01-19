@@ -26,14 +26,13 @@ namespace LibISR
 
 			Objects::ISRLibSettings *settings;
 
-			Objects::ISRFrame *frame;
-			Objects::ISRShapeUnion* shapeUnion;
-			Objects::ISRTrackingState* trackingState;
-
 			Engine::ISRLowlevelEngine* lowLevelEngine;
 
 		public:
 
+			Objects::ISRFrame *frame;
+			Objects::ISRShapeUnion* shapeUnion;
+			Objects::ISRTrackingState* trackingState;
 
 			Objects::ISRView* getView(){ return frame->view;};
 			Objects::ISRTrackingState* getTrackingState(){ return trackingState; }

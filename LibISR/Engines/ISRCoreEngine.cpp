@@ -20,7 +20,7 @@ void LibISR::Engine::ISRCoreEngine::ProcessFrame(void)
 	ISRView* myview = getView();
 
 	lowLevelEngine->createAlignedRGBImage(myview->alignedRgb, myview->rawDepth, myview->rgb, &myview->calib->homo_depth_to_color);
-
+	lowLevelEngine->preparePointCloudForRGBDTrackerAllInOne(frame->ptCloud, myview->rawDepth, myview->rgb, myview->calib, frame->histogram);
 
 	
 }
