@@ -98,8 +98,6 @@ static inline bool minimizeLM(const ISRRGBDTracker &tracker, ISRTrackingState* i
 		grad = x->nabla_energy();
 		B = x->hessian_GN();
 
-
-
 		bool success;
 		{
 			float *A = new float[numPara*numPara];
@@ -129,7 +127,8 @@ static inline bool minimizeLM(const ISRRGBDTracker &tracker, ISRTrackingState* i
 			for (int i = 0; i < numPara; i++) d[i] = -d[i];
 
 			
-			ISRTrackingState tmpState = *x->getState();
+			ISRTrackingState tmpState(tracker.numObjects()); 
+			tmpState.setFrom(*x->getState());
 			tmpState.applyIncrementalPoseChangesToInvH(d);
 			
 			x2 = tracker.evaluateAt(&tmpState);

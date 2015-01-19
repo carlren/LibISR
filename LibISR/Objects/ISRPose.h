@@ -8,7 +8,7 @@ namespace LibISR
 	{
 		/**
 		\brief
-		To kieep it simple and minimalist, our pose only keep
+		To keep it simple and minimalist, our pose only keep
 		the 6-DoF transformation from object coordinates to 
 		camera coordinates in 4x4 matrix H and invH
 		
@@ -20,7 +20,7 @@ namespace LibISR
 		private:
 
 			Matrix4f H;// transformation c->o
-			Matrix4f invH;// inverse transforamtion o->c
+			Matrix4f invH;// inverse transformation o->c
 
 		private:
 
@@ -46,13 +46,13 @@ namespace LibISR
 				return outR;
 			}
 
-			// the trasformation matrix here is already column major
+			// the transformation matrix here is already column major
 			Matrix4f getProjectionMatrixFromRT(const Vector3f &r, const Vector3f &t)
 			{
 				Matrix3f outR = getRotationMatrixFromMRP(r);
 				
 				Matrix4f M;
-				M.m00 = outR.m00; M.m01 = outR.m00; M.m02 = outR.m02; M.m03 = 0;
+				M.m00 = outR.m00; M.m01 = outR.m01; M.m02 = outR.m02; M.m03 = 0;
 				M.m10 = outR.m10; M.m11 = outR.m11; M.m12 = outR.m12; M.m13 = 0;
 				M.m20 = outR.m20; M.m21 = outR.m21; M.m22 = outR.m22; M.m23 = 0;
 				M.m30 = t.x;	  M.m31 = t.y;		M.m32 = t.z;	  M.m33 = 1;
@@ -60,7 +60,7 @@ namespace LibISR
 				return M;
 			}
 
-			// get the trasformation matrix from pose parameters step = [t' r']
+			// get the transformation matrix from pose parameters step = [t' r']
 			Matrix4f getProjectionMatrixFromParam(const float* step)
 			{
 				Vector3f dt(step), dr(&step[3]);
@@ -76,9 +76,8 @@ namespace LibISR
 			void setFromParam(const float* param){ H = getProjectionMatrixFromParam(param); H.inv(invH);}
 
 			//get values
-			Matrix4f* getH(){ return &H;}
-			Matrix4f* getInvH() { return &invH; }
-
+			const Matrix4f& getH() const { return H;}
+			const Matrix4f& getInvH() const { return invH; }
 
 			// apply incremental change to back projection matrix
 			void applyIncrementalChangeToInvH(const Vector3f &dr, const Vector3f &dt)

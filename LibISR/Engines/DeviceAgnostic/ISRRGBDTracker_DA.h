@@ -32,7 +32,7 @@ _CPU_AND_GPU_CODE_ inline float computePerPixelEnergy(const Vector4f &inpt, LibI
 
 	for (int i = 0; i < numObj; i++)
 	{
-		Vector3f objpt = *state->getPose(i)->getInvH()*pt;
+		Vector3f objpt = state->getPose(i)->getInvH()*pt;
 		idx = pt2IntIdx(objpt);
 		if (idx>=0)
 		{
@@ -94,7 +94,7 @@ _CPU_AND_GPU_CODE_ inline bool computePerPixelJacobian(float *jacobian, const Ve
 
 	for (int i = 0; i < numObj; i++)
 	{
-		Vector3f objpt = *state->getPose(i)->getInvH()*pt;
+		Vector3f objpt = state->getPose(i)->getInvH()*pt;
 		idx = pt2IntIdx(objpt);
 		voxelBlocks = shapeunion->getShape(i)->getSDFVoxel();
 		partdt = idx>-1 ? voxelBlocks[idx] : MAX_SDF;

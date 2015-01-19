@@ -42,10 +42,19 @@ namespace LibISR
 					poses[i]->applyIncrementalChangeToH(&step[j]);
 			}
 
+			void setFrom(const ISRTrackingState &inposes)
+			{
+				int count = inposes.numPoses();
+				for (int i = 0; i < count;i++)
+				{
+					this->getPose(i)->setFromH(inposes.getPose(i)->getH());
+				}
+			}
+
 			ISRTrackingState(int num)
 			{
 				nPose = num;
-				poses = (ISRPose_ptr*)malloc(num*sizeof(ISRPose_ptr*));
+				poses = new ISRPose_ptr[num];
 				for (int i = 0; i < num; i++) poses[i] = new ISRPose();
 			}
 
@@ -55,14 +64,14 @@ namespace LibISR
 				free(poses);
 			}
 
-			ISRTrackingState& operator= (const ISRTrackingState& rhs)
-			{	
-				int numObj = rhs.numPoses();
-				ISRTrackingState tmpState(numObj);
-				for (int i = 0; i < numObj;i++)
-					*tmpState.getPose(i) = *rhs.getPose(i);
-				return tmpState;
-			}
+			//ISRTrackingState& operator= (const ISRTrackingState& rhs)
+			//{	
+			//	int numObj = rhs.numPoses();
+			//	ISRTrackingState tmpState(numObj);
+			//	for (int i = 0; i < numObj;i++)
+			//		*tmpState.getPose(i) = *rhs.getPose(i);
+			//	return tmpState;
+			//}
 
 		};
 	}
