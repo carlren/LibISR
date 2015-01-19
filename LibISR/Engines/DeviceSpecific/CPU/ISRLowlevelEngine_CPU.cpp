@@ -34,7 +34,7 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::createForgroundProbabilityMap(ISRFlo
 	for (int i = 0; i < h; i++) for (int j = 0; j < w; j++)
 	{
 		int idx = i * w + j;
-		pf_ptr[idx] = getPf(rgb_ptr[idx], histogram);
+		pf_ptr[idx] = getPf(rgb_ptr[idx],histogram->posterior,histogram->dim);
 	}
 }
 
@@ -53,21 +53,7 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::createAlignedRGBImage(ISRUChar4Image
 		ushort rawdepth = depth_ptr[idx];
 		float z = rawdepth == 65535 ? 0 : ((float)rawdepth) / 1000.0f;
 
-		if (z > 0)
-		{
-			Vector3f imgPt = home->H*Vector3f(j*z, i*z, z) + home->T;
-
-			int ix = (int)(imgPt.x / imgPt.z);
-			int iy = (int)(imgPt.y / imgPt.z);
-
-			if (ix >= 0 && ix < w && iy >= 0 && iy < h)
-			{
-				rgb_out_ptr[idx] = rgb_in_ptr[iy * w + ix];
-				continue;
-			}
-		}
-
-		rgb_out_ptr[idx] = Vector4u((uchar)0);
+		mapRGBDtoRGB(rgb_out_ptr[idx], Vector3f(j*z, i*z, z), rgb_in_ptr, raw_depth_in->noDims, home->H, home->T);
 	}
 }
 
@@ -85,10 +71,11 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::createPointCloudWithPf(ISRFloat4Imag
 		int idx = i * w + j;
 		ushort rawdepth = depth_ptr[idx];
 		float z = rawdepth == 65535 ? 0 : ((float)rawdepth) / 1000.0f;
+
 		if (z > 0)
 		{
 			unprojectPtWithIntrinsic(intrinsic, Vector3f(j*z, i*z, z), ptcloud_ptr[idx]);
-			ptcloud_ptr[idx].w = getPf(rgb_ptr[idx], histogram);
+			ptcloud_ptr[idx].w = getPf(rgb_ptr[idx], histogram->posterior, histogram->noBins);
 		}
 		else ptcloud_ptr[idx] = Vector4f(0, 0, 0, -1);
 	}
@@ -112,21 +99,8 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::preparePointCloudForRGBDTrackerAllIn
 		int idx = i * w + j;
 		ushort rawdepth = depth_ptr[idx];
 		float z = rawdepth == 65535 ? 0 : ((float)rawdepth) / 1000.0f;
-		if (z > 0)
-		{
-			Vector3f dPt(j*z, i*z, z);
-			Vector3f imgPt = H*dPt + T;
-			int ix = (int)(imgPt.x / imgPt.z);
-			int iy = (int)(imgPt.y / imgPt.z);
 
-			if (ix >= 0 && ix < w && iy >= 0 && iy < h)
-			{
-				unprojectPtWithIntrinsic(intrinsic, dPt, ptcloud_ptr[idx]);
-				ptcloud_ptr[idx].w = getPf(rgb_ptr[iy * w + ix], histogram);
-				continue;
-			}			
-		}
-		ptcloud_ptr[idx] = Vector4f(0, 0, 0, -1);
+		preparePtCouldDataAllInOne(ptcloud_ptr[idx], Vector3f(j*z, i*z, z), rgb_ptr, raw_depth_in->noDims, intrinsic, H, T, histogram->posterior, histogram->noBins);
 	}
 
 

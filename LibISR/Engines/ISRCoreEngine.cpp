@@ -7,6 +7,7 @@ LibISR::Engine::ISRCoreEngine::ISRCoreEngine(const ISRLibSettings *settings, con
 {
 	this->settings = new ISRLibSettings(*settings);
 	this->shapeUnion = new ISRShapeUnion(settings->noTrackingObj, settings->useGPU);
+	this->trackingState = new ISRTrackingState(settings->noTrackingObj);
 
 	this->lowLevelEngine = new ISRLowlevelEngine_CPU();
 
@@ -19,4 +20,7 @@ void LibISR::Engine::ISRCoreEngine::ProcessFrame(void)
 	ISRView* myview = getView();
 
 	lowLevelEngine->createAlignedRGBImage(myview->alignedRgb, myview->rawDepth, myview->rgb, &myview->calib->homo_depth_to_color);
+
+
+	
 }

@@ -36,6 +36,7 @@ namespace LibISR
 
 
 			Objects::ISRView* getView(){ return frame->view;};
+			Objects::ISRTrackingState* getTrackingState(){ return trackingState; }
 
 			void ProcessFrame(void);
 

@@ -29,19 +29,9 @@ namespace LibISR
 			{
 				ISR_DISPARITY_DEPTH,
 				ISR_SHORT_DEPTH,
-				ISR_FLOAT_DEPTH,
-			};
-
-			enum InputImageType
-			{
-				ISR_DEPTH_ONLY,
-				ISR_RGBD_EXTRINSIC,
-				ISR_RGBD_HOMOGRAPHY,
-				ISR_RGBD_REGISTERED,
 			};
 
 			InputDepthType inputDepthType;
-			InputImageType inputImageType;
 
 			ISRCalib *calib;
 

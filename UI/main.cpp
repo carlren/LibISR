@@ -41,6 +41,10 @@ int main(int argc, char** argv)
 
 	ISRCoreEngine *coreEngine = new ISRCoreEngine(&isrSettings, &imageSource->calib,imageSource->getDepthImageSize(),imageSource->getRGBImageSize());
 
+	float pose1[6] = { 0.5119f, -0.1408f, 0.7854f, 0.0f, -0.637070260807493f, 0.0f };
+	float pose2[6] = { 0.6687f, 0.5081f, 0.1909f, 0.5469f, 0.9473f, -0.9473f };
+	coreEngine->getTrackingState()->getPose(0)->setFromParam(pose1);
+	coreEngine->getTrackingState()->getPose(1)->setFromParam(pose2);
 
 	UIEngine::Instance()->Initialise(argc, argv, imageSource, coreEngine, " ");
 	UIEngine::Instance()->Run();

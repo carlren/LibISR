@@ -90,9 +90,6 @@ void ImageFileReader::getImages(ISRView *out)
 	if (calib.disparityCalib.params.y == 0) out->inputDepthType = ISRView::ISR_SHORT_DEPTH;
 	else out->inputDepthType = ISRView::ISR_DISPARITY_DEPTH;
 
-	if (calib.homo_depth_to_color.T.x == 0) out->inputImageType = ISRView::ISR_RGBD_HOMOGRAPHY;
-	else out->inputImageType = ISRView::ISR_RGBD_EXTRINSIC;
-
 	++currentFrameNo;
 }
 
@@ -107,75 +104,3 @@ Vector2i ImageFileReader::getRGBImageSize(void)
 	loadIntoCache();
 	return cached_rgb->noDims;
 }
-
-
-//void loadColorAndDepthFrame(ISRUChar4Image* inputColor, ISRUShortImage* inputDepth, InputImageType imgType)
-//{
-//	bool visualizeDepth = true;
-//
-//	this->colorImage->SetFrom(inputColor);
-//	this->rawDepthImage->SetFrom(inputDepth);
-//
-//	ISRUChar4Image* tmpAlignImg = new ISRUChar4Image(inputDepth->noDims, false);
-//	ISRFloatImage* tmpDepthImg = new ISRFloatImage(inputDepth->noDims, false);
-//
-//	USHORT *depthp = inputDepth->GetData(false);
-//	Vector4u *rgbp = inputColor->GetData(false);
-//
-//	float* tmpdepthp = tmpDepthImg->GetData(false);
-//	Vector4u *tmprgbp = tmpAlignImg->GetData(false);
-//
-//	if (imgType == ISR_RGBD_HOMOGRAPHY)
-//		for (int j = 0; j < inputDepth->noDims.x; j++) for (int i = 0; i < inputDepth->noDims.y; i++)
-//		{
-//		int idx = j*inputDepth->noDims.x + i;
-//		USHORT rawDepth = depthp[idx];
-//
-//		float realDepth = rawDepth == 65535 ? 0 : ((float)rawDepth) / 1000.0f;
-//		tmpdepthp[idx] = realDepth;
-//
-//
-//
-//		if (visualizeDepth)
-//		{
-//			int intensity = (int)(realDepth * 1000) % 256;
-//			displayDepthImage->data[idx].x = intensity;
-//			displayDepthImage->data[idx].y = intensity;
-//			displayDepthImage->data[idx].z = intensity;
-//		}
-//
-//		// align color and depth
-//		float* rH = extrinsics->rH;
-//		float* rT = extrinsics->rT;
-//
-//		if (realDepth != 0)
-//		{
-//			float x = (float)i * realDepth;
-//			float y = (float)j * realDepth;
-//
-//			float fIX = rH[0] * x + rH[1] * y + rH[2] * realDepth + rT[0];
-//			float fIY = rH[3] * x + rH[4] * y + rH[5] * realDepth + rT[1];
-//			float fIZ = rH[6] * x + rH[7] * y + rH[8] * realDepth + rT[2];
-//
-//			int iX = (int)(fIX / fIZ);
-//			int iY = (int)(fIY / fIZ);
-//
-//			int imgIdx = iY*this->width + iX;
-//
-//			if (iX >= 0 && iX < this->width && iY >= 0 && iY < this->height)
-//			{
-//				this->alignedColorImage->data[idx].x = this->colorImage->data[imgIdx].x;
-//				this->alignedColorImage->data[idx].y = this->colorImage->data[imgIdx].y;
-//				this->alignedColorImage->data[idx].z = this->colorImage->data[imgIdx].z;
-//			}
-//
-//		}
-//		else
-//		{
-//			this->alignedColorImage->data[idx].x = 0;
-//			this->alignedColorImage->data[idx].y = 255;
-//			this->alignedColorImage->data[idx].z = 0;
-//		}
-//
-//		}
-//}

@@ -18,28 +18,28 @@ namespace LibISR
 		{
 		private:
 
-			ISRPose_ptr *poses;
+			ISRPose_ptr poses;
 			int nPose;
 
 		public:
 
-			ISRPose_ptr* getPoseList() { return poses; }
+			ISRPose_ptr getPoseList() { return poses; }
 			
-			const ISRPose_ptr getPose(int id) const { return poses[id]; }
-			ISRPose_ptr getPose(int id) { return poses[id]; }
+			const ISRPose_ptr getPose(int id) const { return &poses[id]; }
+			ISRPose_ptr getPose(int id) { return &poses[id]; }
 
 			int numPoses() const { return nPose; }
 
 			void inline applyIncrementalPoseChangesToInvH(float* step)
 			{
 				for (int i = 0, j = 0; i < nPose; i++, j += 6)
-					poses[i]->applyIncrementalChangeToInvH(&step[j]);
+					poses[i].applyIncrementalChangeToInvH(&step[j]);
 			}
 
 			void inline applyIncrementalPoseChangesToIH(float* step)
 			{
 				for (int i = 0, j = 0; i < nPose; i++, j += 6)
-					poses[i]->applyIncrementalChangeToH(&step[j]);
+					poses[i].applyIncrementalChangeToH(&step[j]);
 			}
 
 			void setFrom(const ISRTrackingState &inposes)
@@ -54,24 +54,13 @@ namespace LibISR
 			ISRTrackingState(int num)
 			{
 				nPose = num;
-				poses = new ISRPose_ptr[num];
-				for (int i = 0; i < num; i++) poses[i] = new ISRPose();
+				poses = new ISRPose[num];
 			}
 
 			~ISRTrackingState()
 			{
-				for (int i = 0; i < nPose; i++)	delete poses[i];
-				free(poses);
+				delete poses;
 			}
-
-			//ISRTrackingState& operator= (const ISRTrackingState& rhs)
-			//{	
-			//	int numObj = rhs.numPoses();
-			//	ISRTrackingState tmpState(numObj);
-			//	for (int i = 0; i < numObj;i++)
-			//		*tmpState.getPose(i) = *rhs.getPose(i);
-			//	return tmpState;
-			//}
 
 		};
 	}

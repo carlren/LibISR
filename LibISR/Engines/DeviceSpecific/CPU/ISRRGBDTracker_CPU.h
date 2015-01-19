@@ -6,7 +6,7 @@ namespace LibISR
 {
 	namespace Engine
 	{
-		class ISRRGBDTracker_CPU:public ISRRGBDTracker
+		class ISRRGBDTracker_CPU :public ISRRGBDTracker
 		{
 		protected:
 			// evaluate the energy given current poses and shapes
@@ -15,7 +15,7 @@ namespace LibISR
 
 			// compute the Hessian and the Jacobian given the current poses and shape
 			// the poses are always taken from tmpPoses
-			void computeJacobianAndHessian(float *gradient, float *hessian, Objects::ISRTrackingState * trackerState);
+			void computeJacobianAndHessian(float *gradient, float *hessian, Objects::ISRTrackingState * trackerState) const;
 
 
 		public:
