@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "../Utils/LibISRDefine.h"
+#include <fstream>
 
 namespace LibISR
 {
@@ -27,14 +28,14 @@ namespace LibISR
 			bool initialised;
 			int noBins,dim;
 
-			ISRHistogram(int noBins)
+			ISRHistogram(int nBins)
 			{ 
-				this->noBins = noBins;
-				this->dim = noBins*noBins*noBins;
+				noBins = nBins;
+				dim = noBins*noBins*noBins;
 
-				this->data_notnormalised = (Vector2f*)malloc(sizeof(Vector2f) * this->dim);
-				this->data_normalised = (Vector2f*)malloc(sizeof(Vector2f) * this->dim);
-				this->posterior=(float*)malloc(sizeof(float) * this->dim);
+				data_normalised = new Vector2f[dim];
+				data_notnormalised = new Vector2f[dim];
+				posterior = new float[dim];
 
 				this->clear();
 			}
@@ -101,9 +102,34 @@ namespace LibISR
 				this->initialised = true;
 			}
 
-			void clearNormalised() { memset(this->data_normalised, 0, sizeof(Vector2f) * this->dim);  }
-			void clearNotNormalised() { memset(this->data_notnormalised, 0, sizeof(Vector2f) * this->dim); }
-			void clearPosterior() {memset(this->posterior,0,sizeof(float) * this->dim);}
+			void loadPosteriorFromFile(const char* fileName)
+			{
+				std::ifstream infile;
+				infile.open(fileName, std::ios::in);
+				for (int i = 0; i < dim;i++) infile >> posterior[i];
+				infile.close();	
+			}
+
+			void clearNormalised() 
+			{
+				for (int i = 0; i < dim;i++)
+				{
+					data_normalised[i].x = 0;
+					data_normalised[i].y = 0;
+				}				
+			}
+
+			void clearNotNormalised() 
+			{
+				for (int i = 0; i < dim; i++)
+				{
+					data_notnormalised[i].x = 0;
+					data_notnormalised[i].y = 0;
+				}
+			}
+
+
+			void clearPosterior() { for (int i = 0; i < dim; i++) posterior[i] = 0; }
 			
 			void clear()
 			{
@@ -115,9 +141,9 @@ namespace LibISR
 
 			~ISRHistogram(void) 
 			{
-				free(data_normalised);
-				free(data_notnormalised);
-				free(posterior);
+				delete data_normalised;
+				delete data_notnormalised;
+				delete posterior;
 			}
 		};
 	}
