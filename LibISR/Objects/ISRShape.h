@@ -38,16 +38,16 @@ namespace LibISR
 			_CPU_AND_GPU_CODE_ inline float* getSDFVoxel(){ return dt; }
 			_CPU_AND_GPU_CODE_ inline const float* getSDFVoxel() const { return dt; }
 
-			void  loadShapeFromFile(char* fileName, Vector3i size)
+			void  loadShapeFromFile(const char* fileName, Vector3i size)
 			{
 				volSize = size;
 				allocatedSize = size.x*size.y*size.z;
 
-				float *dt_host = (float*)malloc(sizeof(float) * allocatedSize);
+				float *dt_host = new float[allocatedSize];
 
 				FILE* f;
 				f = fopen(fileName, "rb");
-				fread(dt, sizeof(float) * this->allocatedSize, 1, f);
+				fread(dt_host, sizeof(float) * this->allocatedSize, 1, f);
 				fclose(f);
 
 				if (useGPU)

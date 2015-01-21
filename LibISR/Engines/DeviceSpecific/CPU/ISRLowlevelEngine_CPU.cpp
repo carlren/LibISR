@@ -97,8 +97,8 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::preparePointCloudForRGBDTrackerAllIn
 	for (int i = 0; i < h; i++) for (int j = 0; j < w; j++)
 	{
 		int idx = i * w + j;
-		ushort rawdepth = depth_ptr[idx];
-		float z = rawdepth == 65535 ? 0 : ((float)rawdepth) / 1000.0f;
+		ushort rawdepth = (ushort) depth_ptr[idx];
+		float z = (rawdepth == 65535) ? 0 : ((float)rawdepth) / 1000.0f;
 
 		preparePtCouldDataAllInOne(ptcloud_ptr[idx], Vector3f(j*z, i*z, z), rgb_ptr, raw_depth_in->noDims, intrinsic, H, T, histogram->posterior, histogram->noBins);
 	}

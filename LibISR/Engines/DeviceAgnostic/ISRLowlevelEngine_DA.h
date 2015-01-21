@@ -17,9 +17,16 @@ _CPU_AND_GPU_CODE_ inline float getPf(const Vector4u &pixel, float* histogram, i
 {
 	int dim = noBins*noBins*noBins;
 
-	int ru = pixel.r / noBins;
+	//int ru = pixel.r / noBins;
+	//int gu = pixel.g / noBins;
+	//int bu = pixel.b / noBins;
+
+	// opencv flip the r and b channel
+	// hack here since we are reading histogram from a file
+	int ru = pixel.b / noBins;
 	int gu = pixel.g / noBins;
-	int bu = pixel.b / noBins;
+	int bu = pixel.r / noBins;
+
 	int pidx = ru*noBins*noBins + gu * noBins + bu;
 
 	return histogram[pidx];
@@ -39,7 +46,7 @@ float* histogram, int noBins)
 
 		if (ix >= 0 && ix < imgSize.x && iy >= 0 && imgSize.y)
 		{
-			unprojectPtWithIntrinsic(intrinsic, imgPt, ptcloud_out);
+			unprojectPtWithIntrinsic(intrinsic, inpt, ptcloud_out);
 			ptcloud_out.w = getPf(rgb_in[iy * imgSize.x + ix], histogram, noBins);
 			return;
 		}

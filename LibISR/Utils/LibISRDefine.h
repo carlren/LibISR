@@ -14,13 +14,13 @@
 #define MAX_OBJECT_COUNT 2
 #define HISTOGRAM_BIN 16
 #define MAX_IMG_PTS 307200
-#define DT_VOL_SIZE 128
+#define DT_VOL_SIZE 200
 #define VOL_SCALE 1000
 #define BLOCK_SIZE_SDF 8
 #define BLOCK_SIZE_IMG 16
 #define KINECT_PLAYER_INDEX_SHIFT          3
 #define DTUNE 0.5f
-#define MAX_SDF 128.0f
+#define MAX_SDF 121.0f
 
 //////////////////////////////////////////////////////////////////////////
 // Types for mask images

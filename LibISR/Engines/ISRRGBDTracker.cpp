@@ -4,6 +4,8 @@
 #include <math.h>
 #include <stdio.h>
 
+#include "../../LibISRUtils/IOUtil.h"
+
 using namespace LibISR::Engine;
 using namespace LibISR::Objects;
 
@@ -15,9 +17,6 @@ LibISR::Engine::ISRRGBDTracker::ISRRGBDTracker(int nObjs, bool useGPU)
 	nObjects = nObjs;
 	ATb_Size = nObjs * 6;
 	ATA_size = ATb_Size*ATb_Size;
-
-	//ATb_host = (float*)malloc(ATb_Size*sizeof(float));
-	//ATA_host = (float*)malloc(ATA_size*sizeof(float));
 
 	ATb_host = new float[ATb_Size];
 	ATA_host = new float[ATA_size];
@@ -35,9 +34,111 @@ LibISR::Engine::ISRRGBDTracker::~ISRRGBDTracker()
 	delete tempState;
 }
 
+
+void ComputeSingleStep(float *step, float *ATA, float *ATb, float lambda, int dim)
+{
+	float *tmpATA = new float[dim*dim];
+	for (int i = 0; i < dim*dim; i++) tmpATA[i] = ATA[i];
+
+
+	for (int i = 0; i < dim * dim; i += (dim + 1))
+	{
+		float &ele = tmpATA[i];
+		if (!(fabs(ele) < 1e-15f)) ele *= (1.0f + lambda); else ele = lambda*1e-10f;
+	}
+	
+	ORUtils::Cholesky cholA(tmpATA, dim);
+	cholA.Backsub(step, ATb);
+
+	//for (int i = 0; i < 6; i++) step[i] = -step[i];
+}
+
 void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion *shapeUnion, ISRTrackingState *trackerState)
 {
-	minimizeLM(*this, trackerState);
+	this->frame = frame;
+	this->shapeUnion = shapeUnion;
+
+	this->accpetedState->setFrom(*trackerState);
+	this->tempState->setFrom(*trackerState);
+
+	float *cacheNabla = new float[ATb_Size];
+	float *cacheHessian = new float[ATA_size];
+
+	float lastenergy = 0;
+	float currentenergy = 0;
+
+	bool converged = false;
+	float lambda = 1000.0f;
+
+
+
+	evaluateEnergy(&lastenergy, accpetedState);
+
+	ISRFloat4Image *tmpPtCloud = new ISRFloat4Image(frame->depth_size,false);
+
+
+	Vector4f* inptr = frame->ptCloud->GetData(false);
+	Vector4f* outptr = tmpPtCloud->GetData(false);
+	Matrix4f tmpH = tempState->getPose(0)->getInvH();
+
+	//PrintArrayToFile("E:/LibISR/debug/invH_debug.txt", tmpH.m, 16);
+
+	//for (int i = 0; i < frame->ptCloud->dataSize;i++)
+	//{
+	//	if (inptr[i].w>0)
+	//	{
+	//		Vector3f outpt = tmpH*inptr[i].toVector3();
+	//		outptr[i].x = outpt.x;
+	//		outptr[i].y = outpt.y; 
+	//		outptr[i].z = outpt.z; 
+	//	}
+	//	else outptr[i].w = -1;
+	//}
+
+	//PrintPointListToFile("E:/LibISR/debug/objcloud_debug.txt", outptr, frame->ptCloud->dataSize);
+
+	for (int iter = 0; iter < 200; iter++)
+	{
+		computeJacobianAndHessian(ATb_host, ATA_host, tempState);
+
+		//PrintArrayToFile("e:/LibISR/ATA_debug.txt", ATA_host, ATA_size);
+		PrintArrayToFile("e:/LibISR/debug/ATB_debug.txt", ATb_host, ATb_Size);
+
+		while (true)
+		{
+			if (lambda>1e6){ converged = true; break; }
+
+			ComputeSingleStep(cacheNabla, ATA_host, ATb_host, lambda, ATb_Size);
+			
+			PrintArrayToFile("e:/LibISR/debug/step_debug.txt", cacheNabla, ATb_Size);
+			//Matrix4f tmpm = tempState->getPose(1)->getInvH();
+			//PrintArrayToFile("E:/LibISR/invH_before_debug.txt", tmpm.m , 16);
+
+			tempState->applyIncrementalPoseChangesToInvH(cacheNabla);
+
+			//tmpm = tempState->getPose(1)->getInvH();
+			//PrintArrayToFile("E:/LibISR/invH_after_debug.txt", tmpm.m, 16);
+
+			evaluateEnergy(&currentenergy, tempState);
+
+			if (currentenergy<lastenergy)
+			{
+				lastenergy = currentenergy;
+				lambda /= 30.0f;
+				accpetedState->setFrom(*tempState);
+				break;
+			}
+			else
+			{
+				lambda *= 10.0f;
+				tempState->setFrom(*accpetedState);
+			}
+		}
+
+		if (converged) break;
+	}
+
+	//minimizeLM(*this, trackerState);
 }
 
 LibISR::Engine::ISRRGBDTracker::EvaluationPoint::EvaluationPoint(ISRTrackingState * trackerState, const ISRRGBDTracker *f_parent)
@@ -51,6 +152,14 @@ LibISR::Engine::ISRRGBDTracker::EvaluationPoint::EvaluationPoint(ISRTrackingStat
 	cacheHessian = NULL; cacheNabla = NULL;
 }
 
+void LibISR::Engine::ISRRGBDTracker::EvaluationPoint::computeGradients(bool requiresHessian)
+{
+	int numPara = mParent->numParameters();
+	cacheNabla = new float[numPara];
+	cacheHessian = new float[numPara*numPara];
+
+	mParent->computeJacobianAndHessian(cacheNabla, cacheHessian, mState);
+}
 
 static inline double stepQuality(ISRRGBDTracker::EvaluationPoint *x, ISRRGBDTracker::EvaluationPoint *x2, const float *step, const float *grad, const float *B, int numPara)
 {

@@ -35,7 +35,7 @@ static inline void PrintArrayToFile(char* fileName, float *data, int nCount)
 
 	for (int i = 0; i < nCount; i++)
 	{
-		fprintf(fid, "%f\t", data[i]);
+		fprintf(fid, "%f\n", data[i]);
 	}
 	fclose(fid);
 }
@@ -53,3 +53,19 @@ static inline void PrintPointListToFile(char* fileName, Vector3f *data, int nCou
 	fclose(fid);
 }
 
+static inline void PrintPointListToFile(char* fileName, Vector4f *data, int nCount)
+{
+	FILE* fid = fopen(fileName, "w");
+
+	for (int i = 0; i < nCount; i++)
+	{
+		if (data[i].w!=-1)
+		{
+			fprintf(fid, "%f\t", data[i].x);
+			fprintf(fid, "%f\t", data[i].y);
+			fprintf(fid, "%f\t", data[i].z);
+			fprintf(fid, "%f\n", data[i].w);
+		}
+	}
+	fclose(fid);
+}

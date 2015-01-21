@@ -21,14 +21,16 @@ using namespace LibISRUtils;
 
 int main(int argc, char** argv)
 {
-	const char *calibFile = "../Data/calib.txt";
-	const char *histogramFile = "../Data/histogram.txt";
-
 	//const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
 	//const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
 
 	const char *colorImgSource = "E:/Data/k1_cut/c-%04i.ppm";
 	const char *depthImgSource = "E:/Data/k1_cut/d-%04i.pgm";
+
+	const char *calibFile = "../Data/calib.txt";
+	const char *histogramFile = "../Data/histogram.txt";
+
+	const char *sdfFile = "../Data/newCut.bin";
 
 	ImageSourceEngine *imageSource = new ImageFileReader(calibFile, colorImgSource, depthImgSource);
 	//ImageSourceEngine *imageSource = new OpenNIEngine(calibFile,NULL,true);
@@ -41,6 +43,10 @@ int main(int argc, char** argv)
 
 	ISRCoreEngine *coreEngine = new ISRCoreEngine(&isrSettings, &imageSource->calib,imageSource->getDepthImageSize(),imageSource->getRGBImageSize());
 	
+	coreEngine->shapeUnion->getShape(0)->loadShapeFromFile(sdfFile, Vector3i(DT_VOL_SIZE, DT_VOL_SIZE, DT_VOL_SIZE));
+	coreEngine->shapeUnion->getShape(1)->shareSDFWithExistingShape(*coreEngine->shapeUnion->getShape(0));
+
+
 	///////////////////////////////////////////////////////////////////////////
 	// some manual initialization
 	///////////////////////////////////////////////////////////////////////////
@@ -49,9 +55,12 @@ int main(int argc, char** argv)
 
 	float pose1[6] = { 0.5119f, -0.1408f, 0.7854f, 0.0f, -0.637070260807493f, 0.0f };
 	float pose2[6] = { 0.6687f, 0.5081f, 0.1909f, 0.5469f, 0.9473f, -0.9473f };
-	coreEngine->getTrackingState()->getPose(0)->setFromParam(pose1);
-	coreEngine->getTrackingState()->getPose(1)->setFromParam(pose2);
+	coreEngine->getTrackingState()->getPose(0)->setInvHFromParam(pose1);
+	coreEngine->getTrackingState()->getPose(1)->setInvHFromParam(pose2);
 	
+	//Matrix4f tmpm = coreEngine->getTrackingState()->getPose(0)->getInvH();
+	//PrintArrayToFile("E:/LibISR/invH_debug.txt", tmpm.m , 16);
+
 	///////////////////////////////////////////////////////////////////////////
 
 	UIEngine::Instance()->Initialise(argc, argv, imageSource, coreEngine, " ");

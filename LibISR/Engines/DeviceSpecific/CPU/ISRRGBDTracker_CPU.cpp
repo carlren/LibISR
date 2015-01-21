@@ -2,6 +2,8 @@
 #include "ISRRGBDTracker_CPU.h"
 #include "../../DeviceAgnostic/ISRRGBDTracker_DA.h"
 
+#include "../../../../LibISRUtils/IOUtil.h"
+
 using namespace LibISR::Engine;
 using namespace LibISR::Objects;
 
@@ -38,16 +40,16 @@ void LibISR::Engine::ISRRGBDTracker_CPU::computeJacobianAndHessian(float *gradie
 	{
 		if (computePerPixelJacobian(jacobian, ptcloud_ptr[i], shapeUnion, trackerState))
 		{
-			for (int r = 0, counter = 0; r < noPara; r++)
+			for (int a = 0, counter = 0; a < noPara; a++) 	
 			{
-				globalGradient[r] -= jacobian[r];
-				for (int c = 0; c <= r; c++, counter++) globalHessian[counter] += jacobian[r] * jacobian[c];
+				globalGradient[a] -= jacobian[a];
+				for (int b = 0; b < noPara; b++, counter++) globalHessian[counter] += jacobian[a] * jacobian[b];
 			}
 		}
 	}
-	for (int r = 0, counter = 0; r < noPara; r++) for (int c = 0; c <= r; c++, counter++) hessian[r + c * 6] = globalHessian[counter];
-	for (int r = 0; r < noPara; ++r) for (int c = r + 1; c < noPara; c++) hessian[r + c * 6] = hessian[c + r * 6];
+	
 	for (int r = 0; r < noPara; ++r) gradient[r] = globalGradient[r];
+	for (int r = 0; r < noParaSQ; ++r) hessian[r] = globalHessian[r];
 }
 
 

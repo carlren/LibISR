@@ -19,8 +19,8 @@ namespace LibISR
 
 		private:
 
-			Matrix4f H;// transformation c->o
-			Matrix4f invH;// inverse transformation o->c
+			Matrix4f H;// transformation obj->cam
+			Matrix4f invH;// inverse transformation cam->obj
 
 		private:
 
@@ -72,8 +72,12 @@ namespace LibISR
 			// set values
 			void setFromH(const Matrix4f &M){ H = M; H.inv(invH); }
 			void setFromInvH(const Matrix4f &M){ invH = M; invH.inv(H); }
-			void setFromRT(const Vector3f &r, const Vector3f &t){ H = getProjectionMatrixFromRT(r, t); H.inv(invH);}
-			void setFromParam(const float* param){ H = getProjectionMatrixFromParam(param); H.inv(invH);}
+
+			void setHFromRT(const Vector3f &r, const Vector3f &t){ H = getProjectionMatrixFromRT(r, t); H.inv(invH);}
+			void setHFromParam(const float* param){ H = getProjectionMatrixFromParam(param); H.inv(invH);}
+
+			void setInvHFromRT(const Vector3f &r, const Vector3f &t){ invH = getProjectionMatrixFromRT(r, t); invH.inv(H); }
+			void setInvHFromParam(const float* param){ invH = getProjectionMatrixFromParam(param); invH.inv(H); }
 
 			//get values
 			const Matrix4f& getH() const { return H;}

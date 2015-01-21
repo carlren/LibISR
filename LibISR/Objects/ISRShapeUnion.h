@@ -34,16 +34,18 @@ namespace LibISR
 			const ISRShape_ptr getShape(int id) const { return &shapes[id]; }
 			ISRShape_ptr getShape(int id) { return &shapes[id]; }
 
-			ISRShapeUnion(int count, bool useGPU)
+			ISRShapeUnion(int count, bool usegpu)
 			{
 				nObjs = count;
 				shapes = new ISRShape[nObjs];
+				useGPU = usegpu;
 				for (int i = 0; i < nObjs; i++) shapes[i].initialize(useGPU, i);
 			}
 
 			~ISRShapeUnion()
 			{
-				for (int i = 0; i < nObjs; i++) delete &shapes[i];
+				delete shapes;
+				//for (int i = 0; i < nObjs; i++) delete &shapes[i];
 			}
 
 		};

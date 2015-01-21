@@ -27,6 +27,7 @@ namespace LibISR
 			Objects::ISRLibSettings *settings;
 
 			Engine::ISRLowlevelEngine* lowLevelEngine;
+			Engine::ISRTracker* tracker;
 
 		public:
 

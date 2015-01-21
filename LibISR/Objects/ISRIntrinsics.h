@@ -42,6 +42,7 @@ namespace LibISR
 			{
 				projectionParamsSimple.fx = fx; projectionParamsSimple.fy = fy;
 				projectionParamsSimple.px = cx; projectionParamsSimple.py = cy;
+				projectionParamsSimple.all = Vector4f(fx, fy, cx, cy);
 
 				A.setZeros();
 				A.m00 = fx; A.m20 = cx; A.m11 = fy; A.m21 = cy; A.m22 = 1;
@@ -52,6 +53,7 @@ namespace LibISR
 			{
 				projectionParamsSimple.fx = fx; projectionParamsSimple.fy = fy;
 				projectionParamsSimple.px = cx; projectionParamsSimple.py = cy;
+				projectionParamsSimple.all = Vector4f(fx, fy, cx, cy);
 
 				A.setZeros();
 				A.m00 = fx; A.m20 = cx; A.m11 = fy; A.m21 = cy; A.m22 = 1;
@@ -61,7 +63,7 @@ namespace LibISR
 				this->height = h;
 			}
 
-			const Vector4f& const getParam(){ return projectionParamsSimple.all; }
+			const Vector4f& getParam() const { return projectionParamsSimple.all; }
 
 			ISRIntrinsics(void)
 			{
