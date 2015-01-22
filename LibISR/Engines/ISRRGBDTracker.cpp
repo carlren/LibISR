@@ -35,7 +35,7 @@ LibISR::Engine::ISRRGBDTracker::~ISRRGBDTracker()
 }
 
 
-void ComputeSingleStep(float *step, float *ATA, float *ATb, float lambda, int dim)
+void computeSingleStep(float *step, float *ATA, float *ATb, float lambda, int dim)
 {
 	float *tmpATA = new float[dim*dim];
 	for (int i = 0; i < dim*dim; i++) tmpATA[i] = ATA[i];
@@ -50,7 +50,20 @@ void ComputeSingleStep(float *step, float *ATA, float *ATb, float lambda, int di
 	ORUtils::Cholesky cholA(tmpATA, dim);
 	cholA.Backsub(step, ATb);
 
-	//for (int i = 0; i < 6; i++) step[i] = -step[i];
+	for (int i = 0; i < 6; i++) step[i] = -step[i];
+}
+
+double stepQuality(float actual_reduction, const float *step, const float *grad, const float *hessian, int numPara)
+{
+	float predicted_reduction = 0.0;
+	float *tmp = new float[numPara];
+
+	matmul(hessian, step, tmp, numPara, numPara);
+	for (int i = 0; i < numPara; i++) predicted_reduction -= grad[i] * step[i] + 0.5*step[i] * tmp[i];
+	delete[] tmp;
+
+	if (predicted_reduction < 0) return actual_reduction / fabs(predicted_reduction);
+	return actual_reduction / predicted_reduction;
 }
 
 void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion *shapeUnion, ISRTrackingState *trackerState)
@@ -61,8 +74,7 @@ void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion
 	this->accpetedState->setFrom(*trackerState);
 	this->tempState->setFrom(*trackerState);
 
-	float *cacheNabla = new float[ATb_Size];
-	float *cacheHessian = new float[ATA_size];
+	float *cacheNabla = new float[ATb_Size];	
 
 	float lastenergy = 0;
 	float currentenergy = 0;
@@ -70,113 +82,6 @@ void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion
 	bool converged = false;
 	float lambda = 1000.0f;
 
-
-
-	evaluateEnergy(&lastenergy, accpetedState);
-
-	ISRFloat4Image *tmpPtCloud = new ISRFloat4Image(frame->depth_size,false);
-
-
-	Vector4f* inptr = frame->ptCloud->GetData(false);
-	Vector4f* outptr = tmpPtCloud->GetData(false);
-	Matrix4f tmpH = tempState->getPose(0)->getInvH();
-
-	//PrintArrayToFile("E:/LibISR/debug/invH_debug.txt", tmpH.m, 16);
-
-	//for (int i = 0; i < frame->ptCloud->dataSize;i++)
-	//{
-	//	if (inptr[i].w>0)
-	//	{
-	//		Vector3f outpt = tmpH*inptr[i].toVector3();
-	//		outptr[i].x = outpt.x;
-	//		outptr[i].y = outpt.y; 
-	//		outptr[i].z = outpt.z; 
-	//	}
-	//	else outptr[i].w = -1;
-	//}
-
-	//PrintPointListToFile("E:/LibISR/debug/objcloud_debug.txt", outptr, frame->ptCloud->dataSize);
-
-	for (int iter = 0; iter < 200; iter++)
-	{
-		computeJacobianAndHessian(ATb_host, ATA_host, tempState);
-
-		//PrintArrayToFile("e:/LibISR/ATA_debug.txt", ATA_host, ATA_size);
-		PrintArrayToFile("e:/LibISR/debug/ATB_debug.txt", ATb_host, ATb_Size);
-
-		while (true)
-		{
-			if (lambda>1e6){ converged = true; break; }
-
-			ComputeSingleStep(cacheNabla, ATA_host, ATb_host, lambda, ATb_Size);
-			
-			PrintArrayToFile("e:/LibISR/debug/step_debug.txt", cacheNabla, ATb_Size);
-			//Matrix4f tmpm = tempState->getPose(1)->getInvH();
-			//PrintArrayToFile("E:/LibISR/invH_before_debug.txt", tmpm.m , 16);
-
-			tempState->applyIncrementalPoseChangesToInvH(cacheNabla);
-
-			//tmpm = tempState->getPose(1)->getInvH();
-			//PrintArrayToFile("E:/LibISR/invH_after_debug.txt", tmpm.m, 16);
-
-			evaluateEnergy(&currentenergy, tempState);
-
-			if (currentenergy<lastenergy)
-			{
-				lastenergy = currentenergy;
-				lambda /= 30.0f;
-				accpetedState->setFrom(*tempState);
-				break;
-			}
-			else
-			{
-				lambda *= 10.0f;
-				tempState->setFrom(*accpetedState);
-			}
-		}
-
-		if (converged) break;
-	}
-
-	//minimizeLM(*this, trackerState);
-}
-
-LibISR::Engine::ISRRGBDTracker::EvaluationPoint::EvaluationPoint(ISRTrackingState * trackerState, const ISRRGBDTracker *f_parent)
-{
-	mState = trackerState;
-	mParent = f_parent;
-
-	ISRRGBDTracker *parent = (ISRRGBDTracker*)mParent;
-	parent->evaluateEnergy(&cacheEnergy, mState);
-
-	cacheHessian = NULL; cacheNabla = NULL;
-}
-
-void LibISR::Engine::ISRRGBDTracker::EvaluationPoint::computeGradients(bool requiresHessian)
-{
-	int numPara = mParent->numParameters();
-	cacheNabla = new float[numPara];
-	cacheHessian = new float[numPara*numPara];
-
-	mParent->computeJacobianAndHessian(cacheNabla, cacheHessian, mState);
-}
-
-static inline double stepQuality(ISRRGBDTracker::EvaluationPoint *x, ISRRGBDTracker::EvaluationPoint *x2, const float *step, const float *grad, const float *B, int numPara)
-{
-	double actual_reduction = x->energy() - x2->energy();
-	double predicted_reduction = 0.0;
-	float *tmp = new float[numPara];
-
-	matmul(B, step, tmp, numPara, numPara);
-	for (int i = 0; i < numPara; i++) predicted_reduction -= grad[i] * step[i] + 0.5*step[i] * tmp[i];
-	delete[] tmp;
-
-	if (predicted_reduction < 0) return actual_reduction / fabs(predicted_reduction);
-	return actual_reduction / predicted_reduction;
-}
-
-static inline bool minimizeLM(const ISRRGBDTracker &tracker, ISRTrackingState* initialization)
-{
 	// These are some sensible default parameters for Levenberg Marquardt.
 	// The first three control the convergence criteria, the others might
 	// impact convergence speed.
@@ -188,101 +93,98 @@ static inline bool minimizeLM(const ISRRGBDTracker &tracker, ISRTrackingState* i
 	static const float TR_REGION_INCREASE = 2.0f;
 	static const float TR_REGION_DECREASE = 0.3f;
 
-	int numPara = tracker.numParameters();
-	
-	float *d = new float[numPara];
-	float lambda = 1000.0f;
-	int step_counter = 0;
+	evaluateEnergy(&lastenergy, accpetedState);
 
-	ISRRGBDTracker::EvaluationPoint *x = tracker.evaluateAt(initialization);
-	ISRRGBDTracker::EvaluationPoint *x2 = NULL;
+	//ISRFloat4Image *tmpPtCloud = new ISRFloat4Image(frame->depth_size, false);
+	//Vector4f* inptr = frame->ptCloud->GetData(false);
+	//Vector4f* outptr = tmpPtCloud->GetData(false);
+	//Matrix4f tmpH = tempState->getPose(0)->getInvH();
 
-	if (!portable_finite(x->energy())) { delete[] d; delete x; return false; }
+	////PrintArrayToFile("E:/LibISR/debug/invH_debug.txt", tmpH.m, 16);
 
-	do
+	//for (int i = 0; i < frame->ptCloud->dataSize; i++)
+	//{
+	//	if (inptr[i].w > 0)
+	//	{
+	//		Vector3f outpt = tmpH*inptr[i].toVector3();
+	//		outptr[i].x = outpt.x;
+	//		outptr[i].y = outpt.y;
+	//		outptr[i].z = outpt.z;
+	//	}
+	//	else outptr[i].w = -1;
+	//}
+
+	//PrintPointListToFile("E:/LibISR/debug/objcloud_debug.txt", outptr, frame->ptCloud->dataSize);
+
+	for (int iter = 0; iter < MAX_STEPS; iter++)
 	{
-		const float *grad;
-		const float *B;
+		computeJacobianAndHessian(ATb_host, ATA_host, tempState);
 
-		grad = x->nabla_energy();
-		B = x->hessian_GN();
+		//PrintArrayToFile("e:/LibISR/debug/ATA_debug.txt", ATA_host, ATA_size);
+		//PrintArrayToFile("e:/LibISR/debug/ATB_debug.txt", ATb_host, ATb_Size);
 
-		bool success;
+		while (true)
 		{
-			float *A = new float[numPara*numPara];
-			for (int i = 0; i < numPara*numPara; ++i) A[i] = B[i];
-			for (int i = 0; i < numPara; ++i)
-			{
-				float & ele = A[i*(numPara + 1)];
-				if (!(fabs(ele) < 1e-15f)) ele *= (1.0f + lambda); else ele = lambda*1e-10f;
-			}
-
-			ORUtils::Cholesky cholA(A, numPara);
-			cholA.Backsub(&(d[0]), grad);
-			// TODO: if Cholesky failed, set success to false!
-
-			success = true;
-			delete[] A;
-		}
-
-
-
-		if (success)
-		{
+			computeSingleStep(cacheNabla, ATA_host, ATb_host, lambda, ATb_Size);
+			
+			// check if step size is very small
 			float MAXnorm = 0.0;
-			for (int i = 0; i<numPara; i++) { float tmp = fabs(d[i]); if (tmp>MAXnorm) MAXnorm = tmp; }
-
+			for (int i = 0; i<ATb_Size; i++) { float tmp = fabs(cacheNabla[i]); if (tmp>MAXnorm) MAXnorm = tmp; }
 			if (MAXnorm < MIN_STEP) break;
-			for (int i = 0; i < numPara; i++) d[i] = -d[i];
 
-			
-			ISRTrackingState tmpState(tracker.numObjects()); 
-			tmpState.setFrom(*x->getState());
-			tmpState.applyIncrementalPoseChangesToInvH(d);
-			
-			x2 = tracker.evaluateAt(&tmpState);
 
-			// check whether step reduces error function and
-			// compute a new value of lambda
-			//x2 = tracker.evaluateAt(tracker);
+			//PrintArrayToFile("e:/LibISR/debug/step_debug.txt", cacheNabla, ATb_Size);
+			//Matrix4f tmpm = tempState->getPose(1)->getInvH();
+			//PrintArrayToFile("E:/LibISR/invH_before_debug.txt", tmpm.m , 16);
 
-			double rho = stepQuality(x, x2, d, grad, B, numPara);
-			if (rho > TR_QUALITY_GAMMA1)
-				lambda = lambda / TR_REGION_INCREASE;
-			else if (rho <= TR_QUALITY_GAMMA2)
-			{
-				success = false;
-				lambda = lambda / TR_REGION_DECREASE;
+			tempState->applyIncrementalPoseChangesToInvH(cacheNabla);
+
+			//tmpm = tempState->getPose(1)->getInvH();
+			//PrintArrayToFile("E:/LibISR/invH_after_debug.txt", tmpm.m, 16);
+
+			evaluateEnergy(&currentenergy, tempState);
+
+			{ // Olaf's extra step to validate convergence
+
+				float rho = stepQuality(lastenergy - currentenergy, cacheNabla, ATb_host, ATA_host, ATb_Size);
+
+				if (rho > TR_QUALITY_GAMMA1) // step quality is good, accpet the step
+				{
+					lambda = lambda / TR_REGION_INCREASE;
+					lastenergy = currentenergy;
+					accpetedState->setFrom(*tempState);
+
+					if (!(currentenergy < (lastenergy - fabs(lastenergy) * MIN_DECREASE))) converged = true;
+					break;
+				}
+				else if (rho <= TR_QUALITY_GAMMA2)  // step quality is bad, do not accept the step 
+				{
+					lambda /= TR_REGION_DECREASE;
+					tempState->setFrom(*accpetedState);
+					continue;
+				}
 			}
+
+			// // Carl's very simple convergence criteria
+			//if (currentenergy<lastenergy)
+			//{
+			//	lastenergy = currentenergy;
+			//	lambda /= 30.0f;
+			//	accpetedState->setFrom(*tempState);
+			//	break;
+			//}
+			//else
+			//{
+			//	lambda *= 10.0f;
+			//	tempState->setFrom(*accpetedState);
+			//}
+			//if (lambda>1e6){ converged = true; break; }
 		}
-		else
-		{
-			x2 = NULL;
-			// can't compute a step quality here...
-			lambda = lambda / TR_REGION_DECREASE;
-		}
+		if (converged) break;
+	}
 
-		if (success)
-		{
-			// accept step
-			bool continueIteration = true;
-			if (!(x2->energy() < (x->energy() - fabs(x->energy()) * MIN_DECREASE))) continueIteration = false;
+	trackerState->setFrom(*accpetedState);
+	//Matrix4f tmpm = tempState->getPose(0)->getInvH();
+	//PrintArrayToFile("E:/LibISR/debug/invH_debug2.txt", tmpm.m, 16);
 
-
-			delete x;
-			x = x2;
-
-			if (!continueIteration) break;
-		}
-		else if (x2 != NULL) delete x2;
-		if (step_counter++ >= MAX_STEPS - 1) break;
-	} while (true);
-
-	*initialization = *x->getState();
-	delete x;
-
-	delete[] d;
-
-	return true;
 }
-

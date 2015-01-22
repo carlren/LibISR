@@ -29,7 +29,7 @@ template <typename T> void WriteToBIN(const T *data, int dataSize, const char *f
 // Some Random Functions for Debug
 ///////////////////////////////////////////////////////////////////////////
 
-static inline void PrintArrayToFile(char* fileName, float *data, int nCount)
+static inline void PrintArrayToFile(char* fileName, const float *data, int nCount)
 {
 	FILE* fid = fopen(fileName, "w");
 

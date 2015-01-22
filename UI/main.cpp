@@ -21,11 +21,11 @@ using namespace LibISRUtils;
 
 int main(int argc, char** argv)
 {
-	//const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
-	//const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
+	const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
+	const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
 
-	const char *colorImgSource = "E:/Data/k1_cut/c-%04i.ppm";
-	const char *depthImgSource = "E:/Data/k1_cut/d-%04i.pgm";
+	//const char *colorImgSource = "E:/Data/k1_cut/c-%04i.ppm";
+	//const char *depthImgSource = "E:/Data/k1_cut/d-%04i.pgm";
 
 	const char *calibFile = "../Data/calib.txt";
 	const char *histogramFile = "../Data/histogram.txt";

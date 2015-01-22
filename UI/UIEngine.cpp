@@ -324,6 +324,17 @@ void UIEngine::ProcessFrame()
 	
 	sdkStopTimer(&timer); processedTime = sdkGetTimerValue(&timer);
 
+	//write pose file for debug
+	char outPoseFile[200];
+	sprintf(outPoseFile, "e:/LibISR/poses/1_%04i.txt", currentFrameNo);
+	Matrix4f tmpH = mainEngine->trackingState->getPose(0)->getH();
+	PrintArrayToFile(outPoseFile, tmpH.m, 16);
+
+	sprintf(outPoseFile, "e:/LibISR/poses/2_%04i.txt", currentFrameNo);
+	tmpH = mainEngine->trackingState->getPose(1)->getH();
+	PrintArrayToFile(outPoseFile, tmpH.m, 16);
+
+
 	currentFrameNo++;
 }
 

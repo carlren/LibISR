@@ -52,41 +52,6 @@ namespace LibISR
 			int numParameters() const { return ATb_Size; }
 			int numObjects() const { return nObjects;  };
 
-			// evaluation point for LM optimization
-			class EvaluationPoint
-			{
-			protected:
-				float cacheEnergy;
-				float *cacheNabla;
-				float *cacheHessian;
-
-				Objects::ISRTrackingState * mState;
-				const ISRRGBDTracker *mParent;
-
-				void computeGradients(bool requiresHessian);
-				
-			public:
-				float energy(){ return cacheEnergy; };
-				
-				const float* nabla_energy(){if (cacheNabla == NULL) computeGradients(false); return cacheNabla; }
-				const float* hessian_GN() { if (cacheHessian == NULL) computeGradients(true); return cacheHessian; }
-			
-				const Objects::ISRTrackingState* getState() const { return mState; }
-
-				EvaluationPoint(Objects::ISRTrackingState * trackerState, const ISRRGBDTracker *f_parent);
-				~EvaluationPoint(void)
-				{
-					delete mState;
-					if (cacheNabla != NULL) delete[] cacheNabla;
-					if (cacheHessian != NULL) delete[] cacheHessian;
-				}
-			};
-
-			EvaluationPoint* evaluateAt(Objects::ISRTrackingState * trackerState) const
-			{
-				return new EvaluationPoint(trackerState, this);
-			}
-
 			void  TrackObjects(Objects::ISRFrame *frame, Objects::ISRShapeUnion *shapeUnion, Objects::ISRTrackingState *trackerState);
 
 			ISRRGBDTracker(int nObjs, bool useGPU);

@@ -120,6 +120,7 @@ _CPU_AND_GPU_CODE_ inline bool computePerPixelJacobian(float *jacobian, const Ve
 		{
 			voxelBlocks = shapeunion->getShape(i)->getSDFVoxel();
 			partdt = voxelBlocks[idx];
+
 			if (partdt < dt)
 			{ 
 				minidx = i;

@@ -59,7 +59,7 @@ namespace LibISR
 
 			~ISRTrackingState()
 			{
-				delete poses;
+				free(poses);
 			}
 
 		};

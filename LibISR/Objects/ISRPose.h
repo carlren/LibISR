@@ -110,7 +110,6 @@ namespace LibISR
 			}
 
 			ISRPose(void) { H.setZeros(); invH.setZeros(); }
-			~ISRPose(void) { }
 
 		};
 
