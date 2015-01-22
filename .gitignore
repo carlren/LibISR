@@ -11,3 +11,5 @@
 *.tlog
 *.lastbuildstate
 *.ilk
+*.ppm
+*.pgm
