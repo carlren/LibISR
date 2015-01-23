@@ -32,6 +32,8 @@ namespace LibISR
 
 			ISRHistogram *histogram;
 
+			Vector4i boundingbox;
+
 			ISRBoolImage *occMap;
 			
 			ISRFloat4Image *ptCloud;
@@ -44,10 +46,13 @@ namespace LibISR
 			{
 				depth_size = d_size;
 				rgb_size = color_size;
+				boundingbox = Vector4i(0, 0, d_size.x, d_size.y);
 
 				occMap = new ISRBoolImage(d_size, useGPU); occMap->Clear(true);
 				ptCloud = new ISRFloat4Image(d_size, useGPU);
+				pfImage = new ISRFloatImage(d_size, useGPU);
 				rgbIdxImage = new ISRIntImage(d_size, useGPU);
+
 
 				view = new ISRView(calib, color_size, d_size, useGPU);
 			}

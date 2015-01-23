@@ -38,7 +38,7 @@ namespace LibISR
 			Objects::ISRView* getView(){ return frame->view;};
 			Objects::ISRTrackingState* getTrackingState(){ return trackingState; }
 
-			void ProcessFrame(void);
+			void processFrame(void);
 
 			ISRCoreEngine(const Objects::ISRLibSettings *settings, const Objects::ISRCalib *calib, Vector2i d_dize, Vector2i rgb_size);
 			

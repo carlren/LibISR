@@ -51,7 +51,7 @@ namespace LibISR
 
 			}
 
-			void buildHistogram(ISRUChar4Image *color, ISRUCharImage *mask)
+			void buildHistogram(ISRUChar4Image *color, ISRUChar4Image *mask)
 			{
 				int idx_mask;
 				int ru, gu, bu;
@@ -61,7 +61,7 @@ namespace LibISR
 				float sumHistogramBackground = 0;
 
 				Vector4u *pixels = color->GetData(false);
-				unsigned char* maskdata = mask->GetData(false);
+				Vector4u *maskdata = mask->GetData(false);
 
 				int height = mask->noDims.x;
 				int width = mask->noDims.y;
@@ -73,9 +73,12 @@ namespace LibISR
 					ru = pixels[idx].r / noBins; 
 					gu = pixels[idx].g / noBins; 
 					bu = pixels[idx].b / noBins;
+
 					pidx = ru*noBins*noBins + gu * noBins + bu; 
 
-					switch (maskdata[idx])
+					int maskvalue = (maskdata[idx].x + maskdata[idx].y + maskdata[idx].z) / 3;
+
+					switch (maskdata[idx].x)
 					{
 					case WHITE: case 254: 
 						data_notnormalised[pidx].x++; sumHistogramForeground++; break; // white is forground
@@ -127,7 +130,6 @@ namespace LibISR
 					data_notnormalised[i].y = 0;
 				}
 			}
-
 
 			void clearPosterior() { for (int i = 0; i < dim; i++) posterior[i] = 0; }
 			

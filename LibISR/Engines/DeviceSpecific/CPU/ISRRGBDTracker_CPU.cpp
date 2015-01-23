@@ -15,10 +15,16 @@ void LibISR::Engine::ISRRGBDTracker_CPU::evaluateEnergy(float *energy, Objects::
 	int count = this->frame->ptCloud->dataSize;
 	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(false);
 
-	float e = 0;
+	float e = 0, es=0;
+	int totalpix = 0;
 
-	for (int i = 0; i < count; i++) e += computePerPixelEnergy(ptcloud_ptr[i], this->shapeUnion, trackerState);
-	energy[0] = -e;
+	for (int i = 0; i < count; i++)
+	{
+		es = computePerPixelEnergy(ptcloud_ptr[i], this->shapeUnion, trackerState);
+		if (es != 0){ e += es; totalpix++; }
+	}
+		
+	energy[0] = e/totalpix;
 }
 
 void LibISR::Engine::ISRRGBDTracker_CPU::computeJacobianAndHessian(float *gradient, float *hessian, Objects::ISRTrackingState * trackerState) const
@@ -42,7 +48,7 @@ void LibISR::Engine::ISRRGBDTracker_CPU::computeJacobianAndHessian(float *gradie
 		{
 			for (int a = 0, counter = 0; a < noPara; a++) 	
 			{
-				globalGradient[a] -= jacobian[a];
+				globalGradient[a] += jacobian[a];
 				for (int b = 0; b < noPara; b++, counter++) globalHessian[counter] += jacobian[a] * jacobian[b];
 			}
 		}

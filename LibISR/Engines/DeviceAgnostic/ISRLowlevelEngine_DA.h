@@ -17,18 +17,11 @@ _CPU_AND_GPU_CODE_ inline float getPf(const Vector4u &pixel, float* histogram, i
 {
 	int dim = noBins*noBins*noBins;
 
-	//int ru = pixel.r / noBins;
-	//int gu = pixel.g / noBins;
-	//int bu = pixel.b / noBins;
-
-	// opencv flip the r and b channel
-	// hack here since we are reading histogram from a file
-	int ru = pixel.b / noBins;
+	int ru = pixel.r / noBins;
 	int gu = pixel.g / noBins;
-	int bu = pixel.r / noBins;
+	int bu = pixel.b / noBins;
 
 	int pidx = ru*noBins*noBins + gu * noBins + bu;
-
 	return histogram[pidx];
 }
 

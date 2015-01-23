@@ -317,7 +317,7 @@ void UIEngine::ProcessFrame()
 	//}
 
 	//actual processing on the mailEngine
-	mainEngine->ProcessFrame();
+	mainEngine->processFrame();
 
 	outImage[2]->SetFrom(mainEngine->getView()->alignedRgb);
 	DepthToUchar4(outImage[1], mainEngine->getView()->rawDepth);
