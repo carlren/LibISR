@@ -32,5 +32,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="OpenCVmain.cpp" />
   </ItemGroup>
 </Project>

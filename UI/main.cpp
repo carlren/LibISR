@@ -9,17 +9,11 @@
 #include "../LibISRUtils/IOUtil.h"
 #include "../LibISRUtils/Timer.h"
 
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/core/core.hpp"
-
-#pragma comment( lib, "opencv_core2410.lib" )
-#pragma comment( lib, "opencv_highgui2410.lib" )
-
 using namespace LibISR::Engine;
 using namespace LibISR::Objects;
 using namespace LibISRUtils;
 
-int main(int argc, char** argv)
+int main_(int argc, char** argv)
 {
 	const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
 	const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
@@ -66,4 +60,6 @@ int main(int argc, char** argv)
 	UIEngine::Instance()->Initialise(argc, argv, imageSource, coreEngine, " ");
 	UIEngine::Instance()->Run();
 	UIEngine::Instance()->Shutdown();
+
+	return 0;
 }

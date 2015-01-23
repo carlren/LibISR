@@ -158,6 +158,7 @@
   <ItemGroup>
     <ClCompile Include="ImageSourceEngine.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="OpenCVmain.cpp" />
     <ClCompile Include="OpenNIEngine.cpp" />
     <ClCompile Include="UIEngine.cpp" />
   </ItemGroup>
