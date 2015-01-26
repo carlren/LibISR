@@ -76,16 +76,16 @@ _CPU_AND_GPU_CODE_ inline void filterSubsampleWithHoles(Vector4f *imageData_out,
 	Vector4f pixel_out = 0.0f, pixel_in; float no_good_pixels = 0.0f;
 
 	pixel_in = imageData_in[(src_pos_x + 0) + (src_pos_y + 0) * oldDims.x];
-	if (pixel_in.w >= 0) { pixel_out += pixel_in; no_good_pixels++; }
+	if (pixel_in.w > 0) { pixel_out += pixel_in; no_good_pixels++; }
 
 	pixel_in = imageData_in[(src_pos_x + 1) + (src_pos_y + 0) * oldDims.x];
-	if (pixel_in.w >= 0) { pixel_out += pixel_in; no_good_pixels++; }
+	if (pixel_in.w > 0) { pixel_out += pixel_in; no_good_pixels++; }
 
 	pixel_in = imageData_in[(src_pos_x + 0) + (src_pos_y + 1) * oldDims.x];
-	if (pixel_in.w >= 0) { pixel_out += pixel_in; no_good_pixels++; }
+	if (pixel_in.w > 0) { pixel_out += pixel_in; no_good_pixels++; }
 
 	pixel_in = imageData_in[(src_pos_x + 1) + (src_pos_y + 1) * oldDims.x];
-	if (pixel_in.w >= 0) { pixel_out += pixel_in; no_good_pixels++; }
+	if (pixel_in.w > 0) { pixel_out += pixel_in; no_good_pixels++; }
 
 	if (no_good_pixels > 0) pixel_out /= no_good_pixels;
 	else { pixel_out.w = -1.0f; }
