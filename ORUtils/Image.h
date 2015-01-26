@@ -11,7 +11,7 @@
 namespace ORUtils
 {
 	/** \brief
-	    Represents images, templated on the pixel type
+	    Represents images, template on the pixel type
 	*/
 	template <typename T>
 	class Image

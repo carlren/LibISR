@@ -52,15 +52,12 @@ void main(int argc, char** argv)
 	if (!ReadImageFromFile(histogramimage, histogram_rgb)) { printf("wrong!\n"); return; }
 	if (!ReadImageFromFile(histogrammask, histogram_mask)) { printf("wrong!\n"); return;}
 	coreEngine->frame->histogram->buildHistogram(histogramimage, histogrammask);
-	//PrintArrayToFile("e:/libisr/debug/histogram_debug.txt",coreEngine->frame->histogram->posterior, coreEngine->frame->histogram->dim);
 
+	// initialized poses are [T' R']'
 	float pose1[6] = { 0.5119f, -0.1408f, 0.7854f, 0.0f, -0.637070260807493f, 0.0f };
 	float pose2[6] = { 0.6687f, 0.5081f, 0.1909f, 0.5469f, 0.9473f, -0.9473f };
 	coreEngine->getTrackingState()->getPose(0)->setInvHFromParam(pose1);
 	coreEngine->getTrackingState()->getPose(1)->setInvHFromParam(pose2);
-
-
-
 
 	//////////////////////////////////////////////////////////////////////////
 	// opencv interface stuff
@@ -83,13 +80,17 @@ void main(int argc, char** argv)
 
 	while ((key = cvWaitKey(10)) != 27 && count < 250)
 	{
+
 		if (!imageSource->hasMoreImages()) return;
 		imageSource->getImages(coreEngine->getView());
+		
+		
 		coreEngine->processFrame();
 
-		Vector4i bb = coreEngine->frame->boundingbox;
 
+		Vector4i bb = coreEngine->frame->boundingbox;
 		memcpy(depthFrame->imageData, (char*)coreEngine->getView()->rgb->GetData(false), 640 * 480 * sizeof(char) * 4);
+		//memcpy(depthFrame->imageData, (char*)coreEngine->getView()->alignedRgb->GetData(false), 640 * 480 * sizeof(char) * 4);
 		Matrix4f M = coreEngine->trackingState->getPose(0)->getH();
 		for (int i = 0; i < 4; i++)
 		{
@@ -118,7 +119,6 @@ void main(int argc, char** argv)
 		cvDrawLine(depthFrame, p2, p3, bbcolor, 2);
 		cvDrawLine(depthFrame, p3, p4, bbcolor, 2);
 		cvDrawLine(depthFrame, p4, p1, bbcolor, 2);
-
 
 		cvShowImage("Depth", depthFrame);
 		count++;

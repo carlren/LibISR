@@ -45,6 +45,7 @@
     <ClInclude Include="Objects\ISRExtrinsics.h" />
     <ClInclude Include="Objects\ISRFrame.h" />
     <ClInclude Include="Objects\ISRHistogram.h" />
+    <ClInclude Include="Objects\ISRImageHierarchy.h" />
     <ClInclude Include="Objects\ISRIntrinsics.h" />
     <ClInclude Include="Objects\ISRPose.h" />
     <ClInclude Include="Objects\ISRShape.h" />

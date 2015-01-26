@@ -123,6 +123,9 @@
     <ClInclude Include="Engines\DeviceSpecific\CPU\ISRLowlevelEngine_CPU.h">
       <Filter>Engines\DeviceSpecific\CPU</Filter>
     </ClInclude>
+    <ClInclude Include="Objects\ISRImageHierarchy.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="Engines\DeviceSpecific\GPU\ISRRGBDTracker_GPU.cu">
