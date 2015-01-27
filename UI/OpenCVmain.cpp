@@ -22,11 +22,13 @@ void main(int argc, char** argv)
 	//const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
 	//const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
 
-	const char *colorImgSource = "E:/Data/k1_cut/c-%04i.ppm";
-	const char *depthImgSource = "E:/Data/k1_cut/d-%04i.pgm";
+	//const char *colorImgSource = "E:/Data/k1_cut/c-%04i.ppm";
+	//const char *depthImgSource = "E:/Data/k1_cut/d-%04i.pgm";
+	//const char *calibFile = "../Data/Calib_kinect1.txt";
 
+	const char *colorImgSource = "E:/Libisr/k1_cut/cr0-%04i.ppm";
+	const char *depthImgSource = "E:/Libisr/k1_cut/d-%04i.pgm";
 	const char *calibFile = "../Data/calib.txt";
-	const char *histogramFile = "../Data/histogram.txt";
 
 	const char *sdfFile = "../Data/newCut.bin";
 
@@ -94,7 +96,6 @@ void main(int argc, char** argv)
 		sdkStopTimer(&timer); processedTime += sdkGetTimerValue(&timer);
 
 		printf("\rAverage Tracking Time : [%f] ms = [%d] fps", processedTime / count, (int)(count*1000 / processedTime));
-		//printf("Average Tracking Time : [%f] ms = [%d] fps\n\n\n\n", processedTime / count, (int)(count * 1000 / processedTime));
 
 		Vector4i bb = coreEngine->frame->boundingbox;
 		memcpy(depthFrame->imageData, (char*)coreEngine->getView()->rgb->GetData(false), 640 * 480 * sizeof(char) * 4);

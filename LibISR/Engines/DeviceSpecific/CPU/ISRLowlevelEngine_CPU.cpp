@@ -150,7 +150,7 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::prepareAlignedRGBDData(ISRFloat4Imag
 			rgbd_out_ptr[idx].x = rgb_in_ptr[idx].r;
 			rgbd_out_ptr[idx].y = rgb_in_ptr[idx].g;
 			rgbd_out_ptr[idx].z = rgb_in_ptr[idx].b;
-			rgbd_out_ptr[idx].w = rgb_in_ptr[idx].z;
+			rgbd_out_ptr[idx].w = z;
 		}
 		else
 		{
