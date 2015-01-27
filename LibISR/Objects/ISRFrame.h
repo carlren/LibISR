@@ -38,12 +38,11 @@ namespace LibISR
 			ISRBoolImage *occMap;
 			
 			ISRFloat4Image *ptCloud;
-			ISRIntImage *rgbIdxImage;
-
 			ISRFloatImage *pfImage;
-			ISRFloatImage *idxImage; // color index image
+			
 
 			ISRImageHierarchy *imgHierarchy;
+			ISRImageHierarchy::ImageLevel *currentLevel;
 
 			ISRFrame(const ISRCalib &calib, Vector2i color_size, Vector2i d_size, bool  useGPU = false, int noHierarchy = 3)
 			{
@@ -54,7 +53,7 @@ namespace LibISR
 				occMap = new ISRBoolImage(d_size, useGPU); occMap->Clear(true);
 				ptCloud = new ISRFloat4Image(d_size, useGPU);
 				pfImage = new ISRFloatImage(d_size, useGPU);
-				rgbIdxImage = new ISRIntImage(d_size, useGPU);
+				
 
 				view = new ISRView(calib, color_size, d_size, useGPU);
 				imgHierarchy = new ISRImageHierarchy(d_size, noHierarchy, useGPU);
@@ -66,7 +65,6 @@ namespace LibISR
 			{
 				delete occMap;
 				delete pfImage;
-				delete idxImage;
 				delete view;
 
 			}

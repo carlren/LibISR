@@ -61,7 +61,7 @@ static inline void PrintPointListToFile(char* fileName, Vector4f *data, int nCou
 
 	for (int i = 0; i < nCount; i++)
 	{
-		if (data[i].w!=-1)
+		//if (data[i].w!=-1)
 		{
 			fprintf(fid, "%f\t", data[i].x);
 			fprintf(fid, "%f\t", data[i].y);
@@ -90,6 +90,7 @@ inline void WriteMatlabTXTImg(char* fileName, T *imgData, int w, int h)
 	}
 	fid.close();
 }
+
 
 static inline void WritePPMimage(char* fileName, Vector4u *imgData, int w, int h)
 {

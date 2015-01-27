@@ -19,11 +19,11 @@ using namespace LibISRUtils;
 
 void main(int argc, char** argv)
 {
-	const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
-	const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
+	//const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
+	//const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
 
-	//const char *colorImgSource = "E:/Data/k1_cut/c-%04i.ppm";
-	//const char *depthImgSource = "E:/Data/k1_cut/d-%04i.pgm";
+	const char *colorImgSource = "E:/Data/k1_cut/c-%04i.ppm";
+	const char *depthImgSource = "E:/Data/k1_cut/d-%04i.pgm";
 
 	const char *calibFile = "../Data/calib.txt";
 	const char *histogramFile = "../Data/histogram.txt";
@@ -83,7 +83,7 @@ void main(int argc, char** argv)
 	sdkCreateTimer(&timer);
 	float processedTime = 0;
 
-	while ((key = cvWaitKey(10)) != 27 && count < 250)
+	while ((key = cvWaitKey(10)) != 27)
 	{
 
 		if (!imageSource->hasMoreImages()) return;

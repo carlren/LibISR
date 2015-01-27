@@ -50,6 +50,18 @@
 #define GREY2 128
 #endif
 
+#ifndef HIST_FG_PIXEL
+#define HIST_FG_PIXEL -2
+#endif
+
+#ifndef HIST_BG_PIXEL
+#define HIST_BG_PIXEL -3
+#endif
+
+#ifndef HIST_USELESS_PIXEL
+#define HIST_USELESS_PIXEL -1
+#endif
+
 //////////////////////////////////////////////////////////////////////////
 // Image types used by LibISR
 //////////////////////////////////////////////////////////////////////////

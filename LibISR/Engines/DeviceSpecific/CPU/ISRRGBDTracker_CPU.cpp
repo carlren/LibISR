@@ -60,7 +60,22 @@ void LibISR::Engine::ISRRGBDTracker_CPU::computeJacobianAndHessian(float *gradie
 
 void LibISR::Engine::ISRRGBDTracker_CPU::lableForegroundPixels(Objects::ISRTrackingState * trackerState)
 {
+	int count = this->frame->ptCloud->dataSize;
+	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(false);
+	Vector4f* rgbd_ptr = this->frame->currentLevel->rgbd->GetData(false);
 
+	float dt;
+	int totalpix = 0;
+
+	for (int i = 0; i < count; i++)
+	{
+		if (ptcloud_ptr[i].w > 0) // in the bounding box and have depth
+		{
+			dt = findPerPixelDT(ptcloud_ptr[i], this->shapeUnion, trackerState);
+			if (fabs(dt) <= 2) { rgbd_ptr[i].w = HIST_FG_PIXEL; }
+			else { rgbd_ptr[i].w = HIST_BG_PIXEL; }
+		}
+	}	
 }
 
 

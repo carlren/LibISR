@@ -60,6 +60,7 @@ void LibISR::Engine::ISRCoreEngine::processFrame(void)
 
 	//ISRImageHierarchy::ImageLevel& lastLevel = myhierarchy->levels[myhierarchy->noLevels - 1];
 	ISRImageHierarchy::ImageLevel& lastLevel = myhierarchy->levels[2];
+	frame->currentLevel = &lastLevel;
 
 	//sdkResetTimer(&timer); sdkStartTimer(&timer);
 	lowLevelEngine->preparePointCloudFromAlignedRGBDImage(frame->ptCloud, lastLevel.rgbd, frame->histogram, lastLevel.intrinsic, lastLevel.boundingbox);

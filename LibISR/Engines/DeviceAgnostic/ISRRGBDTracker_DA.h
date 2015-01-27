@@ -67,6 +67,8 @@ _CPU_AND_GPU_CODE_ inline float computePerPixelEnergy(const Vector4f &inpt, LibI
 	else return 0.0f;
 }
 
+
+
 // this pt_f is already in the object coordinates
 _CPU_AND_GPU_CODE_ inline Vector3f computeDDT(const Vector3f &pt_f, float* voxelBlock,  bool &ddtFound)
 {
@@ -159,4 +161,34 @@ _CPU_AND_GPU_CODE_ inline bool computePerPixelJacobian(float *jacobian, const Ve
 	jacobian[idxoffset + 5] = 4.0f * (ddt.y * minpt.x - ddt.x * minpt.y);
 
 	return true;
+}
+
+
+
+// inpt now is in camera coordinates, it need to be transformed by pose invH to object coordinates
+// inpt is also been properly scaled to math the voxel resolution
+// inpt.w is pf for the point
+_CPU_AND_GPU_CODE_ inline float findPerPixelDT(const Vector4f &inpt, LibISR::Objects::ISRShapeUnion* shapeunion, LibISR::Objects::ISRTrackingState* state)
+{
+	if (inpt.w > 0)
+	{
+		float dt = MAX_SDF, partdt = MAX_SDF;
+		int numObj = state->numPoses();
+		int idx;
+		float *voxelBlocks;
+
+		for (int i = 0; i < numObj; i++)
+		{
+			Vector3f objpt = state->getPose(i)->getInvH()*Vector3f(inpt.x, inpt.y, inpt.z);
+			idx = pt2IntIdx(objpt);
+			if (idx >= 0)
+			{
+				voxelBlocks = shapeunion->getShape(i)->getSDFVoxel();
+				partdt = voxelBlocks[idx];
+				dt = partdt < dt ? partdt : dt; // now use a hard min to approximate
+			}
+		}
+		return dt;
+	}
+	else return 0.0f;
 }

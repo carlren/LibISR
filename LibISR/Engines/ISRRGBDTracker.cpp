@@ -114,6 +114,11 @@ void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion
 		}
 
 	}
+	
+	lableForegroundPixels(accpetedState);
+	frame->histogram->updateHistogramFromLabeledRGBD(frame->currentLevel->rgbd, 0.05f, 0.3f);
+
 	trackerState->setFrom(*accpetedState);
 
+	printf("\tEnergy:%f", lastenergy);
 }
