@@ -47,6 +47,9 @@ namespace LibISR
 			// the poses are always taken from tmpPoses
 			virtual void computeJacobianAndHessian(float *gradient, float *hessian, Objects::ISRTrackingState * trackerState) const = 0;
 
+			// back-project pixels into object coordinates to see whether they are on the object surface
+			virtual void lableForegroundPixels(Objects::ISRTrackingState * trackerState) = 0;
+
 		public:
 
 			int numParameters() const { return ATb_Size; }

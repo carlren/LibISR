@@ -11,6 +11,7 @@
 
 #include "../LibISRUtils/IOUtil.h"
 #include "../LibISRUtils/Timer.h"
+#include "../LibISRUtils/NVTimer.h"
 
 using namespace LibISR::Engine;
 using namespace LibISR::Objects;
@@ -78,15 +79,22 @@ void main(int argc, char** argv)
 	Matrix3f H = coreEngine->getView()->calib->homo_depth_to_color.H;
 	Vector3f T = coreEngine->getView()->calib->homo_depth_to_color.T*0.001;
 
+	StopWatchInterface *timer;
+	sdkCreateTimer(&timer);
+	float processedTime = 0;
+
 	while ((key = cvWaitKey(10)) != 27 && count < 250)
 	{
 
 		if (!imageSource->hasMoreImages()) return;
 		imageSource->getImages(coreEngine->getView());
 		
-		
+		sdkResetTimer(&timer); sdkStartTimer(&timer);
 		coreEngine->processFrame();
+		sdkStopTimer(&timer); processedTime += sdkGetTimerValue(&timer);
 
+		printf("\rAverage Tracking Time : [%f] ms = [%d] fps", processedTime / count, (int)(count*1000 / processedTime));
+		//printf("Average Tracking Time : [%f] ms = [%d] fps\n\n\n\n", processedTime / count, (int)(count * 1000 / processedTime));
 
 		Vector4i bb = coreEngine->frame->boundingbox;
 		memcpy(depthFrame->imageData, (char*)coreEngine->getView()->rgb->GetData(false), 640 * 480 * sizeof(char) * 4);

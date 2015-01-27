@@ -51,7 +51,8 @@ namespace LibISR
 
 			}
 
-			void buildHistogram(ISRUChar4Image *color, ISRUChar4Image *mask)
+			template <class T>
+			void buildHistogram(ORUtils::Image<T> *color, ISRUChar4Image *mask)
 			{
 				int idx_mask;
 				int ru, gu, bu;
@@ -60,7 +61,7 @@ namespace LibISR
 				float sumHistogramForeground = 0; 
 				float sumHistogramBackground = 0;
 
-				Vector4u *pixels = color->GetData(false);
+				T *pixels = color->GetData(false);
 				Vector4u *maskdata = mask->GetData(false);
 
 				int height = mask->noDims.x;

@@ -71,11 +71,11 @@ void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion
 	// impact convergence speed.
 	static const int MAX_STEPS = 100;
 	static const float MIN_STEP = 0.00005f;
-	static const float MIN_DECREASE = 0.00001f;
+	static const float MIN_DECREASE = 0.0001f;
 	static const float TR_REGION_INCREASE = 0.10f;
 	static const float TR_REGION_DECREASE = 10.0f;
 
-	{// LM main loop
+	{// minimalist LM main loop
 		evaluateEnergy(&lastenergy, accpetedState);
 
 		for (int iter = 0; iter < MAX_STEPS; iter++)
@@ -86,7 +86,7 @@ void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion
 			{
 				computeSingleStep(cacheNabla, ATA_host, ATb_host, lambda, ATb_Size);
 
-				// check if step size is very small
+				// check if step size is very small, if so, converge.
 				float MAXnorm = 0.0;
 				for (int i = 0; i<ATb_Size; i++) { float tmp = fabs(cacheNabla[i]); if (tmp>MAXnorm) MAXnorm = tmp; }
 				if (MAXnorm < MIN_STEP) { converged = true; break; }
@@ -94,10 +94,11 @@ void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion
 				tempState->applyIncrementalPoseChangesToInvH(cacheNabla);
 
 				evaluateEnergy(&currentenergy, tempState);
-				// Carl's very simple convergence criteria
+
 				if (currentenergy > lastenergy)
 				{
-					if (abs(currentenergy - lastenergy) / abs(lastenergy) < 0.0001) converged = true;
+					// check if energy decrease is too small, if so, converge.
+					if (abs(currentenergy - lastenergy) / abs(lastenergy) < MIN_DECREASE) {converged = true;}
 					lastenergy = currentenergy;
 					lambda *= TR_REGION_INCREASE;
 					accpetedState->setFrom(*tempState);
@@ -108,15 +109,11 @@ void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion
 					lambda *= TR_REGION_DECREASE;
 					tempState->setFrom(*accpetedState);
 				}
-				if (lambda > 1e6){ converged = true; break; }
 			}
 			if (converged) break;
 		}
 
 	}
 	trackerState->setFrom(*accpetedState);
-	printf("energy:\t%06f\n", lastenergy);
-	//Matrix4f tmpm = tempState->getPose(0)->getInvH();
-	//PrintArrayToFile("E:/LibISR/debug/invH_debug2.txt", tmpm.m, 16);
 
 }

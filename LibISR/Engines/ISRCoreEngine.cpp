@@ -1,6 +1,7 @@
 #include "ISRCoreEngine.h"
 #include "../../LibISRUtils/IOUtil.h"
 #include "../../LibISRUtils/Timer.h"
+#include "../../LibISRUtils/NVTimer.h"
 
 using namespace LibISR::Engine;
 using namespace LibISR::Objects;
@@ -21,13 +22,11 @@ LibISR::Engine::ISRCoreEngine::ISRCoreEngine(const ISRLibSettings *settings, con
 void LibISR::Engine::ISRCoreEngine::processFrame(void)
 {
 	ISRView* myview = getView();
-	Objects::ISRIntrinsics& intrin = myview->calib->intrinsics_d;
-	Vector4f A = intrin.getParam();
+	ISRImageHierarchy* myhierarchy = getImageHierarchy();
 
 	// // create aligned RGB image
 	//lowLevelEngine->createAlignedRGBImage(myview->alignedRgb, myview->rawDepth, myview->rgb, &myview->calib->homo_depth_to_color);
 	
-	// 
 	//lowLevelEngine->createForgroundProbabilityMap(frame->pfImage, myview->alignedRgb, frame->histogram);
 	
 
@@ -35,29 +34,47 @@ void LibISR::Engine::ISRCoreEngine::processFrame(void)
 	//for (int i = 0; i < frame->ptCloud->dataSize; i++) 
 	//	if (frame->ptCloud->GetData(false)[i].w>0) frame->ptCloud->GetData(false)[i].w = frame->pfImage->GetData(false)[i];
 	
-	frame->boundingbox = lowLevelEngine->findBoundingBoxFromCurrentState(trackingState, myview->calib->intrinsics_d.A);
+	StopWatchInterface* timer;
+	sdkCreateTimer(&timer);
+	float timeused;
 
-	ISRFloat4Image *tmpdata = new ISRFloat4Image(myview->rawDepth->noDims, false);
-	ISRFloat4Image *tmpdata2 = new ISRFloat4Image(myview->rawDepth->noDims, false);
-	lowLevelEngine->prepareAlignedRGBDData(tmpdata, myview->rawDepth, myview->rgb, &myview->calib->homo_depth_to_color);
+	myhierarchy->levels[0].boundingbox = lowLevelEngine->findBoundingBoxFromCurrentState(trackingState, myview->calib->intrinsics_d.A);
+	myhierarchy->levels[0].intrinsic = myview->calib->intrinsics_d.getParam();
 
-	lowLevelEngine->subsampleImageRGBDImage(tmpdata2, tmpdata);
-	lowLevelEngine->subsampleImageRGBDImage(tmpdata, tmpdata2);
+	//sdkResetTimer(&timer); sdkStartTimer(&timer);
+	lowLevelEngine->prepareAlignedRGBDData(myhierarchy->levels[0].rgbd, myview->rawDepth, myview->rgb, &myview->calib->homo_depth_to_color);
+	//timeused = sdkGetTimerValue(&timer);
+	//printf("Align Data:%f\n", timeused);
 
-	Vector4i bb = frame->boundingbox / 4;
-	intrin.SetFrom(A.x / 4, A.y / 4, A.z / 4, A.w / 4);
-	lowLevelEngine->preparePointCloudFromAlignedRGBDImage(frame->ptCloud, tmpdata, frame->histogram, myview->calib->intrinsics_d.getParam(),bb);
+	//sdkResetTimer(&timer); sdkStartTimer(&timer);
+	for (int i = 1; i < myhierarchy->noLevels;i++)
+	{
+		myhierarchy->levels[i].intrinsic = myhierarchy->levels[i - 1].intrinsic / 2;
+		myhierarchy->levels[i].boundingbox = myhierarchy->levels[i - 1].boundingbox / 2;
+		lowLevelEngine->subsampleImageRGBDImage(myhierarchy->levels[i].rgbd, myhierarchy->levels[i - 1].rgbd);
+	}
+	//timeused = sdkGetTimerValue(&timer);
+	//printf("Build Hierarchy:%f\n", timeused);
+	
 
+
+	//ISRImageHierarchy::ImageLevel& lastLevel = myhierarchy->levels[myhierarchy->noLevels - 1];
+	ISRImageHierarchy::ImageLevel& lastLevel = myhierarchy->levels[2];
+
+	//sdkResetTimer(&timer); sdkStartTimer(&timer);
+	lowLevelEngine->preparePointCloudFromAlignedRGBDImage(frame->ptCloud, lastLevel.rgbd, frame->histogram, lastLevel.intrinsic, lastLevel.boundingbox);
+	//timeused = sdkGetTimerValue(&timer);
+	//printf("Prepare Point Cloud:%f\n", timeused);
 
 	//lowLevelEngine->preparePointCloudForRGBDTrackerAllInOne(frame->ptCloud, myview->rawDepth, myview->rgb, myview->calib, frame->histogram, frame->boundingbox);
 
 
 	//PrintPointListToFile("E:/LibISR/debug/ptcloud_debug.txt",frame->ptCloud->GetData(false), frame->ptCloud->dataSize);
 	//PrintArrayToFile("E:/LibISR/histogram_debug.txt", frame->histogram->posterior, frame->histogram->dim);
-	tracker->TrackObjects(frame, shapeUnion, trackingState);
-	intrin.SetFrom(A.x, A.y, A.z, A.w);
 
-	delete tmpdata;
-	delete tmpdata2;
-	
+	//sdkResetTimer(&timer); sdkStartTimer(&timer); 
+	tracker->TrackObjects(frame, shapeUnion, trackingState);
+	//timeused = sdkGetTimerValue(&timer);
+	//printf("Track Object:%f\n\n\n\n\n", timeused);
+
 }

@@ -58,4 +58,9 @@ void LibISR::Engine::ISRRGBDTracker_CPU::computeJacobianAndHessian(float *gradie
 	for (int r = 0; r < noParaSQ; ++r) hessian[r] = globalHessian[r];
 }
 
+void LibISR::Engine::ISRRGBDTracker_CPU::lableForegroundPixels(Objects::ISRTrackingState * trackerState)
+{
+
+}
+
 

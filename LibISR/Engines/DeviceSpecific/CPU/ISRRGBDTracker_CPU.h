@@ -17,7 +17,7 @@ namespace LibISR
 			// the poses are always taken from tmpPoses
 			void computeJacobianAndHessian(float *gradient, float *hessian, Objects::ISRTrackingState * trackerState) const;
 
-
+			void lableForegroundPixels(Objects::ISRTrackingState * trackerState);
 		public:
 			ISRRGBDTracker_CPU(int nObjs);
 			~ISRRGBDTracker_CPU();

@@ -32,11 +32,12 @@ namespace LibISR
 		public:
 
 			Objects::ISRFrame *frame;
-			Objects::ISRShapeUnion* shapeUnion;
-			Objects::ISRTrackingState* trackingState;
+			Objects::ISRShapeUnion *shapeUnion;
+			Objects::ISRTrackingState *trackingState;
 
-			Objects::ISRView* getView(){ return frame->view;};
-			Objects::ISRTrackingState* getTrackingState(){ return trackingState; }
+			Objects::ISRView *getView(){ return frame->view;};
+			Objects::ISRImageHierarchy *getImageHierarchy(){ return frame->imgHierarchy; }
+			Objects::ISRTrackingState *getTrackingState(){ return trackingState; }
 
 			void processFrame(void);
 
