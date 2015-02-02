@@ -5,6 +5,9 @@
 #include "../../Objects//Highlevel/ISRTrackingState.h"
 #include "../../Objects/Highlevel/ISRShapeUnion.h"
 
+#ifndef LIBISR_VOXEL_ACCESS
+#define LIBISR_VOXEL_ACCESS
+
 _CPU_AND_GPU_CODE_ inline int pt2IntIdx(Vector3f pt)
 {
 	int x = pt.x * VOL_SCALE + DT_VOL_SIZE / 2 - 1;
@@ -32,6 +35,9 @@ _CPU_AND_GPU_CODE_ inline int pt2IntIdx_offset(Vector3f pt, Vector3i offpt)
 	else
 		return -1;
 }
+
+#endif
+
 
 // inpt now is in camera coordinates, it need to be transformed by pose invH to object coordinates
 // inpt is also been properly scaled to math the voxel resolution

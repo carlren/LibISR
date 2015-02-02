@@ -49,8 +49,8 @@ int main_(int argc, char** argv)
 
 	float pose1[6] = { 0.5119f, -0.1408f, 0.7854f, 0.0f, -0.637070260807493f, 0.0f };
 	float pose2[6] = { 0.6687f, 0.5081f, 0.1909f, 0.5469f, 0.9473f, -0.9473f };
-	coreEngine->getTrackingState()->getPose(0)->setInvHFromParam(pose1);
-	coreEngine->getTrackingState()->getPose(1)->setInvHFromParam(pose2);
+	coreEngine->trackingState->getPose(0)->setInvHFromParam(pose1);
+	coreEngine->trackingState->getPose(1)->setInvHFromParam(pose2);
 	
 	//Matrix4f tmpm = coreEngine->getTrackingState()->getPose(0)->getInvH();
 	//PrintArrayToFile("E:/LibISR/invH_debug.txt", tmpm.m , 16);

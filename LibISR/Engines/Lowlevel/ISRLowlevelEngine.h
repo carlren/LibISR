@@ -11,7 +11,7 @@ namespace LibISR
 		{
 		public:
 
-			Vector4i findBoundingBoxFromCurrentState(const Objects::ISRTrackingState* state, const Matrix3f& A, const Vector2i& imgsize);
+			Vector4i findBoundingBoxFromCurrentState(const Objects::ISRTrackingState* state, const Matrix3f& K, const Vector2i& imgsize);
 
 			//////////////////////////////////////////////////////////////////////////
 			//// virtual functions that are implemented both on CPU and on GPU

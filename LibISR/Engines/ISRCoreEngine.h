@@ -14,6 +14,10 @@
 #include "Trackers/ISRRGBDTracker_DA.h"
 #include "Trackers/ISRRGBDTracker_CPU.h"
 
+#include "Visualization/ISRVisualisationEngine.h"
+#include "Visualization/ISRVisualisationEngine_CPU.h"
+#include "Visualization/ISRVisualisationEngine_DA.h"
+
 
 namespace LibISR
 {
@@ -23,7 +27,6 @@ namespace LibISR
 		class ISRCoreEngine
 		{
 		private:
-
 			Objects::ISRLibSettings *settings;
 
 			Engine::ISRLowlevelEngine* lowLevelEngine;
@@ -37,7 +40,7 @@ namespace LibISR
 
 			Objects::ISRView *getView(){ return frame->view;};
 			Objects::ISRImageHierarchy *getImageHierarchy(){ return frame->imgHierarchy; }
-			Objects::ISRTrackingState *getTrackingState(){ return trackingState; }
+			Objects::ISRVisualisationState *getRenderingState(){ return frame->rendering; }
 
 			void processFrame(void);
 

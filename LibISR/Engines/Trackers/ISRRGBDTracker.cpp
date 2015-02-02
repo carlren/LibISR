@@ -10,8 +10,6 @@ using namespace LibISR::Engine;
 using namespace LibISR::Objects;
 
 
-static inline bool minimizeLM(const ISRRGBDTracker &tracker, ISRTrackingState *initialization);
-
 LibISR::Engine::ISRRGBDTracker::ISRRGBDTracker(int nObjs, bool useGPU)
 {
 	nObjects = nObjs;
@@ -115,6 +113,7 @@ void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion
 
 	}
 	
+	// after convergence, the w channel of ptcloud is recycled for histogram update
 	lableForegroundPixels(accpetedState);
 	frame->histogram->updateHistogramFromLabeledRGBD(frame->currentLevel->rgbd, 0.05f, 0.3f);
 
