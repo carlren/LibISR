@@ -2,17 +2,17 @@
 
 #include "../Utils/ISRLibSettings.h"
 
-#include "../Objects/ISRFrame.h"
-#include "../Objects/ISRShapeUnion.h"
-#include "../Objects/ISRTrackingState.h"
+#include "../Objects/Highlevel//ISRFrame.h"
+#include "../Objects/Highlevel//ISRShapeUnion.h"
+#include "../Objects/Highlevel//ISRTrackingState.h"
 
-#include "ISRLowlevelEngine.h"
-#include "DeviceAgnostic/ISRLowlevelEngine_DA.h"
-#include "DeviceSpecific/CPU/ISRLowlevelEngine_CPU.h"
+#include "Lowlevel/ISRLowlevelEngine.h"
+#include "Lowlevel/ISRLowlevelEngine_DA.h"
+#include "Lowlevel/ISRLowlevelEngine_CPU.h"
 
-#include "ISRRGBDTracker.h"
-#include "DeviceAgnostic/ISRRGBDTracker_DA.h"
-#include "DeviceSpecific/CPU/ISRRGBDTracker_CPU.h"
+#include "Trackers/ISRRGBDTracker.h"
+#include "Trackers/ISRRGBDTracker_DA.h"
+#include "Trackers/ISRRGBDTracker_CPU.h"
 
 
 namespace LibISR

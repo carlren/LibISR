@@ -23,22 +23,13 @@ void LibISR::Engine::ISRCoreEngine::processFrame(void)
 {
 	ISRView* myview = getView();
 	ISRImageHierarchy* myhierarchy = getImageHierarchy();
-
-	// // create aligned RGB image
-	//lowLevelEngine->createAlignedRGBImage(myview->alignedRgb, myview->rawDepth, myview->rgb, &myview->calib->homo_depth_to_color);
-	
-	//lowLevelEngine->createForgroundProbabilityMap(frame->pfImage, myview->alignedRgb, frame->histogram);
 	
 
-	//lowLevelEngine->createCamCordPointCloud(frame->ptCloud, myview->rawDepth, myview->calib->intrinsics_d.getParam());
-	//for (int i = 0; i < frame->ptCloud->dataSize; i++) 
-	//	if (frame->ptCloud->GetData(false)[i].w>0) frame->ptCloud->GetData(false)[i].w = frame->pfImage->GetData(false)[i];
-	
-	StopWatchInterface* timer;
-	sdkCreateTimer(&timer);
-	float timeused;
+	//StopWatchInterface* timer;
+	//sdkCreateTimer(&timer);
+	//float timeused;
 
-	myhierarchy->levels[0].boundingbox = lowLevelEngine->findBoundingBoxFromCurrentState(trackingState, myview->calib->intrinsics_d.A);
+	myhierarchy->levels[0].boundingbox = lowLevelEngine->findBoundingBoxFromCurrentState(trackingState, myview->calib->intrinsics_d.A, myview->depth->noDims);
 	myhierarchy->levels[0].intrinsic = myview->calib->intrinsics_d.getParam();
 
 	//sdkResetTimer(&timer); sdkStartTimer(&timer);
@@ -57,21 +48,14 @@ void LibISR::Engine::ISRCoreEngine::processFrame(void)
 	//printf("Build Hierarchy:%f\n", timeused);
 	
 
-
-	//ISRImageHierarchy::ImageLevel& lastLevel = myhierarchy->levels[myhierarchy->noLevels - 1];
-	ISRImageHierarchy::ImageLevel& lastLevel = myhierarchy->levels[2];
+	ISRImageHierarchy::ImageLevel& lastLevel = myhierarchy->levels[myhierarchy->noLevels - 1];
+	//ISRImageHierarchy::ImageLevel& lastLevel = myhierarchy->levels[2];
 	frame->currentLevel = &lastLevel;
 
 	//sdkResetTimer(&timer); sdkStartTimer(&timer);
 	lowLevelEngine->preparePointCloudFromAlignedRGBDImage(frame->ptCloud, lastLevel.rgbd, frame->histogram, lastLevel.intrinsic, lastLevel.boundingbox);
 	//timeused = sdkGetTimerValue(&timer);
 	//printf("Prepare Point Cloud:%f\n", timeused);
-
-	//lowLevelEngine->preparePointCloudForRGBDTrackerAllInOne(frame->ptCloud, myview->rawDepth, myview->rgb, myview->calib, frame->histogram, frame->boundingbox);
-
-
-	//PrintPointListToFile("E:/LibISR/debug/ptcloud_debug.txt",frame->ptCloud->GetData(false), frame->ptCloud->dataSize);
-	//PrintArrayToFile("E:/LibISR/histogram_debug.txt", frame->histogram->posterior, frame->histogram->dim);
 
 	//sdkResetTimer(&timer); sdkStartTimer(&timer); 
 	tracker->TrackObjects(frame, shapeUnion, trackingState);

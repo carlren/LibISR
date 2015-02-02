@@ -97,9 +97,8 @@ void main(int argc, char** argv)
 
 		printf("\rAverage Tracking Time : [%f] ms = [%d] fps", processedTime / count, (int)(count*1000 / processedTime));
 
-		Vector4i bb = coreEngine->frame->boundingbox;
+		Vector4i bb = coreEngine->frame->imgHierarchy->levels[0].boundingbox;
 		memcpy(depthFrame->imageData, (char*)coreEngine->getView()->rgb->GetData(false), 640 * 480 * sizeof(char) * 4);
-		//memcpy(depthFrame->imageData, (char*)coreEngine->getView()->alignedRgb->GetData(false), 640 * 480 * sizeof(char) * 4);
 		Matrix4f M = coreEngine->trackingState->getPose(0)->getH();
 		for (int i = 0; i < 4; i++)
 		{
