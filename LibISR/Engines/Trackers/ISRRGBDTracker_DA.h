@@ -1,42 +1,11 @@
 #pragma once
 
 #include "../../Utils/LibISRDefine.h"
+#include "../Lowlevel/ISRVoxelAccess_DA.h"
+
 
 #include "../../Objects//Highlevel/ISRTrackingState.h"
 #include "../../Objects/Highlevel/ISRShapeUnion.h"
-
-#ifndef LIBISR_VOXEL_ACCESS
-#define LIBISR_VOXEL_ACCESS
-
-_CPU_AND_GPU_CODE_ inline int pt2IntIdx(Vector3f pt)
-{
-	int x = pt.x * VOL_SCALE + DT_VOL_SIZE / 2 - 1;
-	int y = pt.y * VOL_SCALE + DT_VOL_SIZE / 2 - 1;
-	int z = pt.z * VOL_SCALE + DT_VOL_SIZE / 2 - 1;
-
-	if (x > 0 && x < DT_VOL_SIZE - 1 &&
-		y > 0 && y < DT_VOL_SIZE - 1 &&
-		z > 0 && z < DT_VOL_SIZE - 1)
-		return (z * DT_VOL_SIZE + y) * DT_VOL_SIZE + x;
-	else
-		return -1;
-}
-
-_CPU_AND_GPU_CODE_ inline int pt2IntIdx_offset(Vector3f pt, Vector3i offpt)
-{
-	int x = pt.x * VOL_SCALE + DT_VOL_SIZE / 2 - 1 + offpt.x;
-	int y = pt.y * VOL_SCALE + DT_VOL_SIZE / 2 - 1 + offpt.y;
-	int z = pt.z * VOL_SCALE + DT_VOL_SIZE / 2 - 1 + offpt.z;
-
-	if (x > 0 && x < DT_VOL_SIZE - 1 &&
-		y > 0 && y < DT_VOL_SIZE - 1 &&
-		z > 0 && z < DT_VOL_SIZE - 1)
-		return (z * DT_VOL_SIZE + y) * DT_VOL_SIZE + x;
-	else
-		return -1;
-}
-
-#endif
 
 
 // inpt now is in camera coordinates, it need to be transformed by pose invH to object coordinates
@@ -73,36 +42,6 @@ _CPU_AND_GPU_CODE_ inline float computePerPixelEnergy(const Vector4f &inpt, LibI
 	else return 0.0f;
 }
 
-
-
-// this pt_f is already in the object coordinates
-_CPU_AND_GPU_CODE_ inline Vector3f computeDDT(const Vector3f &pt_f, float* voxelBlock,  bool &ddtFound)
-{
-	Vector3f ddt;
-
-	bool isFound; float dt1, dt2;
-	int idx;
-
-	idx = pt2IntIdx_offset(pt_f, Vector3i(1, 0, 0)); if (idx == -1) { ddtFound = false; return Vector3f(0.0f); }
-	dt1 = voxelBlock[idx];
-	idx = pt2IntIdx_offset(pt_f, Vector3i(-1, 0, 0)); if (idx == -1) { ddtFound = false; return Vector3f(0.0f); }
-	dt2 = voxelBlock[idx];
-	ddt.x = (dt1 - dt2)*0.5f;
-
-	idx = pt2IntIdx_offset(pt_f, Vector3i(0, 1, 0)); if (idx == -1) { ddtFound = false; return Vector3f(0.0f); }
-	dt1 = voxelBlock[idx];
-	idx = pt2IntIdx_offset(pt_f, Vector3i(0, -1, 0)); if (idx == -1) { ddtFound = false; return Vector3f(0.0f); }
-	dt2 = voxelBlock[idx];
-	ddt.y = (dt1 - dt2)*0.5f;
-
-	idx = pt2IntIdx_offset(pt_f, Vector3i(0, 0, 1)); if (idx == -1) { ddtFound = false; return Vector3f(0.0f); }
-	dt1 = voxelBlock[idx];
-	idx = pt2IntIdx_offset(pt_f, Vector3i(0, 0, -1)); if (idx == -1) { ddtFound = false; return Vector3f(0.0f); }
-	dt2 = voxelBlock[idx];
-	ddt.z = (dt1 - dt2)*0.5f;
-
-	ddtFound = true; return ddt;
-}
 
 // inpt now is in camera coordinates, it need to be transformed by pose invH to object coordinates
 // inpt is also been properly scaled to math the voxel resolution
@@ -142,7 +81,7 @@ _CPU_AND_GPU_CODE_ inline bool computePerPixelJacobian(float *jacobian, const Ve
 	}
 	if (!minfound) return false;
 
-	ddt = computeDDT(minpt, minVoxelBlocks, ddtfound);
+	ddt = getSDFNormal(minpt, minVoxelBlocks, ddtfound);
 	if (!ddtfound) return false;
 
 	float exp_dt = expf(-dt * DTUNE);

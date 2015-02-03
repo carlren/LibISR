@@ -31,6 +31,19 @@ template <typename T> void WriteToBIN(const T *data, int dataSize, const char *f
 // Some Random Functions for Debug
 ///////////////////////////////////////////////////////////////////////////
 
+template<typename T>
+static inline void PrintOneChannelToFile(char* fileName, T *data, int nCount)
+{
+	FILE* fid = fopen(fileName, "w");
+
+	for (int i = 0; i < nCount; i++)
+	{
+		fprintf(fid, "%f\n", data[i].y);
+	}
+	fclose(fid);
+}
+
+
 static inline void PrintArrayToFile(char* fileName, const float *data, int nCount)
 {
 	FILE* fid = fopen(fileName, "w");

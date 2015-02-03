@@ -31,6 +31,7 @@ namespace LibISR
 
 			Engine::ISRLowlevelEngine* lowLevelEngine;
 			Engine::ISRTracker* tracker;
+			Engine::ISRVisualisationEngine* visualizationEngine;
 
 		public:
 

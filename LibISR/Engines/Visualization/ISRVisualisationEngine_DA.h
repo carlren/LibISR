@@ -1,43 +1,11 @@
 #pragma once
 #include "../../Utils/LibISRDefine.h"
-
-
-#ifndef LIBISR_VOXEL_ACCESS
-#define LIBISR_VOXEL_ACCESS
-
-_CPU_AND_GPU_CODE_ inline int pt2IntIdx(Vector3f pt)
-{
-	int x = pt.x * VOL_SCALE + DT_VOL_SIZE / 2 - 1;
-	int y = pt.y * VOL_SCALE + DT_VOL_SIZE / 2 - 1;
-	int z = pt.z * VOL_SCALE + DT_VOL_SIZE / 2 - 1;
-
-	if (x > 0 && x < DT_VOL_SIZE - 1 &&
-		y > 0 && y < DT_VOL_SIZE - 1 &&
-		z > 0 && z < DT_VOL_SIZE - 1)
-		return (z * DT_VOL_SIZE + y) * DT_VOL_SIZE + x;
-	else
-		return -1;
-}
-
-_CPU_AND_GPU_CODE_ inline int pt2IntIdx_offset(Vector3f pt, Vector3i offpt)
-{
-	int x = pt.x * VOL_SCALE + DT_VOL_SIZE / 2 - 1 + offpt.x;
-	int y = pt.y * VOL_SCALE + DT_VOL_SIZE / 2 - 1 + offpt.y;
-	int z = pt.z * VOL_SCALE + DT_VOL_SIZE / 2 - 1 + offpt.z;
-
-	if (x > 0 && x < DT_VOL_SIZE - 1 &&
-		y > 0 && y < DT_VOL_SIZE - 1 &&
-		z > 0 && z < DT_VOL_SIZE - 1)
-		return (z * DT_VOL_SIZE + y) * DT_VOL_SIZE + x;
-	else
-		return -1;
-}
-
-#endif
-
+#include "../Lowlevel/ISRVoxelAccess_DA.h"
 
 _CPU_AND_GPU_CODE_ inline bool castRay(Vector3f &pt_out, int x, int y, const float* voxelData, const Matrix4f& invH, const Vector4f& invIntrinsic, const Vector2f& maxminvalue, float maxvoxelrange)
 {
+	if (maxminvalue.x < 0) return false;
+	
 	Vector3f pt_camera_f, pt_block_s, pt_block_e, rayDirection, pt_result;
 	bool pt_found, inside_volume;
 	float sdfValue = MAX_SDF;
@@ -48,12 +16,12 @@ _CPU_AND_GPU_CODE_ inline bool castRay(Vector3f &pt_out, int x, int y, const flo
 
 	pt_camera_f.z = maxminvalue.x; // min
 	pt_camera_f.x = pt_camera_f.z * ((float(x) *invIntrinsic.x + invIntrinsic.z));
-	pt_camera_f.y = pt_camera_f.z * ((float(x) *invIntrinsic.y + invIntrinsic.w));
+	pt_camera_f.y = pt_camera_f.z * ((float(y) *invIntrinsic.y + invIntrinsic.w));
 	pt_block_s = (invH * pt_camera_f);
 
 	pt_camera_f.z = maxminvalue.y; // max
 	pt_camera_f.x = pt_camera_f.z * ((float(x) *invIntrinsic.x + invIntrinsic.z));
-	pt_camera_f.y = pt_camera_f.z * ((float(x) *invIntrinsic.y + invIntrinsic.w));
+	pt_camera_f.y = pt_camera_f.z * ((float(y) *invIntrinsic.y + invIntrinsic.w));
 	pt_block_e = (invH * pt_camera_f);
 
 	totalLengthMax = length(pt_block_e - pt_block_s);
@@ -67,11 +35,9 @@ _CPU_AND_GPU_CODE_ inline bool castRay(Vector3f &pt_out, int x, int y, const flo
 
 	while (totalLength<=totalLengthMax)
 	{
-		voxidx = pt2IntIdx(pt_result);
-		inside_volume = voxidx >= 0;
+		sdfValue = getSDFValue(pt_result, voxelData, inside_volume);
 		if (inside_volume)
 		{
-			sdfValue = voxelData[voxidx];
 			if (fabs(sdfValue)<=1.0f)
 			{
 				pt_found = true;
@@ -92,6 +58,32 @@ _CPU_AND_GPU_CODE_ inline bool castRay(Vector3f &pt_out, int x, int y, const flo
 	return pt_found;
 }
 
+_CPU_AND_GPU_CODE_ inline void computeNormalAndAngle(Vector3f & normal_out, float & angle_out, bool& foundPoint, const Vector3f& pt_in, const float *voxelData, const Vector3f & lightSource)
+{
+	if (!foundPoint) return;
+	normal_out = getSDFNormal(pt_in, voxelData, foundPoint);
+	if (!foundPoint) return;
+
+	float normScale = 1.0f / sqrtf(normal_out.x * normal_out.x + normal_out.y * normal_out.y + normal_out.z * normal_out.z);
+	normal_out *= normScale;
+
+	angle_out = normal_out.x * lightSource.x + normal_out.y * lightSource.y + normal_out.z * lightSource.z;
+	if (!(angle_out > 0.0)) foundPoint = false;
+}
+
+_CPU_AND_GPU_CODE_ inline void drawRendering(const bool & foundPoint, const float & angle, Vector4u & dest)
+{
+	if (!foundPoint)
+	{
+		dest = Vector4u((const uchar&)0);
+		return;
+	}
+
+	float outRes = (0.8f * angle + 0.2f) * 255.0f;
+	dest = Vector4u((uchar)outRes);
+}
+
+
 _CPU_AND_GPU_CODE_ inline void raycastAndRender(Vector4u *outImg, int x, int y, const Vector2i& imagesize, const float* voxelData, const Matrix4f& invH, const Vector4f& invIntrinsic, const Vector2f *minmaxdata, const Vector3f& lightsource, float maxvoxelrange)
 {
 	Vector3f pt_obj;
@@ -102,5 +94,9 @@ _CPU_AND_GPU_CODE_ inline void raycastAndRender(Vector4u *outImg, int x, int y, 
 	int idx = x + y*imagesize.x;
 
 	Vector2f minmaxvalue = minmaxdata[idx];
-	castRay(pt_obj, x, y, voxelData, invH, invIntrinsic, minmaxvalue,maxvoxelrange);
+	bool foundpoint = castRay(pt_obj, x, y, voxelData, invH, invIntrinsic, minmaxvalue,maxvoxelrange);
+	computeNormalAndAngle(normal_obj, angle, foundpoint, pt_obj, voxelData, lightsource);
+	drawRendering(foundpoint, angle, outImg[idx]);
 }
+
+

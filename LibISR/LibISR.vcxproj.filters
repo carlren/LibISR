@@ -147,6 +147,9 @@
     <ClInclude Include="Objects\Basic\ISRVisualisationState.h">
       <Filter>Objects\Basic</Filter>
     </ClInclude>
+    <ClInclude Include="Engines\Lowlevel\ISRVoxelAccess_DA.h">
+      <Filter>Engines\Lowlevel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="Engines\Trackers\ISRRGBDTracker_GPU.cu">

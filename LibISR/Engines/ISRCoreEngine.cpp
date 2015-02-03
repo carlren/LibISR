@@ -14,6 +14,7 @@ LibISR::Engine::ISRCoreEngine::ISRCoreEngine(const ISRLibSettings *settings, con
 
 	this->lowLevelEngine = new ISRLowlevelEngine_CPU();
 	this->tracker = new ISRRGBDTracker_CPU(settings->noTrackingObj);
+	this->visualizationEngine = new ISRVisualisationEngine_CPU();
 
 	this->frame = new ISRFrame(*calib, d_dize, rgb_size);
 	this->frame->histogram = new ISRHistogram(settings->noHistogramDim);
@@ -43,4 +44,27 @@ void LibISR::Engine::ISRCoreEngine::processFrame(void)
 
 	tracker->TrackObjects(frame, shapeUnion, trackingState);
 
+	ISRVisualisationState* myrendering = getRenderingState();
+	ISRVisualisationState* rendering0 = new ISRVisualisationState(myview->rawDepth->noDims, false);
+	ISRVisualisationState* rendering1 = new ISRVisualisationState(myview->rawDepth->noDims, false);
+
+
+	visualizationEngine->updateMinmaxmImage(rendering1->minmaxImage, trackingState->getPose(0)->getH(), myview->calib->intrinsics_d.A, myview->depth->noDims);
+	visualizationEngine->renderObject(rendering1, trackingState->getPose(0)->getInvH(), shapeUnion->getShape(0), myview->calib->intrinsics_d.getParam());
+
+	visualizationEngine->updateMinmaxmImage(rendering0->minmaxImage, trackingState->getPose(1)->getH(), myview->calib->intrinsics_d.A, myview->depth->noDims);
+	visualizationEngine->renderObject(rendering0, trackingState->getPose(1)->getInvH(), shapeUnion->getShape(1), myview->calib->intrinsics_d.getParam());
+
+	for (int i = 0; i < myrendering->outputImage->dataSize;i++)
+	{
+		if (rendering0->outputImage->GetData(false)[i]!=Vector4u(0,0,0,0))
+		{
+			if (rendering1->outputImage->GetData(false)[i] != Vector4u(0, 0, 0, 0))
+			{
+				myrendering->outputImage->GetData(false)[i] = (rendering0->outputImage->GetData(false)[i] / 2 + rendering1->outputImage->GetData(false)[i] / 2);
+			}
+			else myrendering->outputImage->GetData(false)[i] = rendering0->outputImage->GetData(false)[i];
+		}
+		else myrendering->outputImage->GetData(false)[i] = rendering1->outputImage->GetData(false)[i];
+	}
 }

@@ -19,16 +19,19 @@ using namespace LibISRUtils;
 
 void main(int argc, char** argv)
 {
-	//const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
-	//const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
+	const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
+	const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
+	const char *calibFile = "../Data/Calib_kinect1.txt";
+	const char *outName = "../Data/out/%04i.jpg";
+
 
 	//const char *colorImgSource = "E:/Data/k1_cut/c-%04i.ppm";
 	//const char *depthImgSource = "E:/Data/k1_cut/d-%04i.pgm";
 	//const char *calibFile = "../Data/Calib_kinect1.txt";
 
-	const char *colorImgSource = "E:/Libisr/k1_cut/cr0-%04i.ppm";
-	const char *depthImgSource = "E:/Libisr/k1_cut/d-%04i.pgm";
-	const char *calibFile = "../Data/calib.txt";
+	//const char *colorImgSource = "E:/Libisr/k1_cut/cr0-%04i.ppm";
+	//const char *depthImgSource = "E:/Libisr/k1_cut/d-%04i.pgm";
+	//const char *calibFile = "../Data/calib.txt";
 
 	const char *sdfFile = "../Data/newCut.bin";
 
@@ -98,7 +101,9 @@ void main(int argc, char** argv)
 		printf("\rAverage Tracking Time : [%f] ms = [%d] fps", processedTime / count, (int)(count*1000 / processedTime));
 
 		Vector4i bb = coreEngine->frame->imgHierarchy->levels[0].boundingbox;
-		memcpy(depthFrame->imageData, (char*)coreEngine->getView()->rgb->GetData(false), 640 * 480 * sizeof(char) * 4);
+		//memcpy(depthFrame->imageData, (char*)coreEngine->getView()->rgb->GetData(false), 640 * 480 * sizeof(char) * 4);
+		memcpy(depthFrame->imageData, (char*)coreEngine->getRenderingState()->outputImage->GetData(false), 640 * 480 * sizeof(char) * 4); H.setIdentity(); T = Vector3f(0, 0, 0);
+
 		Matrix4f M = coreEngine->trackingState->getPose(0)->getH();
 		for (int i = 0; i < 4; i++)
 		{
@@ -129,6 +134,11 @@ void main(int argc, char** argv)
 		cvDrawLine(depthFrame, p4, p1, bbcolor, 2);
 
 		cvShowImage("Depth", depthFrame);
+
+		//char tmpchar[200];
+		//sprintf(tmpchar, outName, count);
+		//cvSaveImage(tmpchar, depthFrame);
+
 		count++;
 	}
 	cvDestroyAllWindows();
