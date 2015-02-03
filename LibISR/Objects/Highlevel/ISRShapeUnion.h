@@ -25,10 +25,10 @@ namespace LibISR
 			int nObjs;
 			bool useGPU;
 
-			const ISRShape_ptr getShapeList() const { return shapes; }
+			_CPU_AND_GPU_CODE_ const ISRShape_ptr getShapeList() const { return shapes; }
 
-			const ISRShape_ptr getShape(int id) const { return &shapes[id]; }
-			ISRShape_ptr getShape(int id) { return &shapes[id]; }
+			_CPU_AND_GPU_CODE_ const ISRShape_ptr getShape(int id) const { return &shapes[id]; }
+			_CPU_AND_GPU_CODE_ ISRShape_ptr getShape(int id) { return &shapes[id]; }
 
 			ISRShapeUnion(int count, bool usegpu)
 			{

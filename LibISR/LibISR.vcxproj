@@ -60,6 +60,7 @@
     <ClInclude Include="Objects\Highlevel\ISRShapeUnion.h" />
     <ClInclude Include="Objects\Highlevel\ISRTrackingState.h" />
     <ClInclude Include="Utils\ISRCalibIO.h" />
+    <ClInclude Include="Utils\ISRCUDAUtils.h" />
     <ClInclude Include="Utils\ISRLibSettings.h" />
     <ClInclude Include="Utils\LibISRDefine.h" />
   </ItemGroup>

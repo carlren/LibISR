@@ -24,7 +24,7 @@ namespace LibISR
 		private:
 
 			// rotation matrix here is already column major
-			Matrix3f getRotationMatrixFromMRP(const Vector3f &r)
+			_CPU_AND_GPU_CODE_ Matrix3f getRotationMatrixFromMRP(const Vector3f &r)
 			{
 				Matrix3f outR;
 
@@ -46,7 +46,7 @@ namespace LibISR
 			}
 
 			// the transformation matrix here is already column major
-			Matrix4f getProjectionMatrixFromRT(const Vector3f &r, const Vector3f &t)
+			_CPU_AND_GPU_CODE_ Matrix4f getProjectionMatrixFromRT(const Vector3f &r, const Vector3f &t)
 			{
 				Matrix3f outR = getRotationMatrixFromMRP(r);
 				
@@ -60,7 +60,7 @@ namespace LibISR
 			}
 
 			// get the transformation matrix from pose parameters step = [t' r']
-			Matrix4f getProjectionMatrixFromParam(const float* step)
+			_CPU_AND_GPU_CODE_ Matrix4f getProjectionMatrixFromParam(const float* step)
 			{
 				Vector3f dt(step), dr(&step[3]);
 				return getProjectionMatrixFromRT(dr, dt);
@@ -69,40 +69,40 @@ namespace LibISR
 		public:
 
 			// set values
-			void setFromH(const Matrix4f &M){ H = M; H.inv(invH); }
-			void setFromInvH(const Matrix4f &M){ invH = M; invH.inv(H); }
+			_CPU_AND_GPU_CODE_ void setFromH(const Matrix4f &M){ H = M; H.inv(invH); }
+			_CPU_AND_GPU_CODE_ void setFromInvH(const Matrix4f &M){ invH = M; invH.inv(H); }
 
-			void setHFromRT(const Vector3f &r, const Vector3f &t){ H = getProjectionMatrixFromRT(r, t); H.inv(invH);}
-			void setHFromParam(const float* param){ H = getProjectionMatrixFromParam(param); H.inv(invH);}
+			_CPU_AND_GPU_CODE_ void setHFromRT(const Vector3f &r, const Vector3f &t){ H = getProjectionMatrixFromRT(r, t); H.inv(invH); }
+			_CPU_AND_GPU_CODE_ void setHFromParam(const float* param){ H = getProjectionMatrixFromParam(param); H.inv(invH); }
 
-			void setInvHFromRT(const Vector3f &r, const Vector3f &t){ invH = getProjectionMatrixFromRT(r, t); invH.inv(H); }
-			void setInvHFromParam(const float* param){ invH = getProjectionMatrixFromParam(param); invH.inv(H); }
+			_CPU_AND_GPU_CODE_ void setInvHFromRT(const Vector3f &r, const Vector3f &t){ invH = getProjectionMatrixFromRT(r, t); invH.inv(H); }
+			_CPU_AND_GPU_CODE_ void setInvHFromParam(const float* param){ invH = getProjectionMatrixFromParam(param); invH.inv(H); }
 
 			//get values
-			const Matrix4f& getH() const { return H;}
-			const Matrix4f& getInvH() const { return invH; }
+			_CPU_AND_GPU_CODE_ const Matrix4f& getH() const { return H; }
+			_CPU_AND_GPU_CODE_ const Matrix4f& getInvH() const { return invH; }
 
 			// apply incremental change to back projection matrix
-			void applyIncrementalChangeToInvH(const Vector3f &dr, const Vector3f &dt)
+			_CPU_AND_GPU_CODE_ void applyIncrementalChangeToInvH(const Vector3f &dr, const Vector3f &dt)
 			{
 				Matrix4f deltaM = getProjectionMatrixFromRT(dr, dt);
 				invH = deltaM*invH; invH.inv(H);
 			}
 
-			void applyIncrementalChangeToInvH(const float* step)
+			_CPU_AND_GPU_CODE_ void applyIncrementalChangeToInvH(const float* step)
 			{
 				Matrix4f deltaM = getProjectionMatrixFromParam(step);
 				invH = deltaM*invH; invH.inv(H);
 			}
 
 			// apply incremental change to projection matrix
-			void applyIncrementalChangeToH(const Vector3f &dr, const Vector3f &dt)
+			_CPU_AND_GPU_CODE_ void applyIncrementalChangeToH(const Vector3f &dr, const Vector3f &dt)
 			{
 				Matrix4f deltaM = getProjectionMatrixFromRT(dr, dt);
 				H = deltaM*H; H.inv(invH);
 			}
 
-			void applyIncrementalChangeToH(const float* step)
+			_CPU_AND_GPU_CODE_ void applyIncrementalChangeToH(const float* step)
 			{
 				Matrix4f deltaM = getProjectionMatrixFromParam(step);
 				H = deltaM*H; H.inv(invH);
