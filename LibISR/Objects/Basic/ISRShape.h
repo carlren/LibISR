@@ -31,8 +31,8 @@ namespace LibISR
 			bool modelShared;
 			bool modelLoaded;
 
-			_CPU_AND_GPU_CODE_ inline float* getSDFVoxel(){ return dt; }
-			_CPU_AND_GPU_CODE_ inline const float* getSDFVoxel() const { return dt; }
+			_CPU_AND_GPU_CODE_ float* getSDFVoxel(){ return dt; }
+			_CPU_AND_GPU_CODE_ const float* getSDFVoxel() const { return dt; }
 
 			void  loadShapeFromFile(const char* fileName, Vector3i size)
 			{

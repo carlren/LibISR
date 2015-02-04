@@ -30,18 +30,38 @@ namespace LibISR
 			_CPU_AND_GPU_CODE_ const ISRShape_ptr getShape(int id) const { return &shapes[id]; }
 			_CPU_AND_GPU_CODE_ ISRShape_ptr getShape(int id) { return &shapes[id]; }
 
+			void loadShapeFromFile(const char* fileName, Vector3i size, int id)
+			{
+				if (useGPU)
+				{
+				}
+				else
+				{
+					shapes[id].loadShapeFromFile(fileName, size);
+				}
+			}
+
 			ISRShapeUnion(int count, bool usegpu)
 			{
 				nObjs = count;
-				shapes = new ISRShape[nObjs];
 				useGPU = usegpu;
-				for (int i = 0; i < nObjs; i++) shapes[i].initialize(useGPU, i);
+
+				ISRShape_ptr shapes_host = new ISRShape[nObjs];				
+				for (int i = 0; i < nObjs; i++) shapes_host[i].initialize(useGPU, i);
+
+				if (useGPU)
+				{
+					ORcudaSafeCall(cudaMalloc((void**)&shapes, sizeof(ISRShape)*nObjs));
+					ORcudaSafeCall(cudaMemcpy(shapes, shapes_host, sizeof(ISRShape)*nObjs, cudaMemcpyHostToDevice));
+					
+					free(shapes_host);
+				}
+				else shapes = shapes_host;
 			}
 
 			~ISRShapeUnion()
 			{
-				delete shapes;
-				//for (int i = 0; i < nObjs; i++) delete &shapes[i];
+				if (useGPU)  ORcudaSafeCall(cudaFree(shapes)); else delete shapes;
 			}
 
 		};

@@ -29,9 +29,9 @@ _CPU_AND_GPU_CODE_ inline bool castRay(Vector3f &pt_out, int x, int y, const flo
 	pt_result = pt_block_s;
 
 	step_fine = totalLengthMax * maxvoxelrange;
-	step_coarse = step_fine * 10;
-
+	step_coarse = totalLengthMax * 0.05;
 	pt_found = false;
+
 
 	while (totalLength<=totalLengthMax)
 	{

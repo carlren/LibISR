@@ -11,8 +11,8 @@ using namespace LibISR::Engine;
 using namespace LibISR::Objects;
 
 __global__ void evaluateEnergy_device(float* e_device, Vector4f* ptcloud_ptr, ISRShapeUnion* shapeunion, ISRTrackingState* state, int count);
-
-
+__global__ void computeJacobianAndHessian_device(float* g_device, float* h_device, Vector4f* ptcloud_ptr, ISRShapeUnion* shapeunion, ISRTrackingState* state, int count);
+__global__ void lableForegroundPixels_device(Vector4f* ptcloud_ptr,Vector4f* rgbd_ptr,ISRShapeUnion* shapeunion, ISRTrackingState* state, int count);
 
 LibISR::Engine::ISRRGBDTracker_GPU::ISRRGBDTracker_GPU(int nObjs, const Vector2i& imgSize) :ISRRGBDTracker(nObjs, true)
 {
@@ -55,7 +55,7 @@ void LibISR::Engine::ISRRGBDTracker_GPU::evaluateEnergy(float *energy, Objects::
 
 	ORcudaSafeCall(cudaMemset(energy_dvic, 0, sizeof(float)*gridSize.x));
 
-	evaluateEnergy_device <<<gridSize, blockSize >>> (energy_dvic, ptcloud_ptr, shapeUnion, trackerState, count);
+	evaluateEnergy_device << <gridSize, blockSize >> > (energy_dvic, ptcloud_ptr, shapeUnion, trackerState, count);
 	
 	ORcudaSafeCall(cudaMemcpy(energy_host,energy_dvic,sizeof(float)*gridSize.x,cudaMemcpyDeviceToHost));
 
@@ -69,28 +69,32 @@ void LibISR::Engine::ISRRGBDTracker_GPU::evaluateEnergy(float *energy, Objects::
 void LibISR::Engine::ISRRGBDTracker_GPU::computeJacobianAndHessian(float *gradient, float *hessian, Objects::ISRTrackingState * trackerState) const
 {
 	int count = this->frame->ptCloud->dataSize;
-	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(false);
-
 	int noPara = trackerState->numPoses() * 6;
 	int noParaSQ = noPara*noPara;
 
+	dim3 blockSize(256, 1);
+	dim3 gridSize((int)ceil((float)count / (float)blockSize.x), 1);
+
+	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(true);
+
+	ORcudaSafeCall(cudaMemset(gradient_divc, 0, sizeof(float)*gridSize.x*noPara));
+	ORcudaSafeCall(cudaMemset(hessian_divc, 0, sizeof(float)*gridSize.x*noParaSQ));
+
+	computeJacobianAndHessian_device << <gridSize, blockSize >> > (gradient_divc, hessian_divc, ptcloud_ptr, shapeUnion, trackerState, count);
+
+	ORcudaSafeCall(cudaMemcpy(gradient_host, gradient_divc, sizeof(float)*gridSize.x*noPara, cudaMemcpyDeviceToHost));
+	ORcudaSafeCall(cudaMemcpy(hessian_host, hessian_divc, sizeof(float)*gridSize.x*noParaSQ, cudaMemcpyDeviceToHost));
+
 	float *globalGradient = new float[noPara];
 	float *globalHessian = new float[noParaSQ];
-	float *jacobian = new float[noPara];
 
 	for (int i = 0; i < noPara; i++) globalGradient[i] = 0.0f;
 	for (int i = 0; i < noParaSQ; i++) globalHessian[i] = 0.0f;
 
-	for (int i = 0; i < count; i++)
+	for (int i = 0; i < gridSize.x; i++)
 	{
-		if (computePerPixelJacobian(jacobian, ptcloud_ptr[i], shapeUnion, trackerState))
-		{
-			for (int a = 0, counter = 0; a < noPara; a++)
-			{
-				globalGradient[a] += jacobian[a];
-				for (int b = 0; b < noPara; b++, counter++) globalHessian[counter] += jacobian[a] * jacobian[b];
-			}
-		}
+		for (int p = 0; p < noPara; p++)  globalGradient[p] += gradient_host[i * noPara + p];
+		for (int p = 0; p < noParaSQ; p++)  globalHessian[p] += hessian_host[i * noParaSQ + p];
 	}
 
 	for (int r = 0; r < noPara; ++r) gradient[r] = globalGradient[r];
@@ -100,21 +104,14 @@ void LibISR::Engine::ISRRGBDTracker_GPU::computeJacobianAndHessian(float *gradie
 void LibISR::Engine::ISRRGBDTracker_GPU::lableForegroundPixels(Objects::ISRTrackingState * trackerState)
 {
 	int count = this->frame->ptCloud->dataSize;
-	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(false);
-	Vector4f* rgbd_ptr = this->frame->currentLevel->rgbd->GetData(false);
 
-	float dt;
-	int totalpix = 0;
+	dim3 blockSize(256, 1);
+	dim3 gridSize((int)ceil((float)count / (float)blockSize.x), 1);
 
-	for (int i = 0; i < count; i++)
-	{
-		if (ptcloud_ptr[i].w > 0) // in the bounding box and have depth
-		{
-			dt = findPerPixelDT(ptcloud_ptr[i], this->shapeUnion, trackerState);
-			if (fabs(dt) <= 2) { rgbd_ptr[i].w = HIST_FG_PIXEL; }
-			else { rgbd_ptr[i].w = HIST_BG_PIXEL; }
-		}
-	}
+	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(true);
+	Vector4f* rgbd_ptr = this->frame->currentLevel->rgbd->GetData(true);
+
+	lableForegroundPixels_device << <gridSize, blockSize >> >(ptcloud_ptr, rgbd_ptr, shapeUnion, trackerState, count);
 }
 
 
@@ -143,5 +140,95 @@ __global__ void evaluateEnergy_device(float* e_device, Vector4f* ptcloud_ptr, IS
 		if (locId_local < 32) warpReduce(dim_shared, locId_local);
 
 		if (locId_local == 0) e_device[blockIdx.x] = dim_shared[locId_local];
+	}
+}
+
+__global__ void computeJacobianAndHessian_device(float* g_device, float* h_device, Vector4f* ptcloud_ptr, ISRShapeUnion* shapeunion, ISRTrackingState* state, int count)
+{
+	int locId_global = threadIdx.x + blockIdx.x * blockDim.x, locId_local = threadIdx.x;
+
+	__shared__ float dim_shared[256];
+	__shared__ bool shouldAdd; bool hasValidData = false;
+
+	float localGradient[6], localHessian[21];
+	int noPara = state->numPoses() * 6;
+	int noParaSQ = noPara*noPara;
+	shouldAdd = false;
+
+	__syncthreads();
+
+	if (locId_global < count)
+	{
+		Vector4f cPt = ptcloud_ptr[locId_global];
+		if (cPt.w > -1.0f)
+		{
+			if (computePerPixelJacobian(localGradient, cPt, shapeunion, state))
+			{
+				shouldAdd = true; hasValidData = true;
+				for (int r = 0, counter = 0; r < noPara; r++) for (int c = 0; c <= r; c++, counter++)
+					localHessian[counter] = localGradient[r] * localGradient[c];
+			}
+		}
+	}
+
+	__syncthreads();
+
+	if (!hasValidData && shouldAdd)
+	{
+		for (int i = 0; i < noPara; i++) localGradient[i] = 0.0f;
+		for (int i = 0; i < noParaSQ; i++) localHessian[i] = 0.0f;
+	}
+
+	if (shouldAdd)
+	{
+		//reduction for gradient
+		for (int paraId = 0; paraId < noPara; paraId++)
+		{
+			dim_shared[locId_local] = localGradient[paraId];
+			__syncthreads();
+
+			if (locId_local < 128) dim_shared[locId_local] += dim_shared[locId_local + 128];
+			__syncthreads();
+			if (locId_local < 64) dim_shared[locId_local] += dim_shared[locId_local + 64];
+			__syncthreads();
+
+			if (locId_local < 32) warpReduce(dim_shared, locId_local);
+
+			if (locId_local == 0) g_device[blockIdx.x * noPara + paraId] = dim_shared[locId_local];
+		}
+
+		__syncthreads();
+
+		//reduction for hessian
+		for (int paraId = 0; paraId < noParaSQ; paraId++)
+		{
+			dim_shared[locId_local] = localHessian[paraId];
+			__syncthreads();
+
+			if (locId_local < 128) dim_shared[locId_local] += dim_shared[locId_local + 128];
+			__syncthreads();
+			if (locId_local < 64) dim_shared[locId_local] += dim_shared[locId_local + 64];
+			__syncthreads();
+
+			if (locId_local < 32) warpReduce(dim_shared, locId_local);
+
+			if (locId_local == 0) h_device[blockIdx.x * noParaSQ + paraId] = dim_shared[locId_local];
+		}
+	}
+
+}
+
+__global__ void lableForegroundPixels_device(Vector4f* ptcloud_ptr, Vector4f* rgbd_ptr, ISRShapeUnion* shapeunion, ISRTrackingState* state, int count)
+{
+	int locId_global = threadIdx.x + blockIdx.x * blockDim.x, locId_local = threadIdx.x;
+
+	if (locId_global < count)
+	{
+		if (ptcloud_ptr[locId_global].w > 0.0f)
+		{
+			float dt = findPerPixelDT(ptcloud_ptr[locId_global], shapeunion, state);
+			if (fabs(dt) <= 2) { rgbd_ptr[locId_global].w = HIST_FG_PIXEL; }
+			else { rgbd_ptr[locId_global].w = HIST_BG_PIXEL; }
+		}
 	}
 }
