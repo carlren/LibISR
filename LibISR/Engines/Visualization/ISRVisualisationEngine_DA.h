@@ -29,9 +29,9 @@ _CPU_AND_GPU_CODE_ inline bool castRay(Vector3f &pt_out, int x, int y, const flo
 	pt_result = pt_block_s;
 
 	step_fine = totalLengthMax * maxvoxelrange;
-	step_coarse = totalLengthMax * 0.05;
-	pt_found = false;
+	step_coarse = step_fine * 10;
 
+	pt_found = false;
 
 	while (totalLength<=totalLengthMax)
 	{
@@ -68,7 +68,7 @@ _CPU_AND_GPU_CODE_ inline void computeNormalAndAngle(Vector3f & normal_out, floa
 	normal_out *= normScale;
 
 	angle_out = normal_out.x * lightSource.x + normal_out.y * lightSource.y + normal_out.z * lightSource.z;
-	if (!(angle_out > 0.0)) foundPoint = false;
+	if (!(angle_out > 0.0)) angle_out=0;
 }
 
 _CPU_AND_GPU_CODE_ inline void drawRendering(const bool & foundPoint, const float & angle, Vector4u & dest)
@@ -79,7 +79,7 @@ _CPU_AND_GPU_CODE_ inline void drawRendering(const bool & foundPoint, const floa
 		return;
 	}
 
-	float outRes = (0.8f * angle + 0.2f) * 255.0f;
+	float outRes = (0.6f * angle + 0.4f) * 255.0f;
 	dest = Vector4u((uchar)outRes);
 }
 
@@ -100,3 +100,57 @@ _CPU_AND_GPU_CODE_ inline void raycastAndRender(Vector4u *outImg, int x, int y, 
 }
 
 
+_CPU_AND_GPU_CODE_ inline void raycastAndRenderDepth(ushort *outImg, int x, int y, const Vector2i& imagesize, const float* voxelData, const Matrix4f& invH, const Vector4f& invIntrinsic, const Vector2f *minmaxdata, float maxvoxelrange)
+{
+	Vector3f pt_obj,pt_cam;
+	Vector3f normal_obj;
+
+	Matrix4f H, tmpinvH = invH; tmpinvH.inv(H);
+	float angle;
+
+	int idx = x + y*imagesize.x;
+
+	Vector2f minmaxvalue = minmaxdata[idx];
+	bool foundpoint = castRay(pt_obj, x, y, voxelData, invH, invIntrinsic, minmaxvalue, maxvoxelrange);
+	
+
+	if (foundpoint)
+	{
+		pt_cam = H*pt_obj;
+		outImg[idx] = (ushort)(65535*pt_cam.z);
+	}	
+	else outImg[idx] = 0;
+}
+
+_CPU_AND_GPU_CODE_ inline void raycastAndRenderWithDepthAndSurfaceNormal(ushort *outImgD, Vector4u *outImgGray, Vector4u* outImgNormal, int x, int y, const Vector2i& imagesize, const float* voxelData, const Matrix4f& invH, const Vector4f& invIntrinsic, const Vector2f *minmaxdata, const Vector3f& lightsource, float maxvoxelrange)
+{
+	Vector3f pt_obj, pt_cam;
+	Vector3f normal_obj;
+
+	Matrix4f H, tmpinvH = invH; tmpinvH.inv(H);
+	float angle;
+
+	int idx = x + y*imagesize.x;
+
+	Vector2f minmaxvalue = minmaxdata[idx];
+	bool foundpoint = castRay(pt_obj, x, y, voxelData, invH, invIntrinsic, minmaxvalue, maxvoxelrange);
+	
+	if (foundpoint)
+	{
+		pt_cam = H*pt_obj;
+		outImgD[idx] = (ushort)(65535 * pt_cam.z);
+	}
+	else outImgD[idx] = 0;
+
+	computeNormalAndAngle(normal_obj, angle, foundpoint, pt_obj, voxelData, lightsource);
+		
+	if (foundpoint)
+	{
+		outImgNormal[idx].r = (uchar)((0.4 + normal_obj.r*0.6)*255.0f);
+		outImgNormal[idx].g = (uchar)((0.4 + normal_obj.g*0.6)*255.0f);
+		outImgNormal[idx].b = (uchar)((0.4 + normal_obj.b*0.6)*255.0f);
+	}
+	else outImgNormal[idx] = Vector4u((uchar)0);
+
+	drawRendering(foundpoint, angle, outImgGray[idx]);
+}

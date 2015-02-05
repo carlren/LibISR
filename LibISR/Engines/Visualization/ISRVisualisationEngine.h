@@ -18,6 +18,8 @@ namespace LibISR
 
 			virtual void renderImage(Objects::ISRVisualisationState* rendering, const Objects::ISRTrackingState* state, const Objects::ISRShapeUnion* shapes, const Vector4f& intrinsic) = 0;
 			virtual void renderObject(Objects::ISRVisualisationState* rendering, const Matrix4f& invH, const Objects::ISRShape_ptr shape, const Vector4f& intrinsic) = 0;
+			virtual void renderDepth(ISRUShortImage* renderedDepth, Objects::ISRVisualisationState* rendering, const Matrix4f& invH, const Objects::ISRShape_ptr shape, const Vector4f& intrinsic) = 0;
+			virtual void renderDepthNormalAndObject(ISRUShortImage* renderedDepth,ISRUChar4Image* renderNormal, Objects::ISRVisualisationState* rendering, const Matrix4f& invH, const Objects::ISRShape_ptr shape, const Vector4f& intrinsic) = 0;
 
 			void updateMinmaxmImage(ISRFloat2Image* minmaximg, const Matrix4f& H, const Matrix3f& K, const Vector2i& imgsize);
 		};
