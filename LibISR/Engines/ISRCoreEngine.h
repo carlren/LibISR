@@ -9,6 +9,7 @@
 #include "Lowlevel/ISRLowlevelEngine.h"
 #include "Lowlevel/ISRLowlevelEngine_DA.h"
 #include "Lowlevel/ISRLowlevelEngine_CPU.h"
+#include "Lowlevel/ISRLowlevelEngine_GPU.h"
 
 #include "Trackers/ISRRGBDTracker.h"
 #include "Trackers/ISRRGBDTracker_DA.h"

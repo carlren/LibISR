@@ -18,27 +18,37 @@ namespace LibISR
 		{
 		private:
 
-			ISRShape_ptr shapes;
+			ISRShape_ptr shapes_device;
+			ISRShape_ptr shapes_host;
 
 		public:
 
 			int nObjs;
 			bool useGPU;
 
-			_CPU_AND_GPU_CODE_ const ISRShape_ptr getShapeList() const { return shapes; }
+			_CPU_AND_GPU_CODE_ const ISRShape_ptr getShapeList(bool fromgpu=false) const { if (fromgpu) return shapes_device; else return shapes_host; }
 
-			_CPU_AND_GPU_CODE_ const ISRShape_ptr getShape(int id) const { return &shapes[id]; }
-			_CPU_AND_GPU_CODE_ ISRShape_ptr getShape(int id) { return &shapes[id]; }
+			_CPU_AND_GPU_CODE_ const ISRShape_ptr getShape(int id, bool fromgpu=false) const { if (fromgpu) return &shapes_device[id]; else return &shapes_host[id]; }
+			_CPU_AND_GPU_CODE_ ISRShape_ptr getShape(int id, bool fromgpu=false) { if (fromgpu) return &shapes_device[id]; else return &shapes_host[id]; }
 
+
+			// these functions will only be called from CPU
 			void loadShapeFromFile(const char* fileName, Vector3i size, int id)
 			{
-				if (useGPU)
-				{
-				}
-				else
-				{
-					shapes[id].loadShapeFromFile(fileName, size);
-				}
+				shapes_host[id].loadShapeFromFile(fileName, size);
+				if (useGPU) ORcudaSafeCall(cudaMemcpy(shapes_device, shapes_host, sizeof(ISRShape)*nObjs, cudaMemcpyHostToDevice));
+			}
+
+			void loadShapeFromExistingShape(const ISRShape &shape, int id)
+			{
+				shapes_host[id].loadShapeFromExistingShape(shape);
+				if (useGPU) ORcudaSafeCall(cudaMemcpy(shapes_device, shapes_host, sizeof(ISRShape)*nObjs, cudaMemcpyHostToDevice));
+			}
+			
+			void shareSDFWithExistingShape(ISRShape& shape, int id)
+			{
+				shapes_host[id].shareSDFWithExistingShape(shape);
+				if (useGPU) ORcudaSafeCall(cudaMemcpy(shapes_device, shapes_host, sizeof(ISRShape)*nObjs, cudaMemcpyHostToDevice));
 			}
 
 			ISRShapeUnion(int count, bool usegpu)
@@ -46,22 +56,20 @@ namespace LibISR
 				nObjs = count;
 				useGPU = usegpu;
 
-				ISRShape_ptr shapes_host = new ISRShape[nObjs];				
+				shapes_host = new ISRShape[nObjs];				
 				for (int i = 0; i < nObjs; i++) shapes_host[i].initialize(useGPU, i);
 
 				if (useGPU)
 				{
-					ORcudaSafeCall(cudaMalloc((void**)&shapes, sizeof(ISRShape)*nObjs));
-					ORcudaSafeCall(cudaMemcpy(shapes, shapes_host, sizeof(ISRShape)*nObjs, cudaMemcpyHostToDevice));
-					
-					free(shapes_host);
+					ORcudaSafeCall(cudaMalloc((void**)&shapes_device, sizeof(ISRShape)*nObjs));
+					ORcudaSafeCall(cudaMemcpy(shapes_device, shapes_host, sizeof(ISRShape)*nObjs, cudaMemcpyHostToDevice));
 				}
-				else shapes = shapes_host;
 			}
 
 			~ISRShapeUnion()
 			{
-				if (useGPU)  ORcudaSafeCall(cudaFree(shapes)); else delete shapes;
+				if (useGPU)  ORcudaSafeCall(cudaFree(shapes_device));
+				delete shapes_host;
 			}
 
 		};

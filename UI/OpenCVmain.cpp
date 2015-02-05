@@ -19,14 +19,14 @@ using namespace LibISRUtils;
 
 void main(int argc, char** argv)
 {
-	const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
-	const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
-	const char *calibFile = "../Data/Calib_kinect1.txt";
-	const char *outName = "../Data/out/%04i.jpg";
-
-	//const char *colorImgSource = "E:/Data/k1_cut/c-%04i.ppm";
-	//const char *depthImgSource = "E:/Data/k1_cut/d-%04i.pgm";
+	//const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
+	//const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
 	//const char *calibFile = "../Data/Calib_kinect1.txt";
+	//const char *outName = "../Data/out/%04i.jpg";
+
+	const char *colorImgSource = "E:/Data/k1_cut/c-%04i.ppm";
+	const char *depthImgSource = "E:/Data/k1_cut/d-%04i.pgm";
+	const char *calibFile = "../Data/Calib_kinect1.txt";
 
 	//const char *colorImgSource = "E:/Libisr/k1_cut/cr0-%04i.ppm";
 	//const char *depthImgSource = "E:/Libisr/k1_cut/d-%04i.pgm";
@@ -48,12 +48,12 @@ void main(int argc, char** argv)
 
 	ISRCoreEngine *coreEngine = new ISRCoreEngine(&isrSettings, &imageSource->calib, imageSource->getDepthImageSize(), imageSource->getRGBImageSize());
 
-	coreEngine->shapeUnion->getShape(0)->loadShapeFromFile(sdfFile, Vector3i(DT_VOL_SIZE, DT_VOL_SIZE, DT_VOL_SIZE));
-	coreEngine->shapeUnion->getShape(1)->shareSDFWithExistingShape(*coreEngine->shapeUnion->getShape(0));
+	coreEngine->shapeUnion->loadShapeFromFile(sdfFile, Vector3i(DT_VOL_SIZE, DT_VOL_SIZE, DT_VOL_SIZE), 0);
+	coreEngine->shapeUnion->shareSDFWithExistingShape(*coreEngine->shapeUnion->getShape(0), 1);
 
+	// initialize color histogram from mask image
 	ISRUChar4Image *histogramimage = new ISRUChar4Image(imageSource->getDepthImageSize(), false);
 	ISRUChar4Image *histogrammask = new ISRUChar4Image(imageSource->getDepthImageSize(), false);
-	
 	if (!ReadImageFromFile(histogramimage, histogram_rgb)) { printf("wrong!\n"); return; }
 	if (!ReadImageFromFile(histogrammask, histogram_mask)) { printf("wrong!\n"); return;}
 	coreEngine->frame->histogram->buildHistogram(histogramimage, histogrammask);

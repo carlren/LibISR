@@ -33,6 +33,7 @@
     <ClInclude Include="Engines\Lowlevel\ISRLowlevelEngine.h" />
     <ClInclude Include="Engines\Lowlevel\ISRLowlevelEngine_CPU.h" />
     <ClInclude Include="Engines\Lowlevel\ISRLowlevelEngine_DA.h" />
+    <ClInclude Include="Engines\Lowlevel\ISRLowlevelEngine_GPU.h" />
     <ClInclude Include="Engines\Lowlevel\ISRVoxelAccess_DA.h" />
     <ClInclude Include="Engines\Trackers\ISRDepthTracker.h" />
     <ClInclude Include="Engines\Trackers\ISRRGBDTracker.h" />
@@ -65,6 +66,7 @@
     <ClInclude Include="Utils\LibISRDefine.h" />
   </ItemGroup>
   <ItemGroup>
+    <CudaCompile Include="Engines\Lowlevel\ISRLowlevelEngine_GPU.cu" />
     <CudaCompile Include="Engines\Trackers\ISRRGBDTracker_GPU.cu" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

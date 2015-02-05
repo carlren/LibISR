@@ -153,10 +153,16 @@
     <ClInclude Include="Utils\ISRCUDAUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Engines\Lowlevel\ISRLowlevelEngine_GPU.h">
+      <Filter>Engines\Lowlevel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="Engines\Trackers\ISRRGBDTracker_GPU.cu">
       <Filter>Engines\Trackers</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Engines\Lowlevel\ISRLowlevelEngine_GPU.cu">
+      <Filter>Engines\Lowlevel</Filter>
     </CudaCompile>
   </ItemGroup>
 </Project>

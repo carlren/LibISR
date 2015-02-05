@@ -9,41 +9,59 @@ using namespace LibISR::Objects;
 LibISR::Engine::ISRCoreEngine::ISRCoreEngine(const ISRLibSettings *settings, const ISRCalib *calib, Vector2i d_dize, Vector2i rgb_size)
 {
 	this->settings = new ISRLibSettings(*settings);
-	this->shapeUnion = new ISRShapeUnion(settings->noTrackingObj, settings->useGPU);
+	this->shapeUnion = new ISRShapeUnion(settings->noTrackingObj, false);
 	this->trackingState = new ISRTrackingState(settings->noTrackingObj);
 
-	this->lowLevelEngine = new ISRLowlevelEngine_CPU();
+	if (settings->useGPU)
+	{
+		this->lowLevelEngine = new ISRLowlevelEngine_GPU();
+	}
+	else
+	{
+		this->lowLevelEngine = new ISRLowlevelEngine_CPU();
+	}
+	
+
 	this->tracker = new ISRRGBDTracker_CPU(settings->noTrackingObj);
 	this->visualizationEngine = new ISRVisualisationEngine_CPU();
 
-	this->frame = new ISRFrame(*calib, d_dize, rgb_size);
-	this->frame->histogram = new ISRHistogram(settings->noHistogramDim);
+	this->frame = new ISRFrame(*calib, d_dize, rgb_size, settings->useGPU);
+	this->frame->histogram = new ISRHistogram(settings->noHistogramDim, settings->useGPU);
 }
 
 void LibISR::Engine::ISRCoreEngine::processFrame(void)
 {
 	ISRView* myview = getView();
 	ISRImageHierarchy* myhierarchy = getImageHierarchy();
-	
+
 	myhierarchy->levels[0].boundingbox = lowLevelEngine->findBoundingBoxFromCurrentState(trackingState, myview->calib->intrinsics_d.A, myview->depth->noDims);
 	myhierarchy->levels[0].intrinsic = myview->calib->intrinsics_d.getParam();
 
+	if (settings->useGPU)
+	{
+		myview->rawDepth->UpdateDeviceFromHost();
+		myview->rgb->UpdateDeviceFromHost();
+	}
+
 	lowLevelEngine->prepareAlignedRGBDData(myhierarchy->levels[0].rgbd, myview->rawDepth, myview->rgb, &myview->calib->homo_depth_to_color);
 
-	for (int i = 1; i < myhierarchy->noLevels;i++)
+	for (int i = 1; i < myhierarchy->noLevels; i++)
 	{
 		myhierarchy->levels[i].intrinsic = myhierarchy->levels[i - 1].intrinsic / 2;
 		myhierarchy->levels[i].boundingbox = myhierarchy->levels[i - 1].boundingbox / 2;
 		lowLevelEngine->subsampleImageRGBDImage(myhierarchy->levels[i].rgbd, myhierarchy->levels[i - 1].rgbd);
 	}
-	
+
 	ISRImageHierarchy::ImageLevel& lastLevel = myhierarchy->levels[myhierarchy->noLevels - 1];
+	//ISRImageHierarchy::ImageLevel& lastLevel = myhierarchy->levels[0];
 	frame->currentLevel = &lastLevel;
 
 	lowLevelEngine->preparePointCloudFromAlignedRGBDImage(frame->ptCloud, lastLevel.rgbd, frame->histogram, lastLevel.intrinsic, lastLevel.boundingbox);
 
-	tracker->TrackObjects(frame, shapeUnion, trackingState);
+	if (settings->useGPU) frame->ptCloud->UpdateHostFromDevice();
 
+
+	tracker->TrackObjects(frame, shapeUnion, trackingState);
 	ISRVisualisationState* myrendering = getRenderingState();
 	ISRVisualisationState* rendering0 = new ISRVisualisationState(myview->rawDepth->noDims, false);
 	ISRVisualisationState* rendering1 = new ISRVisualisationState(myview->rawDepth->noDims, false);

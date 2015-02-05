@@ -22,12 +22,16 @@ namespace LibISR
 			Vector2f *data_normalised;
 
 			float* posterior;
+			float* posterior_device;
 
 			bool initialised;
 			int noBins,dim;
+			
+			bool useGPU;
 
-			ISRHistogram(int nBins)
+			ISRHistogram(int nBins, bool usegpu=false)
 			{ 
+				useGPU = usegpu;
 				noBins = nBins;
 				dim = noBins*noBins*noBins;
 
@@ -35,7 +39,20 @@ namespace LibISR
 				data_notnormalised = new Vector2f[dim];
 				posterior = new float[dim];
 
+				if (usegpu) ORcudaSafeCall(cudaMalloc((void**)&posterior_device, dim*sizeof(float)));
+
 				this->clear();
+			}
+
+			float* getPosteriorHistogram(bool fromgpu = false)
+			{ 
+				if (fromgpu)
+				{
+					ORcudaSafeCall(cudaMemcpy(posterior_device, posterior, dim*sizeof(float), cudaMemcpyHostToDevice));
+					return posterior_device;
+
+				} else 
+					return posterior;
 			}
 
 			void updateHistogram(ISRHistogram *newHist, float rf, float rb)
@@ -102,6 +119,8 @@ namespace LibISR
 				}
 
 				this->initialised = true;
+
+				if (useGPU) ORcudaSafeCall(cudaMemcpy(posterior_device, posterior, dim*sizeof(float), cudaMemcpyHostToDevice));
 			}
 
 			void buildHistogramFromLabeledRGBD(ISRFloat4Image *inimg)
@@ -186,7 +205,11 @@ namespace LibISR
 				}
 			}
 
-			void clearPosterior() { for (int i = 0; i < dim; i++) posterior[i] = 0; }
+			void clearPosterior() 
+			{ 
+				for (int i = 0; i < dim; i++) posterior[i] = 0; 
+				if (useGPU) ORcudaSafeCall(cudaMemcpy(posterior_device, posterior, dim*sizeof(float), cudaMemcpyHostToDevice));
+			}
 			
 			void clear()
 			{
@@ -201,6 +224,7 @@ namespace LibISR
 				delete data_normalised;
 				delete data_notnormalised;
 				delete posterior;
+				if (useGPU) ORcudaSafeCall(cudaFree(posterior_device));
 			}
 		};
 	}

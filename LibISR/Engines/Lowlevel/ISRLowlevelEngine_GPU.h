@@ -6,9 +6,13 @@ namespace LibISR
 {
 	namespace Engine
 	{
-		class ISRLowlevelEngine_CPU:public ISRLowlevelEngine
+		class ISRLowlevelEngine_GPU:public ISRLowlevelEngine
 		{
 		public:
+
+			//////////////////////////////////////////////////////////////////////////
+			// Below are the functions that are currently used rgbd tracker
+			//////////////////////////////////////////////////////////////////////////
 
 			void prepareAlignedRGBDData(ISRFloat4Image *outimg, ISRShortImage *raw_depth_in, ISRUChar4Image *rgb_in, Objects::ISRExHomography *home);
 
@@ -16,8 +20,8 @@ namespace LibISR
 
 			void preparePointCloudFromAlignedRGBDImage(ISRFloat4Image *ptcloud_out, ISRFloat4Image *inimg, Objects::ISRHistogram *histogram, const Vector4f &intrinsic, const Vector4i &boundingbox);
 
-			ISRLowlevelEngine_CPU(){}
-			~ISRLowlevelEngine_CPU(){}
+			ISRLowlevelEngine_GPU(){}
+			~ISRLowlevelEngine_GPU(){}
 		};
 
 	}
