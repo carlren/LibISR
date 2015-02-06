@@ -18,7 +18,7 @@
 #include "Visualization/ISRVisualisationEngine.h"
 #include "Visualization/ISRVisualisationEngine_CPU.h"
 #include "Visualization/ISRVisualisationEngine_DA.h"
-
+#include "Visualization/ISRVisualisationEngine_GPU.h"
 
 namespace LibISR
 {

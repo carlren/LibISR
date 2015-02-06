@@ -83,7 +83,6 @@ _CPU_AND_GPU_CODE_ inline void drawRendering(const bool & foundPoint, const floa
 	dest = Vector4u((uchar)outRes);
 }
 
-
 _CPU_AND_GPU_CODE_ inline void raycastAndRender(Vector4u *outImg, int x, int y, const Vector2i& imagesize, const float* voxelData, const Matrix4f& invH, const Vector4f& invIntrinsic, const Vector2f *minmaxdata, const Vector3f& lightsource, float maxvoxelrange)
 {
 	Vector3f pt_obj;
@@ -98,7 +97,6 @@ _CPU_AND_GPU_CODE_ inline void raycastAndRender(Vector4u *outImg, int x, int y, 
 	computeNormalAndAngle(normal_obj, angle, foundpoint, pt_obj, voxelData, lightsource);
 	drawRendering(foundpoint, angle, outImg[idx]);
 }
-
 
 _CPU_AND_GPU_CODE_ inline void raycastAndRenderDepth(ushort *outImg, int x, int y, const Vector2i& imagesize, const float* voxelData, const Matrix4f& invH, const Vector4f& invIntrinsic, const Vector2f *minmaxdata, float maxvoxelrange)
 {

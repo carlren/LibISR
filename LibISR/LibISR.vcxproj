@@ -44,6 +44,7 @@
     <ClInclude Include="Engines\Visualization\ISRVisualisationEngine.h" />
     <ClInclude Include="Engines\Visualization\ISRVisualisationEngine_CPU.h" />
     <ClInclude Include="Engines\Visualization\ISRVisualisationEngine_DA.h" />
+    <ClInclude Include="Engines\Visualization\ISRVisualisationEngine_GPU.h" />
     <ClInclude Include="LibISR.h" />
     <ClInclude Include="Engines\ISRCoreEngine.h" />
     <ClInclude Include="Objects\Basic\ISRCalib.h" />
@@ -68,6 +69,7 @@
   <ItemGroup>
     <CudaCompile Include="Engines\Lowlevel\ISRLowlevelEngine_GPU.cu" />
     <CudaCompile Include="Engines\Trackers\ISRRGBDTracker_GPU.cu" />
+    <CudaCompile Include="Engines\Visualization\ISRVisualisationEngine_GPU.cu" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1268D747-6F6D-4522-A928-1E158331B255}</ProjectGuid>

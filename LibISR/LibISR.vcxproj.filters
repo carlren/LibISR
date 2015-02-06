@@ -156,6 +156,9 @@
     <ClInclude Include="Engines\Lowlevel\ISRLowlevelEngine_GPU.h">
       <Filter>Engines\Lowlevel</Filter>
     </ClInclude>
+    <ClInclude Include="Engines\Visualization\ISRVisualisationEngine_GPU.h">
+      <Filter>Engines\Visualization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="Engines\Trackers\ISRRGBDTracker_GPU.cu">
@@ -163,6 +166,9 @@
     </CudaCompile>
     <CudaCompile Include="Engines\Lowlevel\ISRLowlevelEngine_GPU.cu">
       <Filter>Engines\Lowlevel</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Engines\Visualization\ISRVisualisationEngine_GPU.cu">
+      <Filter>Engines\Visualization</Filter>
     </CudaCompile>
   </ItemGroup>
 </Project>

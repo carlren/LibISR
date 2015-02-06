@@ -5,7 +5,7 @@ namespace LibISR
 {
 	namespace Engine
 	{
-		class ISRVisualisationEngine_CPU: public ISRVisualisationEngine
+		class ISRVisualisationEngine_GPU: public ISRVisualisationEngine
 		{
 		public:
 

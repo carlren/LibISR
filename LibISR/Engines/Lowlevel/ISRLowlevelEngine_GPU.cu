@@ -14,6 +14,10 @@ __global__ void prepareAlignedRGBDData_device(Vector4f* rgbd_out, const short *d
 __global__ void preparePointCloudFromAlignedRGBDImage_device(Vector4f* ptcloud_out, Vector4f* inimg, float* histogram, Vector4f intrinsic, Vector4i boundingbox, Vector2i imgSize, int histBins);
 
 
+//////////////////////////////////////////////////////////////////////////
+// host functions
+//////////////////////////////////////////////////////////////////////////
+
 void LibISR::Engine::ISRLowlevelEngine_GPU::subsampleImageRGBDImage(ISRFloat4Image *outimg, ISRFloat4Image *inimg)
 {
 	Vector2i oldDims = inimg->noDims;

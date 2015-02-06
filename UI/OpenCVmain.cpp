@@ -19,14 +19,14 @@ using namespace LibISRUtils;
 
 void main(int argc, char** argv)
 {
-	//const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
-	//const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
-	//const char *calibFile = "../Data/Calib_kinect1.txt";
-	//const char *outName = "../Data/out/%04i.jpg";
-
-	const char *colorImgSource = "E:/Data/k1_cut/c-%04i.ppm";
-	const char *depthImgSource = "E:/Data/k1_cut/d-%04i.pgm";
+	const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
+	const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
 	const char *calibFile = "../Data/Calib_kinect1.txt";
+	const char *outName = "../Data/out/%04i.jpg";
+
+	//const char *colorImgSource = "E:/Data/k1_cut/c-%04i.ppm";
+	//const char *depthImgSource = "E:/Data/k1_cut/d-%04i.pgm";
+	//const char *calibFile = "../Data/Calib_kinect1.txt";
 
 	//const char *colorImgSource = "E:/Libisr/k1_cut/cr0-%04i.ppm";
 	//const char *depthImgSource = "E:/Libisr/k1_cut/d-%04i.pgm";
@@ -44,7 +44,7 @@ void main(int argc, char** argv)
 	isrSettings.noHistogramDim = 16;
 	isrSettings.noTrackingObj = 2;
 	isrSettings.singleAappearanceModel = true;
-	isrSettings.useGPU = false;
+	isrSettings.useGPU = true;
 
 	ISRCoreEngine *coreEngine = new ISRCoreEngine(&isrSettings, &imageSource->calib, imageSource->getDepthImageSize(), imageSource->getRGBImageSize());
 
