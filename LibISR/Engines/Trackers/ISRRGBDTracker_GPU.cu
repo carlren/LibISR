@@ -10,9 +10,9 @@
 using namespace LibISR::Engine;
 using namespace LibISR::Objects;
 
-__global__ void evaluateEnergy_device(float* e_device, Vector4f* ptcloud_ptr, ISRShapeUnion* shapeunion, ISRTrackingState* state, int count);
-__global__ void computeJacobianAndHessian_device(float* g_device, float* h_device, Vector4f* ptcloud_ptr, ISRShapeUnion* shapeunion, ISRTrackingState* state, int count);
-__global__ void lableForegroundPixels_device(Vector4f* ptcloud_ptr,Vector4f* rgbd_ptr,ISRShapeUnion* shapeunion, ISRTrackingState* state, int count);
+__global__ void evaluateEnergy_device(float* e_device, Vector4f* ptcloud_ptr, ISRShape_ptr shapes, ISRPose_ptr poses, int count, int objCount);
+__global__ void computeJacobianAndHessian_device(float* g_device, float* h_device, Vector4f* ptcloud_ptr, ISRShape_ptr shapes, ISRPose_ptr poses, int count, int objCount);
+__global__ void lableForegroundPixels_device(Vector4f* ptcloud_ptr, Vector4f* rgbd_ptr, ISRShape_ptr shapes, ISRPose_ptr poses, int count, int objCount);
 
 LibISR::Engine::ISRRGBDTracker_GPU::ISRRGBDTracker_GPU(int nObjs, const Vector2i& imgSize) :ISRRGBDTracker(nObjs, true)
 {
@@ -42,45 +42,46 @@ LibISR::Engine::ISRRGBDTracker_GPU::~ISRRGBDTracker_GPU()
 	ORcudaSafeCall(cudaFree(hessian_divc));
 }
 
-
-
 void LibISR::Engine::ISRRGBDTracker_GPU::evaluateEnergy(float *energy, Objects::ISRTrackingState * trackerState)
 {
-	int count = this->frame->ptCloud->dataSize;
+	int ptCount = this->frame->ptCloud->dataSize;
+	int objCount = trackerState->numPoses();
+	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(true);
+	ISRShape_ptr shapes = shapeUnion->getShapeList(true);
+	ISRPose_ptr poses = trackerState->getPoseList(true);
 
 	dim3 blockSize(256, 1);
-	dim3 gridSize((int)ceil((float)count / (float)blockSize.x), 1);
-
-	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(true);
+	dim3 gridSize((int)ceil((float)ptCount / (float)blockSize.x), 1);
 
 	ORcudaSafeCall(cudaMemset(energy_dvic, 0, sizeof(float)*gridSize.x));
 
-	evaluateEnergy_device << <gridSize, blockSize >> > (energy_dvic, ptcloud_ptr, shapeUnion, trackerState, count);
-	
+	evaluateEnergy_device << <gridSize, blockSize >> > (energy_dvic, ptcloud_ptr, shapes, poses, ptCount, objCount);
+
 	ORcudaSafeCall(cudaMemcpy(energy_host,energy_dvic,sizeof(float)*gridSize.x,cudaMemcpyDeviceToHost));
 
-	float e = 0;
-	
+ 	float e = 0;
 	for (int i = 0; i < gridSize.x; i++) e += energy_host[i];
-	
 	energy[0] = e ;
 }
 
 void LibISR::Engine::ISRRGBDTracker_GPU::computeJacobianAndHessian(float *gradient, float *hessian, Objects::ISRTrackingState * trackerState) const
 {
-	int count = this->frame->ptCloud->dataSize;
-	int noPara = trackerState->numPoses() * 6;
+	int ptCount = this->frame->ptCloud->dataSize;
+	int objCount = trackerState->numPoses();
+	int noPara = objCount * 6;
 	int noParaSQ = noPara*noPara;
 
-	dim3 blockSize(256, 1);
-	dim3 gridSize((int)ceil((float)count / (float)blockSize.x), 1);
-
 	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(true);
+	ISRShape_ptr shapes = shapeUnion->getShapeList(true);
+	ISRPose_ptr poses = trackerState->getPoseList(true);
+
+	dim3 blockSize(256, 1);
+	dim3 gridSize((int)ceil((float)ptCount / (float)blockSize.x), 1);
 
 	ORcudaSafeCall(cudaMemset(gradient_divc, 0, sizeof(float)*gridSize.x*noPara));
 	ORcudaSafeCall(cudaMemset(hessian_divc, 0, sizeof(float)*gridSize.x*noParaSQ));
 
-	computeJacobianAndHessian_device << <gridSize, blockSize >> > (gradient_divc, hessian_divc, ptcloud_ptr, shapeUnion, trackerState, count);
+	computeJacobianAndHessian_device << <gridSize, blockSize >> > (gradient_divc, hessian_divc, ptcloud_ptr, shapes, poses, ptCount,objCount);
 
 	ORcudaSafeCall(cudaMemcpy(gradient_host, gradient_divc, sizeof(float)*gridSize.x*noPara, cudaMemcpyDeviceToHost));
 	ORcudaSafeCall(cudaMemcpy(hessian_host, hessian_divc, sizeof(float)*gridSize.x*noParaSQ, cudaMemcpyDeviceToHost));
@@ -103,19 +104,21 @@ void LibISR::Engine::ISRRGBDTracker_GPU::computeJacobianAndHessian(float *gradie
 
 void LibISR::Engine::ISRRGBDTracker_GPU::lableForegroundPixels(Objects::ISRTrackingState * trackerState)
 {
-	int count = this->frame->ptCloud->dataSize;
-
-	dim3 blockSize(256, 1);
-	dim3 gridSize((int)ceil((float)count / (float)blockSize.x), 1);
-
+	int ptCount = this->frame->ptCloud->dataSize;
+	int objCount = trackerState->numPoses();
 	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(true);
 	Vector4f* rgbd_ptr = this->frame->currentLevel->rgbd->GetData(true);
+	ISRShape_ptr shapes = shapeUnion->getShapeList(true);
+	ISRPose_ptr poses = trackerState->getPoseList(true);
 
-	lableForegroundPixels_device << <gridSize, blockSize >> >(ptcloud_ptr, rgbd_ptr, shapeUnion, trackerState, count);
+	dim3 blockSize(256, 1);
+	dim3 gridSize((int)ceil((float)ptCount / (float)blockSize.x), 1);
+
+	lableForegroundPixels_device << <gridSize, blockSize >> >(ptcloud_ptr, rgbd_ptr, shapes, poses, ptCount, objCount);
 }
 
 
-__global__ void evaluateEnergy_device(float* e_device, Vector4f* ptcloud_ptr, ISRShapeUnion* shapeunion, ISRTrackingState* state, int count)
+__global__ void evaluateEnergy_device(float* e_device, Vector4f* ptcloud_ptr, ISRShape_ptr shapes, ISRPose_ptr poses, int count, int objCount)
 {
 	int locId_global = threadIdx.x + blockIdx.x * blockDim.x, locId_local = threadIdx.x;
 
@@ -126,33 +129,34 @@ __global__ void evaluateEnergy_device(float* e_device, Vector4f* ptcloud_ptr, IS
 	if (locId_global < count)
 	{
 		Vector4f inpt = ptcloud_ptr[locId_global];
-		if (inpt.w > -1.0f) dim_shared[locId_local] = computePerPixelEnergy(inpt, shapeunion, state);
+		if (inpt.w > -1.0f)
+		{
+			dim_shared[locId_local] = computePerPixelEnergy(inpt, shapes, poses, objCount);
+		}
 	}
 
 	{ //reduction for e_device
 		__syncthreads();
-
 		if (locId_local < 128) dim_shared[locId_local] += dim_shared[locId_local + 128];
 		__syncthreads();
 		if (locId_local < 64) dim_shared[locId_local] += dim_shared[locId_local + 64];
 		__syncthreads();
-
 		if (locId_local < 32) warpReduce(dim_shared, locId_local);
-
 		if (locId_local == 0) e_device[blockIdx.x] = dim_shared[locId_local];
 	}
 }
 
-__global__ void computeJacobianAndHessian_device(float* g_device, float* h_device, Vector4f* ptcloud_ptr, ISRShapeUnion* shapeunion, ISRTrackingState* state, int count)
+__global__ void computeJacobianAndHessian_device(float* g_device, float* h_device, Vector4f* ptcloud_ptr, ISRShape_ptr shapes, ISRPose_ptr poses, int count, int objCount)
 {
 	int locId_global = threadIdx.x + blockIdx.x * blockDim.x, locId_local = threadIdx.x;
 
 	__shared__ float dim_shared[256];
 	__shared__ bool shouldAdd; bool hasValidData = false;
 
-	float localGradient[6], localHessian[21];
-	int noPara = state->numPoses() * 6;
+	float localGradient[MAX_OBJECT_COUNT * 6], localHessian[MAX_OBJECT_COUNT*MAX_OBJECT_COUNT * 36];
+	int noPara = objCount * 6;
 	int noParaSQ = noPara*noPara;
+
 	shouldAdd = false;
 
 	__syncthreads();
@@ -162,11 +166,11 @@ __global__ void computeJacobianAndHessian_device(float* g_device, float* h_devic
 		Vector4f cPt = ptcloud_ptr[locId_global];
 		if (cPt.w > -1.0f)
 		{
-			if (computePerPixelJacobian(localGradient, cPt, shapeunion, state))
+			if (computePerPixelJacobian(localGradient, cPt, shapes, poses, objCount))
 			{
 				shouldAdd = true; hasValidData = true;
-				for (int r = 0, counter = 0; r < noPara; r++) for (int c = 0; c <= r; c++, counter++)
-					localHessian[counter] = localGradient[r] * localGradient[c];
+				for (int a = 0, counter = 0; a < noPara; a++)
+					for (int b = 0; b < noPara; b++, counter++) localHessian[counter] += localGradient[a] * localGradient[b];
 			}
 		}
 	}
@@ -218,7 +222,7 @@ __global__ void computeJacobianAndHessian_device(float* g_device, float* h_devic
 
 }
 
-__global__ void lableForegroundPixels_device(Vector4f* ptcloud_ptr, Vector4f* rgbd_ptr, ISRShapeUnion* shapeunion, ISRTrackingState* state, int count)
+__global__ void lableForegroundPixels_device(Vector4f* ptcloud_ptr, Vector4f* rgbd_ptr, ISRShape_ptr shapes, ISRPose_ptr poses, int count, int objCount)
 {
 	int locId_global = threadIdx.x + blockIdx.x * blockDim.x, locId_local = threadIdx.x;
 
@@ -226,7 +230,7 @@ __global__ void lableForegroundPixels_device(Vector4f* ptcloud_ptr, Vector4f* rg
 	{
 		if (ptcloud_ptr[locId_global].w > 0.0f)
 		{
-			float dt = findPerPixelDT(ptcloud_ptr[locId_global], shapeunion, state);
+			float dt = findPerPixelDT(ptcloud_ptr[locId_global], shapes, poses,objCount);
 			if (fabs(dt) <= 2) { rgbd_ptr[locId_global].w = HIST_FG_PIXEL; }
 			else { rgbd_ptr[locId_global].w = HIST_BG_PIXEL; }
 		}

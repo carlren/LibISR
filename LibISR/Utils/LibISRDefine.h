@@ -22,6 +22,7 @@
 #define KINECT_PLAYER_INDEX_SHIFT          3
 #define DTUNE 0.5f
 #define MAX_SDF 121.0f
+#define NUM_OBJ 2
 
 //////////////////////////////////////////////////////////////////////////
 // Types for mask images

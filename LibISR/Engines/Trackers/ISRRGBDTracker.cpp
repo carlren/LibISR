@@ -19,8 +19,8 @@ LibISR::Engine::ISRRGBDTracker::ISRRGBDTracker(int nObjs, bool useGPU)
 	ATb_host = new float[ATb_Size];
 	ATA_host = new float[ATA_size];
 
-	accpetedState = new Objects::ISRTrackingState(nObjs);
-	tempState = new Objects::ISRTrackingState(nObjs);
+	accpetedState = new Objects::ISRTrackingState(nObjs,useGPU);
+	tempState = new Objects::ISRTrackingState(nObjs,useGPU);
 }
 
 LibISR::Engine::ISRRGBDTracker::~ISRRGBDTracker()
@@ -115,9 +115,11 @@ void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion
 	
 	// after convergence, the w channel of ptcloud is recycled for histogram update
 	lableForegroundPixels(accpetedState);
+	frame->currentLevel->rgbd->UpdateHostFromDevice();
+
 	frame->histogram->updateHistogramFromLabeledRGBD(frame->currentLevel->rgbd, 0.05f, 0.3f);
 
 	trackerState->setFrom(*accpetedState);
 
-	printf("\tEnergy:%f", lastenergy);
+	//printf("\tEnergy:%f", lastenergy);
 }

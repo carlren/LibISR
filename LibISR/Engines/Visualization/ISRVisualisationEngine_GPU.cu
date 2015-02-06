@@ -15,7 +15,7 @@ __global__ void renderObject_device(Vector4u* outImg, Vector2f* minmaxImg, Vecto
 
 void LibISR::Engine::ISRVisualisationEngine_GPU::renderObject(Objects::ISRVisualisationState* rendering, const Matrix4f& invH, const Objects::ISRShape_ptr shape, const Vector4f& intrinsic)
 {
-	const float *voxelData = shape->getSDFVoxel(true);
+	const float *voxelData = shape->getSDFVoxel();
 	Vector4u *outimage = rendering->outputImage->GetData(true);
 	Vector2f *minmaximg = rendering->minmaxImage->GetData(true);
 

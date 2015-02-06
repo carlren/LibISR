@@ -23,7 +23,8 @@ void LibISR::Engine::ISRRGBDTracker_CPU::evaluateEnergy(float *energy, Objects::
 		if (es != 0){ e += es; totalpix++; }
 	}
 		
-	energy[0] = e/totalpix;
+	//energy[0] = e/totalpix;
+	energy[0] = e;
 }
 
 void LibISR::Engine::ISRRGBDTracker_CPU::computeJacobianAndHessian(float *gradient, float *hessian, Objects::ISRTrackingState * trackerState) const

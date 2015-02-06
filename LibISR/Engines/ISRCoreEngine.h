@@ -2,9 +2,9 @@
 
 #include "../Utils/ISRLibSettings.h"
 
-#include "../Objects/Highlevel//ISRFrame.h"
-#include "../Objects/Highlevel//ISRShapeUnion.h"
-#include "../Objects/Highlevel//ISRTrackingState.h"
+#include "../Objects/Highlevel/ISRFrame.h"
+#include "../Objects/Highlevel/ISRShapeUnion.h"
+#include "../Objects/Highlevel/ISRTrackingState.h"
 
 #include "Lowlevel/ISRLowlevelEngine.h"
 #include "Lowlevel/ISRLowlevelEngine_DA.h"
@@ -14,6 +14,7 @@
 #include "Trackers/ISRRGBDTracker.h"
 #include "Trackers/ISRRGBDTracker_DA.h"
 #include "Trackers/ISRRGBDTracker_CPU.h"
+#include "Trackers/ISRRGBDTracker_GPU.h"
 
 #include "Visualization/ISRVisualisationEngine.h"
 #include "Visualization/ISRVisualisationEngine_CPU.h"

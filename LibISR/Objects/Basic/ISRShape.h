@@ -20,7 +20,6 @@ namespace LibISR
 		private:
 
 			float *dt;
-			float *dt_device;
 
 		public:
 
@@ -32,16 +31,8 @@ namespace LibISR
 			bool modelShared;
 			bool modelLoaded;
 
-			_CPU_AND_GPU_CODE_ float* getSDFVoxel(bool fromGPU=false)
-			{ 
-				if (fromGPU) return dt_device;
-				else return dt; 
-			}
-			_CPU_AND_GPU_CODE_ const float* getSDFVoxel(bool fromGPU = false) const
-			{
-				if (fromGPU) return dt_device;
-				else return dt;
-			}
+			_CPU_AND_GPU_CODE_ float* getSDFVoxel(){ return dt; }
+			_CPU_AND_GPU_CODE_ const float* getSDFVoxel() const	{ return dt; }
 
 			void  loadShapeFromFile(const char* fileName, Vector3i size = Vector3i(DT_VOL_SIZE))
 			{
@@ -57,16 +48,14 @@ namespace LibISR
 
 				if (useGPU)
 				{
-					ORcudaSafeCall(cudaMalloc((void**)&dt_device, allocatedSize*sizeof(float)));
-					ORcudaSafeCall(cudaMemcpy(dt_device, dt_host, allocatedSize*sizeof(float), cudaMemcpyHostToDevice));
-					//free(dt_host);
+					ORcudaSafeCall(cudaMalloc((void**)&dt, allocatedSize*sizeof(float)));
+					ORcudaSafeCall(cudaMemcpy(dt, dt_host, allocatedSize*sizeof(float), cudaMemcpyHostToDevice));
+					free(dt_host);
 				}
-
-				dt = dt_host;
-				//else
-				//{
-				//	dt = dt_host;
-				//}
+				else
+				{
+					dt = dt_host;
+				}
 
 				modelLoaded = true;
 				modelShared = false;
@@ -80,10 +69,10 @@ namespace LibISR
 
 				if (useGPU)
 				{
-					ORcudaSafeCall(cudaMalloc((void**)&dt_device, allocatedSize*sizeof(float)));
-					ORcudaSafeCall(cudaMemcpy(dt_device, shape.getSDFVoxel(true), allocatedSize*sizeof(float), cudaMemcpyHostToDevice));
+					ORcudaSafeCall(cudaMalloc((void**)&dt, allocatedSize*sizeof(float)));
+					ORcudaSafeCall(cudaMemcpy(dt, shape.getSDFVoxel(), allocatedSize*sizeof(float), cudaMemcpyHostToDevice));
 				}
-				//else
+				else
 				{
 					dt = (float*)malloc(sizeof(float) * allocatedSize);
 					memcpy(dt, shape.getSDFVoxel(), allocatedSize*sizeof(float));
@@ -100,7 +89,6 @@ namespace LibISR
 				useGPU = shape.useGPU;
 
 				dt = shape.getSDFVoxel();
-				dt_device = shape.getSDFVoxel(true);
 
 				modelLoaded = true;
 				modelShared = true;
@@ -121,8 +109,7 @@ namespace LibISR
 				if (modelLoaded && !modelShared && dt != NULL)
 				{
 					if (useGPU) ORcudaSafeCall(cudaFree(dt)); 
-					//else 
-						free(dt);
+					else free(dt);
 				}
 			}
 		};

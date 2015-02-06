@@ -61,8 +61,10 @@ void main(int argc, char** argv)
 	// initialized poses are [T' R']'
 	float pose1[6] = { 0.5119f, -0.1408f, 0.7854f, 0.0f, -0.637070260807493f, 0.0f };
 	float pose2[6] = { 0.6687f, 0.5081f, 0.1909f, 0.5469f, 0.9473f, -0.9473f };
-	coreEngine->trackingState->getPose(0)->setInvHFromParam(pose1);
-	coreEngine->trackingState->getPose(1)->setInvHFromParam(pose2);
+	
+	coreEngine->trackingState->setInvHFromParam(pose1, 0);
+	coreEngine->trackingState->setInvHFromParam(pose2, 1);
+
 
 	//////////////////////////////////////////////////////////////////////////
 	// opencv interface stuff
