@@ -120,7 +120,7 @@ void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion
 	{
 		lableForegroundPixels(accpetedState);
 		frame->currentLevel->rgbd->UpdateHostFromDevice();
-		frame->histogram->updateHistogramFromLabeledRGBD(frame->currentLevel->rgbd, 0.05f, 0.3f);
+		frame->histogram->updateHistogramFromLabeledRGBD(frame->currentLevel->rgbd, 0.2f, 0.3f);
 	}
 
 	trackerState->setFrom(*accpetedState);

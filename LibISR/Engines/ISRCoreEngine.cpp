@@ -61,7 +61,7 @@ void LibISR::Engine::ISRCoreEngine::processFrame(void)
 	}
 	//sdkStopTimer(&timer); printf("Image Hierarchy Image Time : [%f] ms\n", sdkGetTimerValue(&timer));
 
-	int lvlnum; lvlnum = settings->useGPU ? 2 : myhierarchy->noLevels - 1;
+	int lvlnum; lvlnum = settings->useGPU ? 1 : myhierarchy->noLevels - 1;
 	ISRImageHierarchy::ImageLevel& lastLevel = myhierarchy->levels[lvlnum];
 	frame->currentLevel = &lastLevel;
 

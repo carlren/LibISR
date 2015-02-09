@@ -146,9 +146,15 @@ __global__ void computepfImageFromHistogram_device(Vector4u* inimg, float* histo
 	if (x > imgSize.x - 1 || y > imgSize.y - 1) return;
 
 	int idx = y * imgSize.x + x;
-	float pf = getPf(inimg[idx], histogram, histBins)*255;
-	inimg[idx].r = (uchar)pf;
-	inimg[idx].g = (uchar)pf;
-	inimg[idx].b = (uchar)pf;
+	float pf = getPf(inimg[idx], histogram, histBins);
+
+	if (pf>0.5)
+	{
+		inimg[idx].r = 255;
+		inimg[idx].g = 0;
+		inimg[idx].b = 0;
+	}
+
+
 }
 

@@ -379,16 +379,20 @@ void UIEngine::ProcessFrame()
 	//DepthToUchar4(outImage[1], mainEngine->getView()->rawDepth);
 	DepthToUchar4_overlay(outImage[1], mainEngine->getView()->rawDepth,mainEngine->getView()->rgb);
 
-	//if (isRecording)
-	//{
-	//	char str[250];
+	if (isRecording)
+	{
+		char str[250];
 
-	//	sprintf(str, "%s/%04d.pgm", outFolder, currentFrameNo);
-	//	SaveImageToFile(mainEngine->GetView()->rawDepth, str);
+		//sprintf(str, "%s/%04d.pgm", outFolder, currentFrameNo);
+		//SaveImageToFile(mainEngine->getView()->rawDepth, str);
 
-	//	sprintf(str, "%s/%04d.ppm", outFolder, currentFrameNo);
-	//	SaveImageToFile(mainEngine->GetView()->rgb, str);
-	//}
+		sprintf(str, "%s/%04d.txt", outFolder, currentFrameNo);
+		WriteMatlabTXTImg(str, mainEngine->getView()->rawDepth->GetData(false), 640, 480);
+
+		sprintf(str, "%s/%04d.ppm", outFolder, currentFrameNo);
+		SaveImageToFile(mainEngine->getView()->rgb, str);
+
+	}
 
 	//actual processing on the mailEngine
 

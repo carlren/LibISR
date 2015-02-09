@@ -99,10 +99,14 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::computepfImageFromHistogram(ISRUChar
 	for (int i = 0; i < h; i++) for (int j = 0; j < w; j++)
 	{
 		int idx = i * w + j;
-		pf = getPf(inimg_ptr[idx], histogram->posterior, noBins)*255;
-		inimg_ptr[idx].r = (uchar)pf;
-		inimg_ptr[idx].g = (uchar)pf;
-		inimg_ptr[idx].b = (uchar)pf;
+		pf = getPf(inimg_ptr[idx], histogram->posterior, noBins);
+		if (pf>0.5f)
+		{
+			inimg_ptr[idx].r = 255;
+			inimg_ptr[idx].g = 255;
+			inimg_ptr[idx].b = 255;
+		}
+
 	}
 }
 
