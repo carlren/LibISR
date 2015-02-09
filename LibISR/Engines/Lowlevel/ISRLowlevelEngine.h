@@ -17,6 +17,8 @@ namespace LibISR
 			//// virtual functions that are implemented both on CPU and on GPU
 			//////////////////////////////////////////////////////////////////////////
 
+			virtual void computepfImageFromHistogram(ISRUChar4Image *rgb_in, Objects::ISRHistogram *histogram) = 0;
+
 			virtual void prepareAlignedRGBDData(ISRFloat4Image *outimg, ISRShortImage *raw_depth_in, ISRUChar4Image *rgb_in, Objects::ISRExHomography *home) = 0;
 			
 			virtual void subsampleImageRGBDImage(ISRFloat4Image *outimg, ISRFloat4Image *inimg) = 0;

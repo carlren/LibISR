@@ -9,6 +9,7 @@ namespace LibISR
 		class ISRLowlevelEngine_GPU:public ISRLowlevelEngine
 		{
 		public:
+			void computepfImageFromHistogram(ISRUChar4Image *rgb_in, Objects::ISRHistogram *histogram);
 
 			void prepareAlignedRGBDData(ISRFloat4Image *outimg, ISRShortImage *raw_depth_in, ISRUChar4Image *rgb_in, Objects::ISRExHomography *home);
 

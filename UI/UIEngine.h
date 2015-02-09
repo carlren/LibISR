@@ -13,7 +13,7 @@ namespace LibISRUtils
 
 		enum MainLoopAction
 		{
-			PROCESS_PAUSED, PROCESS_FRAME, PROCESS_VIDEO, EXIT, SAVE_TO_DISK
+			PROCESS_PAUSED, PROCESS_FRAME, PROCESS_VIDEO, EXIT, SAVE_TO_DISK, REINIT_HIST
 		}mainLoopAction;
 
 		ImageSourceEngine *imageSource;
@@ -52,6 +52,7 @@ namespace LibISRUtils
 		int processedFrameNo;
 		char *outFolder;
 		bool needsRefresh;
+		float energy;
 
 		void Initialise(int & argc, char** argv, ImageSourceEngine *imageSource, LibISR::Engine::ISRCoreEngine* mainEngine, const char *outFolder);
 		void Shutdown();

@@ -172,6 +172,7 @@ namespace LibISR
 				this->initialised = true;
 			}
 
+
 			void updateHistogramFromLabeledRGBD(ISRFloat4Image *inimg, float rf, float rb)
 			{
 				ISRHistogram* tmphist = new ISRHistogram(this->noBins);

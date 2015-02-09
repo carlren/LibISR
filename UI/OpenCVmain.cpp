@@ -2,6 +2,7 @@
 #include "../LibISR/LibISR.h"
 
 #include "ImageSourceEngine.h"
+#include "OpenNIEngine.h"
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/core/core.hpp"
@@ -17,20 +18,19 @@ using namespace LibISR::Engine;
 using namespace LibISR::Objects;
 using namespace LibISRUtils;
 
-void main(int argc, char** argv)
+void main_(int argc, char** argv)
 {
-	const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
-	const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
-	const char *calibFile = "../Data/Calib_kinect1.txt";
-	const char *outName = "../Data/out/%04i.jpg";
+	//const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
+	//const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
+	//const char *calibFile = "../Data/Calib_kinect1.txt";
 
 	//const char *colorImgSource = "E:/Data/k1_cut/c-%04i.ppm";
 	//const char *depthImgSource = "E:/Data/k1_cut/d-%04i.pgm";
 	//const char *calibFile = "../Data/Calib_kinect1.txt";
 
-	//const char *colorImgSource = "E:/Libisr/k1_cut/cr0-%04i.ppm";
-	//const char *depthImgSource = "E:/Libisr/k1_cut/d-%04i.pgm";
-	//const char *calibFile = "../Data/calib.txt";
+	const char *colorImgSource = "E:/Libisr/k1_cut/cr0-%04i.ppm";
+	const char *depthImgSource = "E:/Libisr/k1_cut/d-%04i.pgm";
+	const char *calibFile = "../Data/calib.txt";
 
 	const char *sdfFile = "../Data/newCut.bin";
 
@@ -99,40 +99,42 @@ void main(int argc, char** argv)
 		coreEngine->processFrame();
 		sdkStopTimer(&timer); processedTime += sdkGetTimerValue(&timer);
 
-		printf("\rAverage Tracking Time : [%f] ms = [%d] fps", processedTime / count, (int)(count*1000 / processedTime));
+		printf("\rAverage Tracking Time : [%f] ms = [%d] fps\tEnergy = %f", processedTime / count, (int)(count*1000 / processedTime),coreEngine->getEnergy());
 
 		Vector4i bb = coreEngine->frame->imgHierarchy->levels[0].boundingbox;
-		//memcpy(depthFrame->imageData, (char*)coreEngine->getView()->rgb->GetData(false), 640 * 480 * sizeof(char) * 4);
-		memcpy(depthFrame->imageData, (char*)coreEngine->getRenderingState()->outputImage->GetData(false), 640 * 480 * sizeof(char) * 4); H.setIdentity(); T = Vector3f(0, 0, 0);
+		memcpy(depthFrame->imageData, (char*)coreEngine->getView()->alignedRgb->GetData(false), 640 * 480 * sizeof(char) * 4);
+		//memcpy(depthFrame->imageData, (char*)coreEngine->getRenderingState()->outputImage->GetData(false), 640 * 480 * sizeof(char) * 4); H.setIdentity(); T = Vector3f(0, 0, 0);
 
-		Matrix4f M = coreEngine->trackingState->getPose(0)->getH();
-		for (int i = 0; i < 4; i++)
-		{
-			ipt[i] = H*(A*(M*cpt[i])) + T;
-			cvpt[i].x = ipt[i].x / ipt[i].z;
-			cvpt[i].y = ipt[i].y / ipt[i].z;
-		}
-		for (int i = 0; i < 3; i++) cvDrawLine(depthFrame, cvpt[0], cvpt[i + 1], color[i], 2);
+		//// draw the axis on object
+		//Matrix4f M = coreEngine->trackingState->getPose(0)->getH();
+		//for (int i = 0; i < 4; i++)
+		//{
+		//	ipt[i] = H*(A*(M*cpt[i])) + T;
+		//	cvpt[i].x = ipt[i].x / ipt[i].z;
+		//	cvpt[i].y = ipt[i].y / ipt[i].z;
+		//}
+		//for (int i = 0; i < 3; i++) cvDrawLine(depthFrame, cvpt[0], cvpt[i + 1], color[i], 2);
+		//
+		//M = coreEngine->trackingState->getPose(1)->getH();
+		//for (int i = 0; i < 4; i++)
+		//{
+		//	ipt[i] = H*(A*(M*cpt[i])) + T;
+		//	cvpt[i].x = ipt[i].x / ipt[i].z;
+		//	cvpt[i].y = ipt[i].y / ipt[i].z;
+		//}
+		//for (int i = 0; i < 3; i++) cvDrawLine(depthFrame, cvpt[0], cvpt[i + 1], color[i], 2);
 		
-		M = coreEngine->trackingState->getPose(1)->getH();
-		for (int i = 0; i < 4; i++)
-		{
-			ipt[i] = H*(A*(M*cpt[i])) + T;
-			cvpt[i].x = ipt[i].x / ipt[i].z;
-			cvpt[i].y = ipt[i].y / ipt[i].z;
-		}
-		for (int i = 0; i < 3; i++) cvDrawLine(depthFrame, cvpt[0], cvpt[i + 1], color[i], 2);
-		
-		CvPoint p1, p2, p3, p4;
-		p1.x = bb.x; p1.y = bb.y; 
-		p2.x = bb.z; p2.y = bb.y;
-		p3.x = bb.z; p4.y = bb.w;
-		p4.x = bb.x, p3.y = bb.w;
-		
-		cvDrawLine(depthFrame, p1, p2, bbcolor, 2);
-		cvDrawLine(depthFrame, p2, p3, bbcolor, 2);
-		cvDrawLine(depthFrame, p3, p4, bbcolor, 2);
-		cvDrawLine(depthFrame, p4, p1, bbcolor, 2);
+		//// draw the bounding box
+		//CvPoint p1, p2, p3, p4;
+		//p1.x = bb.x; p1.y = bb.y; 
+		//p2.x = bb.z; p2.y = bb.y;
+		//p3.x = bb.z; p4.y = bb.w;
+		//p4.x = bb.x, p3.y = bb.w;
+		//
+		//cvDrawLine(depthFrame, p1, p2, bbcolor, 2);
+		//cvDrawLine(depthFrame, p2, p3, bbcolor, 2);
+		//cvDrawLine(depthFrame, p3, p4, bbcolor, 2);
+		//cvDrawLine(depthFrame, p4, p1, bbcolor, 2);
 
 		cvShowImage("Depth", depthFrame);
 

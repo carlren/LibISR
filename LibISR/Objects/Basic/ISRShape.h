@@ -50,7 +50,7 @@ namespace LibISR
 				{
 					ORcudaSafeCall(cudaMalloc((void**)&dt, allocatedSize*sizeof(float)));
 					ORcudaSafeCall(cudaMemcpy(dt, dt_host, allocatedSize*sizeof(float), cudaMemcpyHostToDevice));
-					free(dt_host);
+					delete[] dt_host;
 				}
 				else
 				{

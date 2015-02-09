@@ -74,11 +74,17 @@ void UIEngine::glutDisplayFunction()
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 
-	glColor3f(1.0f, 0.0f, 0.0f); glRasterPos2f(0.85f, -0.962f);
-
-	char str[200]; sprintf(str, "%04.2lf", uiEngine->processedTime);
+	glColor3f(1.0f, 0.0f, 0.0f); 
+	glRasterPos2f(0.75f, -0.967f);
+	char str[200]; sprintf(str, "%04.2f fps",1000* uiEngine->currentFrameNo / uiEngine->processedTime );
 	safe_glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const char*)str);
 
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glRasterPos2f(0.0f, -0.967f);
+	sprintf(str, "P(Obj): %04.2f", uiEngine->energy);
+	safe_glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const char*)str);
+
+	glColor3f(1.0f, 1.0f, 0.0f);
 	glRasterPos2f(-0.95f, -0.95f);
 	sprintf(str, "n - next frame \t b - all frames \t e - exit");
 	safe_glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const char*)str);
@@ -87,12 +93,35 @@ void UIEngine::glutDisplayFunction()
 	uiEngine->needsRefresh = false;
 }
 
+void inline updateHistogramFromRendering(ISRUChar4Image* rendering, ISRUChar4Image* rgb, LibISR::Objects::ISRHistogram* hist)
+{
+	Vector4u* imgptr = rendering->GetData(false);
+	Vector4u bpix((uchar)0);
+	for (int i = 0; i < rendering->dataSize;i++)
+		if (imgptr[i] != bpix) imgptr[i] = Vector4u(255,255,255,255);
+		else imgptr[i] = Vector4u(100, 100, 100, 100);
+	
+	//WritePPMimage("e:/test.ppm", rendering->GetData(false), 640, 480);
+
+	//LibISR::Objects::ISRHistogram* tmphist = new LibISR::Objects::ISRHistogram(hist->noBins);
+	//tmphist->buildHistogram(rgb, rendering);
+	//hist->updateHistogram(tmphist, 0.8, 0.8);
+
+		hist->buildHistogram(rgb, rendering);
+
+}
+
 void UIEngine::glutIdleFunction()
 {
 	UIEngine *uiEngine = UIEngine::Instance();
 
 	switch (uiEngine->mainLoopAction)
 	{
+	case REINIT_HIST:
+		updateHistogramFromRendering(uiEngine->mainEngine->getRenderingState()->outputImage, uiEngine->mainEngine->getView()->rgb, uiEngine->mainEngine->frame->histogram);
+		uiEngine->mainLoopAction = PROCESS_VIDEO; uiEngine->processedFrameNo++;
+		uiEngine->needsRefresh = true;
+		break;
 	case PROCESS_FRAME:
 		uiEngine->ProcessFrame(); uiEngine->processedFrameNo++;
 		uiEngine->mainLoopAction = PROCESS_PAUSED;
@@ -125,6 +154,10 @@ void UIEngine::glutKeyUpFunction(unsigned char key, int x, int y)
 
 	switch (key)
 	{
+	case 'r':
+		printf("re-initialize histogram ...\n");
+		uiEngine->mainLoopAction = UIEngine::REINIT_HIST;
+		break;
 	case 'n':
 		printf("processing one frame ...\n");
 		uiEngine->mainLoopAction = UIEngine::PROCESS_FRAME;
@@ -154,7 +187,6 @@ void UIEngine::glutKeyUpFunction(unsigned char key, int x, int y)
 		break;
 	}
 }
-
 
 static inline Matrix3f createRotation(const Vector3f & _axis, float angle)
 {
@@ -297,13 +329,55 @@ static inline void  DepthToUchar4(ISRUChar4Image *dst, ISRShortImage *src)
 	}
 }
 
+static inline void  DepthToUchar4_overlay(ISRUChar4Image *dst, ISRShortImage *src, ISRUChar4Image *rgb)
+{
+	Vector4u *srgb = rgb->GetData(false);
+	Vector4u *dest = dst->GetData(false);
+	short *source = src->GetData(false);
+	int dataSize = dst->dataSize;
+
+	memset(dst->GetData(false), 0, dataSize * 4);
+
+	Vector4u *destUC4;
+	float lims[2], scale;
+
+	destUC4 = (Vector4u*)dest;
+	lims[0] = 100000.0f; lims[1] = -100000.0f;
+
+	for (int idx = 0; idx < dataSize; idx++)
+	{
+
+		float sourceVal = source[idx];
+		if (sourceVal>65530) sourceVal = 0.0f;
+		if (sourceVal > 0.0f) { lims[0] = MIN(lims[0], sourceVal); lims[1] = MAX(lims[1], sourceVal); }
+	}
+
+	scale = ((lims[1] - lims[0]) != 0) ? 1.0f / (lims[1] - lims[0]) : 1.0f / lims[1];
+
+	if (lims[0] == lims[1]) return;
+
+	for (int idx = 0; idx < dataSize; idx++)
+	{
+		float sourceVal = source[idx];
+
+		if (sourceVal > 0.0f)
+		{
+			sourceVal = (sourceVal - lims[0]) * scale;
+
+			destUC4[idx].r = (uchar)(base(sourceVal - 0.5f) * 127.5f + srgb[idx].r*0.5f);
+			destUC4[idx].g = (uchar)(base(sourceVal) * 127.5f + srgb[idx].g*0.5f);
+			destUC4[idx].b = (uchar)(base(sourceVal + 0.5f) * 127.5f + srgb[idx].b*0.5f);
+			destUC4[idx].a = 255;
+		}
+	}
+}
 
 void UIEngine::ProcessFrame()
 {
 	if (!imageSource->hasMoreImages()) return;
 	imageSource->getImages(mainEngine->getView());
-
-	sdkResetTimer(&timer); sdkStartTimer(&timer);
+	//DepthToUchar4(outImage[1], mainEngine->getView()->rawDepth);
+	DepthToUchar4_overlay(outImage[1], mainEngine->getView()->rawDepth,mainEngine->getView()->rgb);
 
 	//if (isRecording)
 	//{
@@ -317,24 +391,15 @@ void UIEngine::ProcessFrame()
 	//}
 
 	//actual processing on the mailEngine
+
+	sdkResetTimer(&timer); sdkStartTimer(&timer);
 	mainEngine->processFrame();
-
-	outImage[2]->SetFrom(mainEngine->getView()->alignedRgb);
-	DepthToUchar4(outImage[1], mainEngine->getView()->rawDepth);
-	
-	sdkStopTimer(&timer); processedTime = sdkGetTimerValue(&timer);
-
-	//write pose file for debug
-	char outPoseFile[200];
-	sprintf(outPoseFile, "e:/LibISR/poses/1_%04i.txt", currentFrameNo);
-	Matrix4f tmpH = mainEngine->trackingState->getPose(0)->getH();
-	PrintArrayToFile(outPoseFile, tmpH.m, 16);
-
-	sprintf(outPoseFile, "e:/LibISR/poses/2_%04i.txt", currentFrameNo);
-	tmpH = mainEngine->trackingState->getPose(1)->getH();
-	PrintArrayToFile(outPoseFile, tmpH.m, 16);
+	sdkStopTimer(&timer); processedTime += sdkGetTimerValue(&timer);
 
 
+	this->energy = mainEngine->getEnergy();
+	outImage[0]->SetFrom(mainEngine->getView()->alignedRgb);
+	outImage[2]->SetFrom(mainEngine->getView()->rgb);
 	currentFrameNo++;
 }
 

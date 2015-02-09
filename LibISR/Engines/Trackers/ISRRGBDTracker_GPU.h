@@ -9,8 +9,9 @@ namespace LibISR
 		class ISRRGBDTracker_GPU :public ISRRGBDTracker
 		{
 		private:
-			float *energy_host, *gradient_host, *hessian_host;
-			float *energy_dvic, *gradient_divc, *hessian_divc;
+			float *gradient_host, *hessian_host;
+			float *gradient_divc, *hessian_divc;
+			Vector3f *energy_dvic, *energy_host;
 
 		protected:
 			// evaluate the energy given current poses and shapes

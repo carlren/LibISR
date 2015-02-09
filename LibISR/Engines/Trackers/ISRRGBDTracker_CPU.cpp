@@ -14,23 +14,36 @@ void LibISR::Engine::ISRRGBDTracker_CPU::evaluateEnergy(float *energy, Objects::
 	int count = this->frame->ptCloud->dataSize;
 	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(false);
 
+	ISRShape_ptr shapes = this->shapeUnion->getShapeList(false);
+	ISRPose_ptr poses = trackerState->getPoseList(false);
+	int objCount = trackerState->numPoses();
+
 	float e = 0, es=0;
 	int totalpix = 0;
+	int totalpfpix = 0;
 
 	for (int i = 0; i < count; i++)
 	{
-		es = computePerPixelEnergy(ptcloud_ptr[i], this->shapeUnion, trackerState);
-		if (es != 0){ e += es; totalpix++; }
+		es = computePerPixelEnergy(ptcloud_ptr[i], shapes, poses, objCount);
+		if (es > 0)
+		{ 
+			e += es; totalpix++; 
+			if (ptcloud_ptr[i].w > 0.5) totalpfpix++;
+		}
+		
 	}
 		
-	//energy[0] = e/totalpix;
-	energy[0] = e;
+	energy[0] = totalpfpix>100 ? e / totalpix : 0.0f;
 }
 
 void LibISR::Engine::ISRRGBDTracker_CPU::computeJacobianAndHessian(float *gradient, float *hessian, Objects::ISRTrackingState * trackerState) const
 {
 	int count = this->frame->ptCloud->dataSize;
 	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(false);
+
+	ISRShape_ptr shapes = this->shapeUnion->getShapeList(false);
+	ISRPose_ptr poses = trackerState->getPoseList(false);
+	int objCount = trackerState->numPoses();
 
 	int noPara = trackerState->numPoses() * 6;
 	int noParaSQ = noPara*noPara;
@@ -44,18 +57,20 @@ void LibISR::Engine::ISRRGBDTracker_CPU::computeJacobianAndHessian(float *gradie
 
 	for (int i = 0; i < count; i++)
 	{
-		if (computePerPixelJacobian(jacobian, ptcloud_ptr[i], shapeUnion, trackerState))
+		if (computePerPixelJacobian(jacobian, ptcloud_ptr[i], shapes, poses, objCount))
 		{
 			for (int a = 0, counter = 0; a < noPara; a++) 	
 			{
 				globalGradient[a] += jacobian[a];
-				for (int b = 0; b < noPara; b++, counter++) globalHessian[counter] += jacobian[a] * jacobian[b];
+				for (int b = 0; b <= a; b++, counter++) globalHessian[counter] += jacobian[a] * jacobian[b];
 			}
 		}
 	}
 	
 	for (int r = 0; r < noPara; ++r) gradient[r] = globalGradient[r];
-	for (int r = 0; r < noParaSQ; ++r) hessian[r] = globalHessian[r];
+
+	for (int r = 0, counter = 0; r < noPara; r++) for (int c = 0; c <= r; c++, counter++) hessian[r + c * noPara] = globalHessian[counter];
+	for (int r = 0; r < noPara; ++r) for (int c = r + 1; c < noPara; c++) hessian[r + c * noPara] = hessian[c + r*noPara];
 }
 
 void LibISR::Engine::ISRRGBDTracker_CPU::lableForegroundPixels(Objects::ISRTrackingState * trackerState)
@@ -64,6 +79,10 @@ void LibISR::Engine::ISRRGBDTracker_CPU::lableForegroundPixels(Objects::ISRTrack
 	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(false);
 	Vector4f* rgbd_ptr = this->frame->currentLevel->rgbd->GetData(false);
 
+	ISRShape_ptr shapes = this->shapeUnion->getShapeList(false);
+	ISRPose_ptr poses = trackerState->getPoseList(false);
+	int objCount = trackerState->numPoses();
+
 	float dt;
 	int totalpix = 0;
 
@@ -71,7 +90,7 @@ void LibISR::Engine::ISRRGBDTracker_CPU::lableForegroundPixels(Objects::ISRTrack
 	{
 		if (ptcloud_ptr[i].w > 0) // in the bounding box and have depth
 		{
-			dt = findPerPixelDT(ptcloud_ptr[i], this->shapeUnion, trackerState);
+			dt = findPerPixelDT(ptcloud_ptr[i], shapes, poses,objCount);
 			if (fabs(dt) <= 2) { rgbd_ptr[i].w = HIST_FG_PIXEL; }
 			else { rgbd_ptr[i].w = HIST_BG_PIXEL; }
 		}

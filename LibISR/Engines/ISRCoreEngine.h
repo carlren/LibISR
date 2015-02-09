@@ -44,6 +44,7 @@ namespace LibISR
 			Objects::ISRView *getView(){ return frame->view;};
 			Objects::ISRImageHierarchy *getImageHierarchy(){ return frame->imgHierarchy; }
 			Objects::ISRVisualisationState *getRenderingState(){ return frame->rendering; }
+			float getEnergy(){ return trackingState->energy; };
 
 			void processFrame(void);
 

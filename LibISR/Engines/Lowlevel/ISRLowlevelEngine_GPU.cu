@@ -13,6 +13,7 @@ __global__ void prepareAlignedRGBDData_device(Vector4f* rgbd_out, const short *d
 
 __global__ void preparePointCloudFromAlignedRGBDImage_device(Vector4f* ptcloud_out, Vector4f* inimg, float* histogram, Vector4f intrinsic, Vector4i boundingbox, Vector2i imgSize, int histBins);
 
+__global__ void computepfImageFromHistogram_device(Vector4u* inimg, float* histogram, Vector2i imgSize, int histBins);
 
 //////////////////////////////////////////////////////////////////////////
 // host functions
@@ -67,6 +68,24 @@ void LibISR::Engine::ISRLowlevelEngine_GPU::preparePointCloudFromAlignedRGBDImag
 	preparePointCloudFromAlignedRGBDImage_device << <gridSize, blockSize >> >(ptcloud_ptr, inimg_ptr, histogram_ptr, intrinsic, boundingbox, inimg->noDims, noBins);
 }
 
+void LibISR::Engine::ISRLowlevelEngine_GPU::computepfImageFromHistogram(ISRUChar4Image *rgb_in, Objects::ISRHistogram *histogram)
+{
+	
+	int w = rgb_in->noDims.width;
+	int h = rgb_in->noDims.height;
+
+	int noBins = histogram->noBins;
+
+	Vector4u *inimg_ptr = rgb_in->GetData(true);
+	float* histogram_ptr = histogram->getPosteriorHistogram(true);
+
+	dim3 blockSize(16, 16);
+	dim3 gridSize((int)ceil((float)w / (float)blockSize.x), (int)ceil((float)h / (float)blockSize.y));
+
+	computepfImageFromHistogram_device << <gridSize, blockSize >> >(inimg_ptr, histogram_ptr, rgb_in->noDims, noBins);
+	rgb_in->UpdateHostFromDevice();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // device functions
@@ -119,5 +138,17 @@ __global__ void preparePointCloudFromAlignedRGBDImage_device(Vector4f* ptcloud_o
 		unprojectPtWithIntrinsic(intrinsic, Vector3f(x*z, y*z, z), ptcloud_out[idx]);
 		ptcloud_out[idx].w = getPf(inimg[idx], histogram, histBins);
 	}
+}
+
+__global__ void computepfImageFromHistogram_device(Vector4u* inimg, float* histogram, Vector2i imgSize, int histBins)
+{
+	int x = threadIdx.x + blockIdx.x * blockDim.x, y = threadIdx.y + blockIdx.y * blockDim.y;
+	if (x > imgSize.x - 1 || y > imgSize.y - 1) return;
+
+	int idx = y * imgSize.x + x;
+	float pf = getPf(inimg[idx], histogram, histBins)*255;
+	inimg[idx].r = (uchar)pf;
+	inimg[idx].g = (uchar)pf;
+	inimg[idx].b = (uchar)pf;
 }
 

@@ -76,6 +76,8 @@ void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion
 	{// minimalist LM main loop
 		evaluateEnergy(&lastenergy, accpetedState);
 
+		if (lastenergy==0) { trackerState->energy = 0; return; }
+
 		for (int iter = 0; iter < MAX_STEPS; iter++)
 		{
 			computeJacobianAndHessian(ATb_host, ATA_host, tempState);
@@ -114,12 +116,14 @@ void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion
 	}
 	
 	// after convergence, the w channel of ptcloud is recycled for histogram update
-	lableForegroundPixels(accpetedState);
-	frame->currentLevel->rgbd->UpdateHostFromDevice();
-
-	frame->histogram->updateHistogramFromLabeledRGBD(frame->currentLevel->rgbd, 0.05f, 0.3f);
+	if (lastenergy>=0.7f)
+	{
+		lableForegroundPixels(accpetedState);
+		frame->currentLevel->rgbd->UpdateHostFromDevice();
+		frame->histogram->updateHistogramFromLabeledRGBD(frame->currentLevel->rgbd, 0.05f, 0.3f);
+	}
 
 	trackerState->setFrom(*accpetedState);
-
+	trackerState->energy = lastenergy;
 	//printf("\tEnergy:%f", lastenergy);
 }

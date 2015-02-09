@@ -24,6 +24,7 @@ namespace LibISR
 
 		public:
 
+			float energy;
 			bool useGPU;
 
 			ISRPose_ptr getPoseList(bool fromGPU=false) 
@@ -81,7 +82,6 @@ namespace LibISR
 				if (useGPU) ORcudaSafeCall(cudaMemcpy(poses_device, poses, nPose*sizeof(ISRPose), cudaMemcpyHostToDevice));
 			}
 
-
 			void inline updatePoseDeviceFromHost()
 			{
 				if (useGPU) ORcudaSafeCall(cudaMemcpy(poses_device, poses, nPose*sizeof(ISRPose), cudaMemcpyHostToDevice));
@@ -89,6 +89,7 @@ namespace LibISR
 
 			ISRTrackingState(int num, bool usegpu=false)
 			{
+				energy = 0;
 				nPose = num;
 				poses = new ISRPose[num];
 				useGPU = usegpu;

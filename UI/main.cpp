@@ -13,47 +13,58 @@ using namespace LibISR::Engine;
 using namespace LibISR::Objects;
 using namespace LibISRUtils;
 
-int main_(int argc, char** argv)
+int main(int argc, char** argv)
 {
-	const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
-	const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
+	//const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
+	//const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
+	//const char *calibFile = "../Data/Calib_kinect1.txt";
 
 	//const char *colorImgSource = "E:/Data/k1_cut/c-%04i.ppm";
 	//const char *depthImgSource = "E:/Data/k1_cut/d-%04i.pgm";
+	//const char *calibFile = "../Data/Calib_kinect1.txt";
 
+	const char *colorImgSource = "E:/Libisr/k1_cut/cr0-%04i.ppm";
+	const char *depthImgSource = "E:/Libisr/k1_cut/d-%04i.pgm";
 	const char *calibFile = "../Data/calib.txt";
-	const char *histogramFile = "../Data/histogram.txt";
 
 	const char *sdfFile = "../Data/newCut.bin";
 
-	ImageSourceEngine *imageSource = new ImageFileReader(calibFile, colorImgSource, depthImgSource);
-	//ImageSourceEngine *imageSource = new OpenNIEngine(calibFile,NULL,true);
+	const char* histogram_rgb = "../Data/color.ppm";
+	const char* histogram_mask = "../Data/mask.ppm";
+
+	//ImageSourceEngine *imageSource = new ImageFileReader(calibFile, colorImgSource, depthImgSource);
+	ImageSourceEngine *imageSource = new OpenNIEngine(calibFile,NULL,true);
 
 	ISRLibSettings isrSettings;
 	isrSettings.noHistogramDim = 16;
-	isrSettings.noTrackingObj = 2;
+	isrSettings.noTrackingObj = 1;
 	isrSettings.singleAappearanceModel = true;
-	isrSettings.useGPU = false;
+	isrSettings.useGPU = true;
 
-	ISRCoreEngine *coreEngine = new ISRCoreEngine(&isrSettings, &imageSource->calib,imageSource->getDepthImageSize(),imageSource->getRGBImageSize());
-	
-	coreEngine->shapeUnion->getShape(0)->loadShapeFromFile(sdfFile, Vector3i(DT_VOL_SIZE, DT_VOL_SIZE, DT_VOL_SIZE));
-	coreEngine->shapeUnion->getShape(1)->shareSDFWithExistingShape(*coreEngine->shapeUnion->getShape(0));
-
+	ISRCoreEngine *coreEngine = new ISRCoreEngine(&isrSettings, &imageSource->calib, imageSource->getDepthImageSize(), imageSource->getRGBImageSize());	
+	coreEngine->shapeUnion->loadShapeFromFile(sdfFile, Vector3i(DT_VOL_SIZE, DT_VOL_SIZE, DT_VOL_SIZE), 0);
+	for (int i = 1; i < isrSettings.noTrackingObj; i++)
+		coreEngine->shapeUnion->shareSDFWithExistingShape(*coreEngine->shapeUnion->getShape(0), i);
 
 	///////////////////////////////////////////////////////////////////////////
 	// some manual initialization
 	///////////////////////////////////////////////////////////////////////////
 
-	coreEngine->frame->histogram->loadPosteriorFromFile(histogramFile);
+	// initialize color histogram from mask image
+	ISRUChar4Image *histogramimage = new ISRUChar4Image(imageSource->getDepthImageSize(), false);
+	ISRUChar4Image *histogrammask = new ISRUChar4Image(imageSource->getDepthImageSize(), false);
+	if (!ReadImageFromFile(histogramimage, histogram_rgb)) { printf("histogram initialization error!\n"); return 0; }
+	if (!ReadImageFromFile(histogrammask, histogram_mask)) { printf("histogram initialization error!\n"); return 0; }
+	coreEngine->frame->histogram->buildHistogram(histogramimage, histogrammask);
 
-	float pose1[6] = { 0.5119f, -0.1408f, 0.7854f, 0.0f, -0.637070260807493f, 0.0f };
-	float pose2[6] = { 0.6687f, 0.5081f, 0.1909f, 0.5469f, 0.9473f, -0.9473f };
-	coreEngine->trackingState->getPose(0)->setInvHFromParam(pose1);
-	coreEngine->trackingState->getPose(1)->setInvHFromParam(pose2);
-	
-	//Matrix4f tmpm = coreEngine->getTrackingState()->getPose(0)->getInvH();
-	//PrintArrayToFile("E:/LibISR/invH_debug.txt", tmpm.m , 16);
+	// initialized poses are [T' R']'
+	//float pose1[6] = { 0.5119f, -0.1408f, 0.7854f, 0.0f, -0.637070260807493f, 0.0f };
+	//float pose2[6] = { 0.6687f, 0.5081f, 0.1909f, 0.5469f, 0.9473f, -0.9473f };
+	//float poses[12] = { 0.5119f, -0.1408f, 0.7854f, 0.0f, -0.637070260807493f, 0.0f, 0.6687f, 0.5081f, 0.1909f, 0.5469f, 0.9473f, -0.9473f };
+	//for (int i = 0; i < isrSettings.noTrackingObj; i++)	coreEngine->trackingState->setInvHFromParam(&poses[6*i], i);
+
+	float poses[6] = { 0.0f, 0.0f, 1.2f, 0.1f, 0.1f, 0.1f };
+	coreEngine->trackingState->setHFromParam(poses,0);
 
 	///////////////////////////////////////////////////////////////////////////
 

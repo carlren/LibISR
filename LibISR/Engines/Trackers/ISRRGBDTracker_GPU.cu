@@ -10,7 +10,7 @@
 using namespace LibISR::Engine;
 using namespace LibISR::Objects;
 
-__global__ void evaluateEnergy_device(float* e_device, Vector4f* ptcloud_ptr, ISRShape_ptr shapes, ISRPose_ptr poses, int count, int objCount);
+__global__ void evaluateEnergy_device(Vector3f* e_device, Vector4f* ptcloud_ptr, ISRShape_ptr shapes, ISRPose_ptr poses, int count, int objCount);
 __global__ void computeJacobianAndHessian_device(float* g_device, float* h_device, Vector4f* ptcloud_ptr, ISRShape_ptr shapes, ISRPose_ptr poses, int count, int objCount);
 __global__ void lableForegroundPixels_device(Vector4f* ptcloud_ptr, Vector4f* rgbd_ptr, ISRShape_ptr shapes, ISRPose_ptr poses, int count, int objCount);
 
@@ -22,11 +22,11 @@ LibISR::Engine::ISRRGBDTracker_GPU::ISRRGBDTracker_GPU(int nObjs, const Vector2i
 	int g_size = ATb_Size*e_size;
 	int h_size = ATA_size*e_size;
 
-	energy_host = new float[e_size];
+	energy_host = new Vector3f[e_size];
 	gradient_host = new float[g_size];
 	hessian_host = new float[h_size];
 
-	ORcudaSafeCall(cudaMalloc((void**)&energy_dvic,sizeof(float)*e_size));
+	ORcudaSafeCall(cudaMalloc((void**)&energy_dvic, sizeof(Vector3f)*e_size));
 	ORcudaSafeCall(cudaMalloc((void**)&gradient_divc, sizeof(float)*g_size));
 	ORcudaSafeCall(cudaMalloc((void**)&hessian_divc, sizeof(float)*h_size));
 
@@ -53,15 +53,15 @@ void LibISR::Engine::ISRRGBDTracker_GPU::evaluateEnergy(float *energy, Objects::
 	dim3 blockSize(256, 1);
 	dim3 gridSize((int)ceil((float)ptCount / (float)blockSize.x), 1);
 
-	ORcudaSafeCall(cudaMemset(energy_dvic, 0, sizeof(float)*gridSize.x));
+	ORcudaSafeCall(cudaMemset(energy_dvic, 0, sizeof(Vector3f)*gridSize.x));
 
 	evaluateEnergy_device << <gridSize, blockSize >> > (energy_dvic, ptcloud_ptr, shapes, poses, ptCount, objCount);
 
-	ORcudaSafeCall(cudaMemcpy(energy_host,energy_dvic,sizeof(float)*gridSize.x,cudaMemcpyDeviceToHost));
+	ORcudaSafeCall(cudaMemcpy(energy_host, energy_dvic, sizeof(Vector3f)*gridSize.x, cudaMemcpyDeviceToHost));
 
- 	float e = 0;
+ 	Vector3f e(0.0f);
 	for (int i = 0; i < gridSize.x; i++) e += energy_host[i];
-	energy[0] = e ;
+	energy[0] = e.z < 100 ? 0.0f : e.x/e.y;
 }
 
 void LibISR::Engine::ISRRGBDTracker_GPU::computeJacobianAndHessian(float *gradient, float *hessian, Objects::ISRTrackingState * trackerState) const
@@ -98,8 +98,11 @@ void LibISR::Engine::ISRRGBDTracker_GPU::computeJacobianAndHessian(float *gradie
 		for (int p = 0; p < noParaSQ; p++)  globalHessian[p] += hessian_host[i * noParaSQ + p];
 	}
 
+
+	for (int r = 0, counter = 0; r < noPara; r++) for (int c = 0; c <= r; c++, counter++) hessian[r + c * noPara] = globalHessian[counter];
+	for (int r = 0; r < noPara; ++r) for (int c = r + 1; c < noPara; c++) hessian[r + c * noPara] = hessian[c + r * noPara];
 	for (int r = 0; r < noPara; ++r) gradient[r] = globalGradient[r];
-	for (int r = 0; r < noParaSQ; ++r) hessian[r] = globalHessian[r];
+	
 }
 
 void LibISR::Engine::ISRRGBDTracker_GPU::lableForegroundPixels(Objects::ISRTrackingState * trackerState)
@@ -118,13 +121,15 @@ void LibISR::Engine::ISRRGBDTracker_GPU::lableForegroundPixels(Objects::ISRTrack
 }
 
 
-__global__ void evaluateEnergy_device(float* e_device, Vector4f* ptcloud_ptr, ISRShape_ptr shapes, ISRPose_ptr poses, int count, int objCount)
+__global__ void evaluateEnergy_device(Vector3f* e_device, Vector4f* ptcloud_ptr, ISRShape_ptr shapes, ISRPose_ptr poses, int count, int objCount)
 {
 	int locId_global = threadIdx.x + blockIdx.x * blockDim.x, locId_local = threadIdx.x;
 
-	__shared__ float dim_shared[256];
+	__shared__ float dim_shared[256], count_shared[256], pfcount_shared[256];
 
 	dim_shared[locId_local] = 0.0f;
+	count_shared[locId_local] = 0.0f;
+	pfcount_shared[locId_local] = 0.0f;
 
 	if (locId_global < count)
 	{
@@ -132,17 +137,44 @@ __global__ void evaluateEnergy_device(float* e_device, Vector4f* ptcloud_ptr, IS
 		if (inpt.w > -1.0f)
 		{
 			dim_shared[locId_local] = computePerPixelEnergy(inpt, shapes, poses, objCount);
+			if (dim_shared[locId_local] > 0.0f)
+			{
+				count_shared[locId_local] = 1.0f;
+				if (inpt.w > 0.5f) pfcount_shared[locId_local] = 1.0f;
+			}
+			else dim_shared[locId_local] = 0.0f;
+
 		}
 	}
 
 	{ //reduction for e_device
 		__syncthreads();
-		if (locId_local < 128) dim_shared[locId_local] += dim_shared[locId_local + 128];
+		if (locId_local < 128)
+		{
+			dim_shared[locId_local] += dim_shared[locId_local + 128];
+			count_shared[locId_local] += count_shared[locId_local + 128];
+			pfcount_shared[locId_local] += pfcount_shared[locId_local + 128];
+		}
 		__syncthreads();
-		if (locId_local < 64) dim_shared[locId_local] += dim_shared[locId_local + 64];
+		if (locId_local < 64) 
+		{
+			dim_shared[locId_local] += dim_shared[locId_local + 64];
+			count_shared[locId_local] += count_shared[locId_local + 64];
+			pfcount_shared[locId_local] += pfcount_shared[locId_local + 64];
+		}
 		__syncthreads();
-		if (locId_local < 32) warpReduce(dim_shared, locId_local);
-		if (locId_local == 0) e_device[blockIdx.x] = dim_shared[locId_local];
+		if (locId_local < 32)
+		{
+			warpReduce(dim_shared, locId_local);
+			warpReduce(count_shared, locId_local);
+			warpReduce(pfcount_shared, locId_local);
+		}
+		if (locId_local == 0)
+		{
+			e_device[blockIdx.x].x = dim_shared[locId_local];
+			e_device[blockIdx.x].y = count_shared[locId_local];
+			e_device[blockIdx.x].z = pfcount_shared[locId_local];
+		}
 	}
 }
 
@@ -169,8 +201,9 @@ __global__ void computeJacobianAndHessian_device(float* g_device, float* h_devic
 			if (computePerPixelJacobian(localGradient, cPt, shapes, poses, objCount))
 			{
 				shouldAdd = true; hasValidData = true;
-				for (int a = 0, counter = 0; a < noPara; a++)
-					for (int b = 0; b < noPara; b++, counter++) localHessian[counter] += localGradient[a] * localGradient[b];
+
+				for (int r = 0, counter = 0; r < noPara; r++) for (int c = 0; c <= r; c++, counter++)
+					localHessian[counter] = localGradient[r] * localGradient[c];
 			}
 		}
 	}
