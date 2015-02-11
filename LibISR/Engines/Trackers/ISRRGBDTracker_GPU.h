@@ -23,6 +23,8 @@ namespace LibISR
 			void computeJacobianAndHessian(float *gradient, float *hessian, Objects::ISRTrackingState * trackerState) const;
 
 			void lableForegroundPixels(Objects::ISRTrackingState * trackerState);
+
+			void lableForegroundPixels(Objects::ISRTrackingState * trackerState, Vector4i bb);
 		public:
 			ISRRGBDTracker_GPU(int nObjs, const Vector2i& imgSize);
 			~ISRRGBDTracker_GPU();

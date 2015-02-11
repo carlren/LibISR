@@ -50,12 +50,16 @@ namespace LibISR
 			// back-project pixels into object coordinates to see whether they are on the object surface
 			virtual void lableForegroundPixels(Objects::ISRTrackingState * trackerState) = 0;
 
+			virtual void lableForegroundPixels(Objects::ISRTrackingState * trackerState, Vector4i bb) = 0;
+
 		public:
 
 			int numParameters() const { return ATb_Size; }
 			int numObjects() const { return nObjects;  };
 
-			void  TrackObjects(Objects::ISRFrame *frame, Objects::ISRShapeUnion *shapeUnion, Objects::ISRTrackingState *trackerState);
+			void  TrackObjects(Objects::ISRFrame *frame, Objects::ISRShapeUnion *shapeUnion, Objects::ISRTrackingState *trackerState, bool updateappearance=true);
+
+			void fastReinitialize(float& oldenergy);
 
 			ISRRGBDTracker(int nObjs, bool useGPU);
 			~ISRRGBDTracker();

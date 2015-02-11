@@ -66,6 +66,44 @@ namespace LibISR
 				return getProjectionMatrixFromRT(dr, dt);
 			}
 
+			_CPU_AND_GPU_CODE_ Vector3f getMRPfromDegree(Vector3f r)
+			{
+				float rotationX = r.x * DEGTORAD;
+				float rotationY = r.y * DEGTORAD;
+				float rotationZ = r.z * DEGTORAD;
+
+				float c1 = cos(rotationY / 2);
+				float c2 = cos(rotationZ / 2);
+				float c3 = cos(rotationX / 2);
+
+				float s1 = sin(rotationY / 2);
+				float s2 = sin(rotationZ / 2);
+				float s3 = sin(rotationX / 2);
+
+				float c1c2 = c1 * c2;
+				float s1s2 = s1 * s2;
+
+				float rotation1 = c1c2*s3 + s1s2*c3;
+				float rotation2 = s1*c2*c3 + c1*s2*s3;
+				float rotation3 = c1*s2*c3 - s1*c2*s3;
+				float rotation4 = c1c2*c3 - s1s2*s3;
+
+				float normal = 1 / sqrt(rotation1 *rotation1 + rotation2 * rotation2 + rotation3 * rotation3 + rotation4 * rotation4);
+
+				float b0 = rotation4 * normal;
+				float b1 = rotation1 * normal;
+				float b2 = rotation2 * normal;
+				float b3 = rotation3 * normal;
+
+				Vector3f theta;
+
+				theta.x = b1 / (1 + b0);
+				theta.y = b2 / (1 + b0);
+				theta.z = b3 / (1 + b0);
+
+				return theta;
+			}
+
 		public:
 
 			// set values
@@ -93,6 +131,12 @@ namespace LibISR
 			{
 				Matrix4f deltaM = getProjectionMatrixFromParam(step);
 				invH = deltaM*invH; invH.inv(H);
+			}
+
+			_CPU_AND_GPU_CODE_ void applyIncrementalRotationToInvHInDegree(const Vector3f& dr)
+			{
+				Vector3f r = getMRPfromDegree(dr);
+				applyIncrementalChangeToInvH(r, Vector3f(0.0f));
 			}
 
 			// apply incremental change to projection matrix

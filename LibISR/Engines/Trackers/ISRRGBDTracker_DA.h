@@ -38,7 +38,7 @@ _CPU_AND_GPU_CODE_ inline float computePerPixelEnergy(const Vector4f &inpt, LibI
 		float deto = exp_dt + 1.0f;
 		float sheaviside = 1.0f / deto;
 		float sdelta = 4.0f* exp_dt * sheaviside * sheaviside;
-		float e = inpt.w * sdelta + (1 - inpt.w)*sheaviside;
+		float e = inpt.w * sdelta*TMP_WEIGHT + (1 - inpt.w)*sheaviside*(2-TMP_WEIGHT);
 		return e;
 	}
 	else return 0.0f;
@@ -89,9 +89,9 @@ _CPU_AND_GPU_CODE_ inline bool computePerPixelJacobian(float *jacobian, const Ve
 	float dbase = exp_dt / (deto * deto);
 
 	float d_heaviside_dt = dbase * DTUNE;
-	float d_delta_dt = 4.0f * expf(-dt) / (deto * deto* deto) - 2 * dbase;
+	float d_delta_dt = 8.0f *DTUNE* expf(-2 * DTUNE*dt) / (deto * deto* deto) - 4 * DTUNE * dbase;
 
-	float prefix = inpt.w*d_delta_dt + (1 - inpt.w)*d_heaviside_dt;
+	float prefix = inpt.w*d_delta_dt*TMP_WEIGHT + (1 - inpt.w)*d_heaviside_dt*(2-TMP_WEIGHT);
 
 	ddt *= prefix;
 
@@ -132,5 +132,5 @@ _CPU_AND_GPU_CODE_ inline float findPerPixelDT(const Vector4f &inpt, LibISR::Obj
 		}
 		return dt;
 	}
-	else return 0.0f;
+	else return MAX_SDF;
 }

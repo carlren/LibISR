@@ -8,7 +8,7 @@ _CPU_AND_GPU_CODE_ inline bool castRay(Vector3f &pt_out, int x, int y, const flo
 	
 	Vector3f pt_camera_f, pt_block_s, pt_block_e, rayDirection, pt_result;
 	bool pt_found, inside_volume;
-	float sdfValue = MAX_SDF;
+	float sdfValue = MAX_SDF, lastsdfValue = MAX_SDF;
 	float totalLength=0, stepLength, totalLengthMax;
 	int voxidx;
 
@@ -33,17 +33,16 @@ _CPU_AND_GPU_CODE_ inline bool castRay(Vector3f &pt_out, int x, int y, const flo
 
 	pt_found = false;
 
+
 	while (totalLength<=totalLengthMax)
 	{
 		sdfValue = getSDFValue(pt_result, voxelData, inside_volume);
 		if (inside_volume)
 		{
-			if (fabs(sdfValue)<=1.0f)
-			{
-				pt_found = true;
-				break;
-			}
-			else stepLength = sdfValue*step_fine;
+			if (fabs(sdfValue) <= 1.0f){pt_found = true;break;}
+			if (lastsdfValue != MAX_SDF &&lastsdfValue*sdfValue<0){ pt_found = true; break; }
+			lastsdfValue = sdfValue;
+			stepLength = sdfValue*step_fine;
 		}
 		else
 		{
@@ -81,6 +80,7 @@ _CPU_AND_GPU_CODE_ inline void drawRendering(const bool & foundPoint, const floa
 
 	float outRes = (0.6f * angle + 0.4f) * 255.0f;
 	dest = Vector4u((uchar)outRes);
+	dest.r = 0;
 }
 
 _CPU_AND_GPU_CODE_ inline void raycastAndRender(Vector4u *outImg, int x, int y, const Vector2i& imagesize, const float* voxelData, const Matrix4f& invH, const Vector4f& invIntrinsic, const Vector2f *minmaxdata, const Vector3f& lightsource, float maxvoxelrange)

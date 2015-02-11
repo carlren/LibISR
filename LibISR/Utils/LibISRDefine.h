@@ -20,9 +20,11 @@
 #define BLOCK_SIZE_SDF 8
 #define BLOCK_SIZE_IMG 16
 #define KINECT_PLAYER_INDEX_SHIFT          3
-#define DTUNE 0.5f
+#define DTUNE 0.2f
 #define MAX_SDF 128.0f
 #define NUM_OBJ 2
+
+#define  TMP_WEIGHT 1.3f
 
 //////////////////////////////////////////////////////////////////////////
 // Types for mask images

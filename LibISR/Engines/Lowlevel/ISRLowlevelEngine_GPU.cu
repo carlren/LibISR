@@ -136,6 +136,7 @@ __global__ void preparePointCloudFromAlignedRGBDImage_device(Vector4f* ptcloud_o
 	{
 		float z = inimg[idx].w;
 		unprojectPtWithIntrinsic(intrinsic, Vector3f(x*z, y*z, z), ptcloud_out[idx]);
+
 		ptcloud_out[idx].w = getPf(inimg[idx], histogram, histBins);
 	}
 }
@@ -148,13 +149,18 @@ __global__ void computepfImageFromHistogram_device(Vector4u* inimg, float* histo
 	int idx = y * imgSize.x + x;
 	float pf = getPf(inimg[idx], histogram, histBins);
 
-	if (pf>0.5)
+	if (pf>0.5f)
 	{
 		inimg[idx].r = 255;
 		inimg[idx].g = 0;
 		inimg[idx].b = 0;
 	}
-
+	else if (pf==0.5f)
+	{
+		inimg[idx].r = 0;
+		inimg[idx].g = 0;
+		inimg[idx].b = 255;
+	}
 
 }
 

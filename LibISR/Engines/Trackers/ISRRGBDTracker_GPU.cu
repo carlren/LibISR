@@ -14,6 +14,7 @@ __global__ void evaluateEnergy_device(Vector3f* e_device, Vector4f* ptcloud_ptr,
 __global__ void computeJacobianAndHessian_device(float* g_device, float* h_device, Vector4f* ptcloud_ptr, ISRShape_ptr shapes, ISRPose_ptr poses, int count, int objCount);
 __global__ void lableForegroundPixels_device(Vector4f* ptcloud_ptr, Vector4f* rgbd_ptr, ISRShape_ptr shapes, ISRPose_ptr poses, int count, int objCount);
 
+
 LibISR::Engine::ISRRGBDTracker_GPU::ISRRGBDTracker_GPU(int nObjs, const Vector2i& imgSize) :ISRRGBDTracker(nObjs, true)
 {
 	Vector2i gridSize((imgSize.x + 15) / 16, (imgSize.y + 15) / 16);
@@ -118,6 +119,11 @@ void LibISR::Engine::ISRRGBDTracker_GPU::lableForegroundPixels(Objects::ISRTrack
 	dim3 gridSize((int)ceil((float)ptCount / (float)blockSize.x), 1);
 
 	lableForegroundPixels_device << <gridSize, blockSize >> >(ptcloud_ptr, rgbd_ptr, shapes, poses, ptCount, objCount);
+}
+
+void LibISR::Engine::ISRRGBDTracker_GPU::lableForegroundPixels(Objects::ISRTrackingState * trackerState, Vector4i bb)
+{
+
 }
 
 
@@ -264,7 +270,8 @@ __global__ void lableForegroundPixels_device(Vector4f* ptcloud_ptr, Vector4f* rg
 		if (ptcloud_ptr[locId_global].w > 0.0f)
 		{
 			float dt = findPerPixelDT(ptcloud_ptr[locId_global], shapes, poses,objCount);
-			if (fabs(dt) <= 2) { rgbd_ptr[locId_global].w = HIST_FG_PIXEL; }
+			
+			if (fabs(dt) <= 5) { rgbd_ptr[locId_global].w = HIST_FG_PIXEL; }
 			else { rgbd_ptr[locId_global].w = HIST_BG_PIXEL; }
 		}
 	}

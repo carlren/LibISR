@@ -23,5 +23,10 @@ Vector4i LibISR::Engine::ISRLowlevelEngine::findBoundingBoxFromCurrentState(cons
 		bb.w = ipts[idx].y > bb.w ? ipts[idx].y : bb.w;
 	}
 
+	bb.x = bb.x < 0 ? 0 : bb.x; 
+	bb.y = bb.y < 0 ? 0 : bb.y;
+	bb.z = bb.z > imgsize.x ? imgsize.x : bb.z;
+	bb.w = bb.w > imgsize.y ? imgsize.y : bb.w;
+
 	return bb;
 }

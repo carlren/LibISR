@@ -20,6 +20,7 @@ _CPU_AND_GPU_CODE_ inline float getPf(const T &pixel, float* histogram, int noBi
 	int bu = pixel.b / noBins;
 
 	int pidx = ru*noBins*noBins + gu * noBins + bu;
+
 	return histogram[pidx];
 }
 

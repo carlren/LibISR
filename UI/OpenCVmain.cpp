@@ -32,7 +32,8 @@ void main_(int argc, char** argv)
 	const char *depthImgSource = "E:/Libisr/k1_cut/d-%04i.pgm";
 	const char *calibFile = "../Data/calib.txt";
 
-	const char *sdfFile = "../Data/newCut.bin";
+	//const char *sdfFile = "../Data/newCut.bin";
+	const char *sdfFile = "../Data/hand.bin";
 
 	const char* histogram_rgb = "../Data/color.ppm";
 	const char* histogram_mask = "../Data/mask.ppm";

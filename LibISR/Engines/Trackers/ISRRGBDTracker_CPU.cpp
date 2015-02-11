@@ -97,4 +97,9 @@ void LibISR::Engine::ISRRGBDTracker_CPU::lableForegroundPixels(Objects::ISRTrack
 	}	
 }
 
+void LibISR::Engine::ISRRGBDTracker_CPU::lableForegroundPixels(Objects::ISRTrackingState * trackerState, Vector4i bb)
+{
+
+}
+
 

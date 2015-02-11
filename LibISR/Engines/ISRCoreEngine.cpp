@@ -61,6 +61,8 @@ void LibISR::Engine::ISRCoreEngine::processFrame(void)
 	}
 	//sdkStopTimer(&timer); printf("Image Hierarchy Image Time : [%f] ms\n", sdkGetTimerValue(&timer));
 
+	trackingState->boundingBox = myhierarchy->levels[0].boundingbox;
+
 	int lvlnum; lvlnum = settings->useGPU ? 1 : myhierarchy->noLevels - 1;
 	ISRImageHierarchy::ImageLevel& lastLevel = myhierarchy->levels[lvlnum];
 	frame->currentLevel = &lastLevel;
@@ -100,7 +102,7 @@ void LibISR::Engine::ISRCoreEngine::processFrame(void)
 
 		if (myrendering->outputImage->GetData(false)[i] != Vector4u(0, 0, 0, 0))
 		{
-			myview->alignedRgb->GetData(false)[i] = myrendering->outputImage->GetData(false)[i];
+			myview->alignedRgb->GetData(false)[i] = myrendering->outputImage->GetData(false)[i] / 3 * 2 + myview->alignedRgb->GetData(false)[i] / 3;
 		}
 	}
 

@@ -26,6 +26,7 @@ namespace LibISR
 
 			float energy;
 			bool useGPU;
+			Vector4i boundingBox;
 
 			ISRPose_ptr getPoseList(bool fromGPU=false) 
 			{
@@ -62,6 +63,7 @@ namespace LibISR
 			void setFrom(const ISRTrackingState &inposes)
 			{
 				int count = inposes.numPoses();
+				this->boundingBox = inposes.boundingBox;
 				for (int i = 0; i < count; i++)
 				{
 					this->getPose(i)->setFromH(inposes.getPose(i)->getH());

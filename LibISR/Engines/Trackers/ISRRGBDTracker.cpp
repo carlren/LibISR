@@ -48,7 +48,48 @@ void computeSingleStep(float *step, float *ATA, float *ATb, float lambda, int di
 	cholA.Backsub(step, ATb);
 }
 
-void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion *shapeUnion, ISRTrackingState *trackerState)
+
+void LibISR::Engine::ISRRGBDTracker::fastReinitialize(float& oldenergy)
+{
+	float e = oldenergy, tmpe = 0;
+	Vector3f bigestR(0.0f);
+
+	int R_SEP = 6;
+	float R_DEGREE = 360.0f / R_SEP;
+
+	for (int i = 1; i < R_SEP; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			Vector3f tmpV(0.0f);
+			tmpV.v[j] = i * R_DEGREE;
+			this->tempState->setFrom(*this->accpetedState);
+			this->tempState->getPose(0)->applyIncrementalRotationToInvHInDegree(tmpV);
+			this->tempState->updatePoseDeviceFromHost();
+			evaluateEnergy(&tmpe, this->tempState);
+
+			if (tmpe > e)
+			{
+				e = tmpe;
+				bigestR = tmpV;
+			}
+		}
+
+	}
+
+	this->tempState->setFrom(*this->accpetedState);
+
+	if (e-oldenergy>=0.05)
+	{
+		printf("Reinitialized, energy increase: %f \t rotation: (%d,%d,%d)\n", e - oldenergy, (int)bigestR.x, (int)bigestR.y, (int)bigestR.z);
+		this->tempState->getPose(0)->applyIncrementalRotationToInvHInDegree(bigestR);
+		this->tempState->updatePoseDeviceFromHost();
+		this->accpetedState->setFrom(*this->tempState);
+		oldenergy = e;
+	}
+}
+
+void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion *shapeUnion, ISRTrackingState *trackerState, bool updateappearance)
 {
 	this->frame = frame;
 	this->shapeUnion = shapeUnion;
@@ -76,7 +117,7 @@ void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion
 	{// minimalist LM main loop
 		evaluateEnergy(&lastenergy, accpetedState);
 
-		if (lastenergy==0) { trackerState->energy = 0; return; }
+		if (lastenergy<0.1f) { trackerState->energy = 0; return; }
 
 		for (int iter = 0; iter < MAX_STEPS; iter++)
 		{
@@ -115,14 +156,20 @@ void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion
 
 	}
 	
+
 	// after convergence, the w channel of ptcloud is recycled for histogram update
-	if (lastenergy>=0.7f)
+	if (lastenergy>=0.5f && updateappearance)
 	{
 		lableForegroundPixels(accpetedState);
 		frame->currentLevel->rgbd->UpdateHostFromDevice();
-		frame->histogram->updateHistogramFromLabeledRGBD(frame->currentLevel->rgbd, 0.2f, 0.3f);
+		frame->histogram->updateHistogramFromLabeledRGBD(frame->currentLevel->rgbd, 0.3f, 0.1f);
 	}
 
+	if (trackerState->numPoses() == 1 && lastenergy > 0.3f && lastenergy < 0.7f)
+	{
+		fastReinitialize(lastenergy);
+	}
+	
 	trackerState->setFrom(*accpetedState);
 	trackerState->energy = lastenergy;
 	//printf("\tEnergy:%f", lastenergy);
