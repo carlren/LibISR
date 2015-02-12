@@ -100,10 +100,16 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::computepfImageFromHistogram(ISRUChar
 	{
 		int idx = i * w + j;
 		pf = getPf(inimg_ptr[idx], histogram->posterior, noBins);
-		if (pf>0.5f)
+		if (pf > 0.5f)
 		{
 			inimg_ptr[idx].r = 255;
-			inimg_ptr[idx].g = 255;
+			inimg_ptr[idx].g = 0;
+			inimg_ptr[idx].b = 0;
+		}
+		else if (pf == 0.5f)
+		{
+			inimg_ptr[idx].r = 0;
+			inimg_ptr[idx].g = 0;
 			inimg_ptr[idx].b = 255;
 		}
 

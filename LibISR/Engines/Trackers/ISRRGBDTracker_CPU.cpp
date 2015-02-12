@@ -91,7 +91,7 @@ void LibISR::Engine::ISRRGBDTracker_CPU::lableForegroundPixels(Objects::ISRTrack
 		if (ptcloud_ptr[i].w > 0) // in the bounding box and have depth
 		{
 			dt = findPerPixelDT(ptcloud_ptr[i], shapes, poses,objCount);
-			if (fabs(dt) <= 2) { rgbd_ptr[i].w = HIST_FG_PIXEL; }
+			if (fabs(dt) <= 5) { rgbd_ptr[i].w = HIST_FG_PIXEL; }
 			else { rgbd_ptr[i].w = HIST_BG_PIXEL; }
 		}
 	}	
