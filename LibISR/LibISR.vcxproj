@@ -22,6 +22,8 @@
     <ClCompile Include="Engines\ISRCoreEngine.cpp" />
     <ClCompile Include="Engines\Lowlevel\ISRLowlevelEngine.cpp" />
     <ClCompile Include="Engines\Lowlevel\ISRLowlevelEngine_CPU.cpp" />
+    <ClCompile Include="Engines\Reconstruction\ISRReconstructionEngine.cpp" />
+    <ClCompile Include="Engines\Reconstruction\ISRReconstructionEngine_CPU.cpp" />
     <ClCompile Include="Engines\Trackers\ISRDepthTracker.cpp" />
     <ClCompile Include="Engines\Trackers\ISRRGBDTracker.cpp" />
     <ClCompile Include="Engines\Trackers\ISRRGBDTracker_CPU.cpp" />
@@ -35,6 +37,10 @@
     <ClInclude Include="Engines\Lowlevel\ISRLowlevelEngine_DA.h" />
     <ClInclude Include="Engines\Lowlevel\ISRLowlevelEngine_GPU.h" />
     <ClInclude Include="Engines\Lowlevel\ISRVoxelAccess_DA.h" />
+    <ClInclude Include="Engines\Reconstruction\ISRReconstructionEngine.h" />
+    <ClInclude Include="Engines\Reconstruction\ISRReconstructionEngine_CPU.h" />
+    <ClInclude Include="Engines\Reconstruction\ISRReconstructionEngine_DA.h" />
+    <ClInclude Include="Engines\Reconstruction\ISRReconstructionEngine_GPU.h" />
     <ClInclude Include="Engines\Trackers\ISRDepthTracker.h" />
     <ClInclude Include="Engines\Trackers\ISRRGBDTracker.h" />
     <ClInclude Include="Engines\Trackers\ISRRGBDTracker_CPU.h" />
@@ -68,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="Engines\Lowlevel\ISRLowlevelEngine_GPU.cu" />
+    <CudaCompile Include="Engines\Reconstruction\ISRReconstructionEngine_GPU.cu" />
     <CudaCompile Include="Engines\Trackers\ISRRGBDTracker_GPU.cu" />
     <CudaCompile Include="Engines\Visualization\ISRVisualisationEngine_GPU.cu" />
   </ItemGroup>

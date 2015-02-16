@@ -25,6 +25,9 @@
     <Filter Include="Objects\Basic">
       <UniqueIdentifier>{1a371c00-38b1-4ae1-9523-4fcecda1f011}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engines\Reconstruction">
+      <UniqueIdentifier>{0626232b-86d9-4f5f-91c7-288ef1af2950}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engines\ISRCoreEngine.cpp">
@@ -53,6 +56,12 @@
     </ClCompile>
     <ClCompile Include="Engines\Visualization\ISRVisualisationEngine_CPU.cpp">
       <Filter>Engines\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="Engines\Reconstruction\ISRReconstructionEngine.cpp">
+      <Filter>Engines\Reconstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="Engines\Reconstruction\ISRReconstructionEngine_CPU.cpp">
+      <Filter>Engines\Reconstruction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +168,18 @@
     <ClInclude Include="Engines\Visualization\ISRVisualisationEngine_GPU.h">
       <Filter>Engines\Visualization</Filter>
     </ClInclude>
+    <ClInclude Include="Engines\Reconstruction\ISRReconstructionEngine.h">
+      <Filter>Engines\Reconstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="Engines\Reconstruction\ISRReconstructionEngine_CPU.h">
+      <Filter>Engines\Reconstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="Engines\Reconstruction\ISRReconstructionEngine_DA.h">
+      <Filter>Engines\Reconstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="Engines\Reconstruction\ISRReconstructionEngine_GPU.h">
+      <Filter>Engines\Reconstruction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="Engines\Trackers\ISRRGBDTracker_GPU.cu">
@@ -169,6 +190,9 @@
     </CudaCompile>
     <CudaCompile Include="Engines\Visualization\ISRVisualisationEngine_GPU.cu">
       <Filter>Engines\Visualization</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Engines\Reconstruction\ISRReconstructionEngine_GPU.cu">
+      <Filter>Engines\Reconstruction</Filter>
     </CudaCompile>
   </ItemGroup>
 </Project>
