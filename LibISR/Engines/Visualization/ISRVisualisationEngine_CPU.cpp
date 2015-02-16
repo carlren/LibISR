@@ -23,10 +23,13 @@ void LibISR::Engine::ISRVisualisationEngine_CPU::renderObject(Objects::ISRVisual
 
 	float one_on_top_of_maxVoxelRange = 1 / sqrtf(DT_VOL_SIZE*DT_VOL_SIZE + DT_VOL_SIZE*DT_VOL_SIZE + DT_VOL_SIZE*DT_VOL_SIZE);
 
-
-	for (int y = 0; y < imgSize.y; y++) for (int x = 0; x < imgSize.x; x++)
+#pragma omp parallel 
 	{
-		raycastAndRender(outimage, x, y, imgSize, voxelData, invH, invIntrinsic, minmaximg, lightSource, one_on_top_of_maxVoxelRange);
+#pragma omp for
+		for (int y = 0; y < imgSize.y; y++) for (int x = 0; x < imgSize.x; x++)
+		{
+			raycastAndRender(outimage, x, y, imgSize, voxelData, invH, invIntrinsic, minmaximg, lightSource, one_on_top_of_maxVoxelRange);
+		}
 	}
 }
 
@@ -46,10 +49,13 @@ void LibISR::Engine::ISRVisualisationEngine_CPU::renderDepth(ISRUShortImage* ren
 
 	float one_on_top_of_maxVoxelRange = 1 / sqrtf(DT_VOL_SIZE*DT_VOL_SIZE + DT_VOL_SIZE*DT_VOL_SIZE + DT_VOL_SIZE*DT_VOL_SIZE);
 
-
-	for (int y = 0; y < imgSize.y; y++) for (int x = 0; x < imgSize.x; x++)
+#pragma omp parallel 
 	{
-		raycastAndRenderDepth(outimage, x, y, imgSize, voxelData, invH, invIntrinsic,minmaximg, one_on_top_of_maxVoxelRange);
+#pragma omp for
+		for (int y = 0; y < imgSize.y; y++) for (int x = 0; x < imgSize.x; x++)
+		{
+			raycastAndRenderDepth(outimage, x, y, imgSize, voxelData, invH, invIntrinsic, minmaximg, one_on_top_of_maxVoxelRange);
+		}
 	}
 }
 
@@ -73,10 +79,13 @@ void LibISR::Engine::ISRVisualisationEngine_CPU::renderDepthNormalAndObject(ISRU
 
 	float one_on_top_of_maxVoxelRange = 1 / sqrtf(DT_VOL_SIZE*DT_VOL_SIZE + DT_VOL_SIZE*DT_VOL_SIZE + DT_VOL_SIZE*DT_VOL_SIZE);
 
-
-	for (int y = 0; y < imgSize.y; y++) for (int x = 0; x < imgSize.x; x++)
+#pragma omp parallel 
 	{
-		raycastAndRenderWithDepthAndSurfaceNormal(outimageD,outimageGray,outimageNormal, x, y, imgSize, voxelData, invH, invIntrinsic, minmaximg,lightSource, one_on_top_of_maxVoxelRange);
+#pragma omp for
+		for (int y = 0; y < imgSize.y; y++) for (int x = 0; x < imgSize.x; x++)
+		{
+			raycastAndRenderWithDepthAndSurfaceNormal(outimageD, outimageGray, outimageNormal, x, y, imgSize, voxelData, invH, invIntrinsic, minmaximg, lightSource, one_on_top_of_maxVoxelRange);
+		}
 	}
 }
 

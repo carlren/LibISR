@@ -21,8 +21,8 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::subsampleImageRGBDImage(ISRFloat4Ima
 	const Vector4f *imageData_in = inimg->GetData(false);
 	Vector4f *imageData_out = outimg->GetData(false);
 
-	for (int y = 0; y < newDims.y; y++) for (int x = 0; x < newDims.x; x++)
-		filterSubsampleWithHoles(imageData_out, x, y, newDims, imageData_in, oldDims);
+		for (int y = 0; y < newDims.y; y++) for (int x = 0; x < newDims.x; x++)
+			filterSubsampleWithHoles(imageData_out, x, y, newDims, imageData_in, oldDims);
 }
 
 void LibISR::Engine::ISRLowlevelEngine_CPU::prepareAlignedRGBDData(ISRFloat4Image *outimg, ISRShortImage *raw_depth_in, ISRUChar4Image *rgb_in, Objects::ISRExHomography *home)
@@ -54,7 +54,6 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::prepareAlignedRGBDData(ISRFloat4Imag
 			mapRGBDtoRGB(rgbd_out_ptr[idx], Vector3f(j*z, i*z, z), rgb_in_ptr, raw_depth_in->noDims, home->H, home->T);
 			rgbd_out_ptr[idx].w = z;
 		}
-
 	}
 
 }
@@ -70,21 +69,21 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::preparePointCloudFromAlignedRGBDImag
 
 	Vector4f *inimg_ptr = inimg->GetData(false);
 	Vector4f* ptcloud_ptr = ptcloud_out->GetData(false);
-	
-	for (int i = 0; i < h; i++) for (int j = 0; j < w; j++)
-	{
-		int idx = i * w + j;
-		if (j < boundingbox.x || j >= boundingbox.z || i < boundingbox.y || i >= boundingbox.w)
+
+		for (int i = 0; i < h; i++) for (int j = 0; j < w; j++)
 		{
-			ptcloud_ptr[idx] = Vector4f(0, 0, 0, -1);
+			int idx = i * w + j;
+			if (j < boundingbox.x || j >= boundingbox.z || i < boundingbox.y || i >= boundingbox.w)
+			{
+				ptcloud_ptr[idx] = Vector4f(0, 0, 0, -1);
+			}
+			else
+			{
+				float z = inimg_ptr[idx].w;
+				unprojectPtWithIntrinsic(intrinsic, Vector3f(j*z, i*z, z), ptcloud_ptr[idx]);
+				ptcloud_ptr[idx].w = getPf(inimg_ptr[idx], histogram->posterior, noBins);
+			}
 		}
-		else
-		{
-			float z = inimg_ptr[idx].w;
-			unprojectPtWithIntrinsic(intrinsic, Vector3f(j*z, i*z, z), ptcloud_ptr[idx]);
-			ptcloud_ptr[idx].w = getPf(inimg_ptr[idx], histogram->posterior, noBins);
-		}
-	}
 }
 
 void LibISR::Engine::ISRLowlevelEngine_CPU::computepfImageFromHistogram(ISRUChar4Image *rgb_in, Objects::ISRHistogram *histogram)
@@ -96,23 +95,22 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::computepfImageFromHistogram(ISRUChar
 
 	Vector4u *inimg_ptr = rgb_in->GetData(false);
 
-	for (int i = 0; i < h; i++) for (int j = 0; j < w; j++)
-	{
-		int idx = i * w + j;
-		pf = getPf(inimg_ptr[idx], histogram->posterior, noBins);
-		if (pf > 0.5f)
+		for (int i = 0; i < h; i++) for (int j = 0; j < w; j++)
 		{
-			inimg_ptr[idx].r = 255;
-			inimg_ptr[idx].g = 0;
-			inimg_ptr[idx].b = 0;
+			int idx = i * w + j;
+			pf = getPf(inimg_ptr[idx], histogram->posterior, noBins);
+			if (pf > 0.5f)
+			{
+				inimg_ptr[idx].r = 255;
+				inimg_ptr[idx].g = 0;
+				inimg_ptr[idx].b = 0;
+			}
+			else if (pf == 0.5f)
+			{
+				inimg_ptr[idx].r = 0;
+				inimg_ptr[idx].g = 0;
+				inimg_ptr[idx].b = 255;
+			}
 		}
-		else if (pf == 0.5f)
-		{
-			inimg_ptr[idx].r = 0;
-			inimg_ptr[idx].g = 0;
-			inimg_ptr[idx].b = 255;
-		}
-
-	}
 }
 

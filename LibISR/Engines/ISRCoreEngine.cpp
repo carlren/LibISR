@@ -31,14 +31,12 @@ LibISR::Engine::ISRCoreEngine::ISRCoreEngine(const ISRLibSettings *settings, con
 
 void LibISR::Engine::ISRCoreEngine::processFrame(void)
 {
-	//StopWatchInterface *timer;
-	//sdkCreateTimer(&timer);
-
+	StopWatchInterface *timer;
+	sdkCreateTimer(&timer);
 
 	ISRView* myview = getView();
 	ISRImageHierarchy* myhierarchy = getImageHierarchy();
 	
-
 	myhierarchy->levels[0].boundingbox = lowLevelEngine->findBoundingBoxFromCurrentState(trackingState, myview->calib->intrinsics_d.A, myview->depth->noDims);
 	myhierarchy->levels[0].intrinsic = myview->calib->intrinsics_d.getParam();
 
@@ -48,18 +46,18 @@ void LibISR::Engine::ISRCoreEngine::processFrame(void)
 		myview->rgb->UpdateDeviceFromHost();
 	}
 
-	//sdkResetTimer(&timer); sdkStartTimer(&timer);
+	sdkResetTimer(&timer); sdkStartTimer(&timer);
 	lowLevelEngine->prepareAlignedRGBDData(myhierarchy->levels[0].rgbd, myview->rawDepth, myview->rgb, &myview->calib->homo_depth_to_color);
-	//sdkStopTimer(&timer); printf("Prepare Aligned Image Time : [%f] ms\n", sdkGetTimerValue(&timer));
+	sdkStopTimer(&timer); printf("\rAlign:[%.2f] ", sdkGetTimerValue(&timer));
 
-	//sdkResetTimer(&timer); sdkStartTimer(&timer);
+	sdkResetTimer(&timer); sdkStartTimer(&timer);
 	for (int i = 1; i < myhierarchy->noLevels; i++)
 	{
 		myhierarchy->levels[i].intrinsic = myhierarchy->levels[i - 1].intrinsic / 2;
 		myhierarchy->levels[i].boundingbox = myhierarchy->levels[i - 1].boundingbox / 2;
 		lowLevelEngine->subsampleImageRGBDImage(myhierarchy->levels[i].rgbd, myhierarchy->levels[i - 1].rgbd);
 	}
-	//sdkStopTimer(&timer); printf("Image Hierarchy Image Time : [%f] ms\n", sdkGetTimerValue(&timer));
+	sdkStopTimer(&timer); printf("Hier:[%.2f] ", sdkGetTimerValue(&timer));
 
 	trackingState->boundingBox = myhierarchy->levels[0].boundingbox;
 
@@ -67,21 +65,22 @@ void LibISR::Engine::ISRCoreEngine::processFrame(void)
 	ISRImageHierarchy::ImageLevel& lastLevel = myhierarchy->levels[lvlnum];
 	frame->currentLevel = &lastLevel;
 
-	//sdkResetTimer(&timer); sdkStartTimer(&timer);
+	sdkResetTimer(&timer); sdkStartTimer(&timer);
 	lowLevelEngine->preparePointCloudFromAlignedRGBDImage(frame->ptCloud, lastLevel.rgbd, frame->histogram, lastLevel.intrinsic, lastLevel.boundingbox);
-	//sdkStopTimer(&timer); printf("Prepare Point Cloud Time : [%f] ms\n", sdkGetTimerValue(&timer));
+	sdkStopTimer(&timer); printf("Prep:[%.2f] ", sdkGetTimerValue(&timer));
 
-	//sdkResetTimer(&timer); sdkStartTimer(&timer);
+	sdkResetTimer(&timer); sdkStartTimer(&timer);
 	tracker->TrackObjects(frame, shapeUnion, trackingState);
-	//sdkStopTimer(&timer); printf("Track Object Time : [%f] ms\n", sdkGetTimerValue(&timer));
+	sdkStopTimer(&timer); printf("Track:[%.2f] ", sdkGetTimerValue(&timer));
 
 	myview->alignedRgb->SetFrom(myview->rgb);
 	lowLevelEngine->computepfImageFromHistogram(myview->rgb, frame->histogram);
 
 	ISRVisualisationState* myrendering = getRenderingState();
-
 	ISRVisualisationState** tmprendering = new ISRVisualisationState*[settings->noTrackingObj];
 
+
+	sdkResetTimer(&timer); sdkStartTimer(&timer);
 	for (int i = 0; i < settings->noTrackingObj; i++)
 	{
 		tmprendering[i] = new ISRVisualisationState(myview->rawDepth->noDims, settings->useGPU);
@@ -90,9 +89,11 @@ void LibISR::Engine::ISRCoreEngine::processFrame(void)
 		tmprendering[i]->minmaxImage->UpdateDeviceFromHost();
 		visualizationEngine->renderObject(tmprendering[i], trackingState->getPose(i)->getInvH(), shapeUnion->getShape(0), myview->calib->intrinsics_d.getParam());
 	}
+	sdkStopTimer(&timer); printf("Render:[%.2f] ", sdkGetTimerValue(&timer));
 
+
+	sdkResetTimer(&timer); sdkStartTimer(&timer);
 	myrendering->outputImage->Clear(0);
-	
 	for (int i = 0; i < myrendering->outputImage->dataSize; i++)
 	{
 		for (int j = 0; j < settings->noTrackingObj; j++)
@@ -108,6 +109,6 @@ void LibISR::Engine::ISRCoreEngine::processFrame(void)
 
 	for (int i = 0; i < settings->noTrackingObj; i++) delete tmprendering[i];
 	delete[] tmprendering;
-
+	sdkStopTimer(&timer); printf("Rest:[%.2f]", sdkGetTimerValue(&timer));
 }
 

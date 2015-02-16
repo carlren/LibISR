@@ -51,4 +51,3 @@ void LibISR::Engine::ISRVisualisationEngine::updateMinmaxmImage(ISRFloat2Image* 
 		}
 	}
 }
-
