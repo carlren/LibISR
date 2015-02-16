@@ -77,7 +77,6 @@ void LibISR::Engine::ISRCoreEngine::processFrame(void)
 	lowLevelEngine->computepfImageFromHistogram(myview->rgb, frame->histogram);
 
 	ISRVisualisationState* myrendering = getRenderingState();
-
 	ISRVisualisationState** tmprendering = new ISRVisualisationState*[settings->noTrackingObj];
 
 
