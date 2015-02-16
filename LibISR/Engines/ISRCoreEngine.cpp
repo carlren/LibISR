@@ -82,11 +82,17 @@ void LibISR::Engine::ISRCoreEngine::processFrame(void)
 
 	ISRVisualisationState** tmprendering = new ISRVisualisationState*[settings->noTrackingObj];
 
+
+
 	for (int i = 0; i < settings->noTrackingObj; i++)
 	{
 		tmprendering[i] = new ISRVisualisationState(myview->rawDepth->noDims, settings->useGPU);
 		tmprendering[i]->outputImage->Clear(0);
-		visualizationEngine->updateMinmaxmImage(tmprendering[i]->minmaxImage, trackingState->getPose(i)->getH(), myview->calib->intrinsics_d.A, myview->depth->noDims);
+
+		myhierarchy->levels[0].rgbd->UpdateHostFromDevice();
+		visualizationEngine->updateMinmaxImage_fast(tmprendering[i]->minmaxImage,myhierarchy->levels[0].rgbd, trackingState->getPose(i)->getH(), myview->calib->intrinsics_d.A, myview->depth->noDims);
+
+		//visualizationEngine->updateMinmaxmImage(tmprendering[i]->minmaxImage, trackingState->getPose(i)->getH(), myview->calib->intrinsics_d.A, myview->depth->noDims);
 		tmprendering[i]->minmaxImage->UpdateDeviceFromHost();
 		visualizationEngine->renderObject(tmprendering[i], trackingState->getPose(i)->getInvH(), shapeUnion->getShape(0), myview->calib->intrinsics_d.getParam());
 	}
