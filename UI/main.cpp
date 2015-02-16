@@ -60,6 +60,7 @@ int main(int argc, char** argv)
 	if (!ReadImageFromFile(histogramimage, histogram_rgb)) { printf("histogram initialization error!\n"); return 0; }
 	if (!ReadImageFromFile(histogrammask, histogram_mask)) { printf("histogram initialization error!\n"); return 0; }
 	coreEngine->frame->histogram->buildHistogram(histogramimage, histogrammask);
+	delete histogrammask; delete histogramimage;
 
 ////	 initialized poses are [T' R']'
 	//float pose1[6] = { 0.5119f, -0.1408f, 0.7854f, 0.0f, -0.637070260807493f, 0.0f };

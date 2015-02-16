@@ -70,7 +70,6 @@ void LibISR::Engine::ISRVisualisationEngine_GPU::renderDepthNormalAndObject(ISRU
 	Vector2f *minmaximg = rendering->minmaxImage->GetData(false);
 
 	Vector2i imgSize = rendering->outputImage->noDims;
-	float mu = 0.5;
 	Vector3f lightSource = -Vector3f(invH.getColumn(2));
 
 	Vector4f invIntrinsic;

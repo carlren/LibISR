@@ -26,7 +26,6 @@ namespace LibISR
 
 
 			void updateMinmaxmImage(ISRFloat2Image* minmaximg, const Matrix4f& H, const Matrix3f& K, const Vector2i& imgsize);
-			void updateMinmaxImage_fast(ISRFloat2Image* minmaximg, ISRFloat4Image* rgbd, const Matrix4f& H, const Matrix3f& K, const Vector2i& imgsize);
 		};
 	}
 }
