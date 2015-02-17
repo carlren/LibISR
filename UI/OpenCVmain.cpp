@@ -10,6 +10,7 @@
 #pragma comment( lib, "opencv_core2410.lib" )
 #pragma comment( lib, "opencv_highgui2410.lib" )
 
+
 #include "../LibISRUtils/IOUtil.h"
 #include "../LibISRUtils/Timer.h"
 #include "../LibISRUtils/NVTimer.h"
@@ -18,68 +19,69 @@ using namespace LibISR::Engine;
 using namespace LibISR::Objects;
 using namespace LibISRUtils;
 
-void main_(int argc, char** argv)
+void inline updateHistogramFromRendering(ISRUChar4Image* rendering, ISRUChar4Image* rgb, LibISR::Objects::ISRHistogram* hist)
 {
-	//const char *colorImgSource = "../Data/K1_cut/c-%04i.ppm";
-	//const char *depthImgSource = "../Data/K1_cut/d-%04i.pgm";
-	//const char *calibFile = "../Data/Calib_kinect1.txt";
+	Vector4u* imgptr = rendering->GetData(false);
+	Vector4u bpix((uchar)0);
+	for (int i = 0; i < rendering->dataSize; i++)
+		if (imgptr[i] != bpix) imgptr[i] = Vector4u(255, 255, 255, 255);
+		else imgptr[i] = Vector4u(100, 100, 100, 100);
 
-	//const char *colorImgSource = "E:/Data/k1_cut/c-%04i.ppm";
-	//const char *depthImgSource = "E:/Data/k1_cut/d-%04i.pgm";
-	//const char *calibFile = "../Data/Calib_kinect1.txt";
+		hist->buildHistogram(rgb, rendering);
 
-	const char *colorImgSource = "E:/Libisr/k1_cut/cr0-%04i.ppm";
-	const char *depthImgSource = "E:/Libisr/k1_cut/d-%04i.pgm";
-	const char *calibFile = "../Data/calib.txt";
+}
 
+
+void copydataISR2OpenCV(IplImage* outimg, ISRUChar4Image* inimg)
+{
+	uchar* outimg_ptr = (uchar*)outimg->imageData;
+	Vector4u* inimg_ptr = inimg->GetData(false);
+
+	for (int i = 0; i < inimg->dataSize;i++)
+	{
+		outimg_ptr[i * 4 + 0] = inimg_ptr[i].b;
+		outimg_ptr[i * 4 + 1] = inimg_ptr[i].g;
+		outimg_ptr[i * 4 + 2] = inimg_ptr[i].r;
+	}
+}
+
+void main(int argc, char** argv)
+{
 	//const char *sdfFile = "../Data/newCut.bin";
-	const char *sdfFile = "../Data/hand.bin";
+	const char *sdfFile = "../Data/teacan.bin";
+	//const char *sdfFile = "../Data/ball.bin";
 
-	const char* histogram_rgb = "../Data/color.ppm";
-	const char* histogram_mask = "../Data/mask.ppm";
-
-	ImageSourceEngine *imageSource = new ImageFileReader(calibFile, colorImgSource, depthImgSource);
-	//ImageSourceEngine *imageSource = new OpenNIEngine(calibFile,NULL,true);
+	const char *calibFile = "../Data/calib_reg.txt";
+	ImageSourceEngine *imageSource = new OpenNIEngine(calibFile, NULL, true);
 
 	ISRLibSettings isrSettings;
-	isrSettings.noHistogramDim = 16;
-	isrSettings.noTrackingObj = 2;
+	isrSettings.noHistogramDim = HISTOGRAM_BIN;
+	isrSettings.noTrackingObj = 1;
 	isrSettings.singleAappearanceModel = true;
 	isrSettings.useGPU = true;
 
 	ISRCoreEngine *coreEngine = new ISRCoreEngine(&isrSettings, &imageSource->calib, imageSource->getDepthImageSize(), imageSource->getRGBImageSize());
-
 	coreEngine->shapeUnion->loadShapeFromFile(sdfFile, Vector3i(DT_VOL_SIZE, DT_VOL_SIZE, DT_VOL_SIZE), 0);
-	coreEngine->shapeUnion->shareSDFWithExistingShape(*coreEngine->shapeUnion->getShape(0), 1);
+	for (int i = 1; i < isrSettings.noTrackingObj; i++)
+		coreEngine->shapeUnion->shareSDFWithExistingShape(*coreEngine->shapeUnion->getShape(0), i);
 
-	// initialize color histogram from mask image
-	ISRUChar4Image *histogramimage = new ISRUChar4Image(imageSource->getDepthImageSize(), false);
-	ISRUChar4Image *histogrammask = new ISRUChar4Image(imageSource->getDepthImageSize(), false);
-	if (!ReadImageFromFile(histogramimage, histogram_rgb)) { printf("wrong!\n"); return; }
-	if (!ReadImageFromFile(histogrammask, histogram_mask)) { printf("wrong!\n"); return;}
-	coreEngine->frame->histogram->buildHistogram(histogramimage, histogrammask);
-
-	// initialized poses are [T' R']'
-	float pose1[6] = { 0.5119f, -0.1408f, 0.7854f, 0.0f, -0.637070260807493f, 0.0f };
-	float pose2[6] = { 0.6687f, 0.5081f, 0.1909f, 0.5469f, 0.9473f, -0.9473f };
-	
-	coreEngine->trackingState->setInvHFromParam(pose1, 0);
-	coreEngine->trackingState->setInvHFromParam(pose2, 1);
-
+	float poses[6] = { 0.0f, 0.0f, 0.7f, 0.1f, 0.0f, 0.0f };
+	coreEngine->trackingState->setHFromParam(poses, 0);
 
 	//////////////////////////////////////////////////////////////////////////
 	// opencv interface stuff
 	//////////////////////////////////////////////////////////////////////////
 
-	cvNamedWindow("Depth", 0);
+	cvNamedWindow("LibISR", 0);
 	IplImage* depthFrame = cvCreateImage(cvSize(640, 480), 8, 4);
+
 
 	Vector3f cpt[4];	cpt[0] = Vector3f(0, 0, 0);	cpt[1] = Vector3f(0.1, 0, 0);	cpt[2] = Vector3f(0, 0.1, 0);	cpt[3] = Vector3f(0, 0, 0.1);
 	CvPoint cvpt[4];Vector3f ipt[4];
 	CvScalar color[3];	color[0] = CV_RGB(0, 0, 255);	color[1] = CV_RGB(0, 255, 0);	color[2] = CV_RGB(255, 0, 0);
 	CvScalar bbcolor = CV_RGB(255,255,0);
 
-	int key;
+	int key=0;
 	int count = 0;
 
 	Matrix3f A = coreEngine->getView()->calib->intrinsics_d.A;
@@ -90,54 +92,46 @@ void main_(int argc, char** argv)
 	sdkCreateTimer(&timer);
 	float processedTime = 0;
 
-	while ((key = cvWaitKey(10)) != 27)
+	while (key != 27)
 	{
-
+		key = cvWaitKey(10);
 		if (!imageSource->hasMoreImages()) return;
 		imageSource->getImages(coreEngine->getView());
 		
-		sdkResetTimer(&timer); sdkStartTimer(&timer);
-		coreEngine->processFrame();
-		sdkStopTimer(&timer); processedTime += sdkGetTimerValue(&timer);
+		if (key=='r') updateHistogramFromRendering(coreEngine->getRenderingState()->outputImage, coreEngine->getView()->rgb, coreEngine->frame->histogram);
 
-		printf("\rAverage Tracking Time : [%f] ms = [%d] fps\tEnergy = %f", processedTime / count, (int)(count*1000 / processedTime),coreEngine->getEnergy());
+		coreEngine->processFrame();
 
 		Vector4i bb = coreEngine->frame->imgHierarchy->levels[0].boundingbox;
-		memcpy(depthFrame->imageData, (char*)coreEngine->getView()->alignedRgb->GetData(false), 640 * 480 * sizeof(char) * 4);
-		//memcpy(depthFrame->imageData, (char*)coreEngine->getRenderingState()->outputImage->GetData(false), 640 * 480 * sizeof(char) * 4); H.setIdentity(); T = Vector3f(0, 0, 0);
+		copydataISR2OpenCV(depthFrame, coreEngine->getView()->alignedRgb);
 
-		//// draw the axis on object
-		//Matrix4f M = coreEngine->trackingState->getPose(0)->getH();
-		//for (int i = 0; i < 4; i++)
-		//{
-		//	ipt[i] = H*(A*(M*cpt[i])) + T;
-		//	cvpt[i].x = ipt[i].x / ipt[i].z;
-		//	cvpt[i].y = ipt[i].y / ipt[i].z;
-		//}
-		//for (int i = 0; i < 3; i++) cvDrawLine(depthFrame, cvpt[0], cvpt[i + 1], color[i], 2);
-		//
-		//M = coreEngine->trackingState->getPose(1)->getH();
-		//for (int i = 0; i < 4; i++)
-		//{
-		//	ipt[i] = H*(A*(M*cpt[i])) + T;
-		//	cvpt[i].x = ipt[i].x / ipt[i].z;
-		//	cvpt[i].y = ipt[i].y / ipt[i].z;
-		//}
-		//for (int i = 0; i < 3; i++) cvDrawLine(depthFrame, cvpt[0], cvpt[i + 1], color[i], 2);
+		// draw the axis on object
+
+		for (int o = 0; o < isrSettings.noTrackingObj; o++)
+		{
+			Matrix4f M = coreEngine->trackingState->getPose(o)->getH();
+			for (int i = 0; i < 4; i++)
+			{
+				ipt[i] = H*(A*(M*cpt[i])) + T;
+				cvpt[i].x = ipt[i].x / ipt[i].z;
+				cvpt[i].y = ipt[i].y / ipt[i].z;
+			}
+			for (int i = 0; i < 3; i++) cvDrawLine(depthFrame, cvpt[0], cvpt[i + 1], color[i], 2);
+		}
+
+		// draw the bounding box
+		CvPoint p1, p2, p3, p4;
+		p1.x = bb.x; p1.y = bb.y; 
+		p2.x = bb.z; p2.y = bb.y;
+		p3.x = bb.z; p4.y = bb.w;
+		p4.x = bb.x, p3.y = bb.w;
 		
-		//// draw the bounding box
-		//CvPoint p1, p2, p3, p4;
-		//p1.x = bb.x; p1.y = bb.y; 
-		//p2.x = bb.z; p2.y = bb.y;
-		//p3.x = bb.z; p4.y = bb.w;
-		//p4.x = bb.x, p3.y = bb.w;
-		//
-		//cvDrawLine(depthFrame, p1, p2, bbcolor, 2);
-		//cvDrawLine(depthFrame, p2, p3, bbcolor, 2);
-		//cvDrawLine(depthFrame, p3, p4, bbcolor, 2);
-		//cvDrawLine(depthFrame, p4, p1, bbcolor, 2);
+		cvDrawLine(depthFrame, p1, p2, bbcolor, 2);
+		cvDrawLine(depthFrame, p2, p3, bbcolor, 2);
+		cvDrawLine(depthFrame, p3, p4, bbcolor, 2);
+		cvDrawLine(depthFrame, p4, p1, bbcolor, 2);
 
-		cvShowImage("Depth", depthFrame);
+		cvShowImage("LibISR", depthFrame);
 
 		//char tmpchar[200];
 		//sprintf(tmpchar, outName, count);
