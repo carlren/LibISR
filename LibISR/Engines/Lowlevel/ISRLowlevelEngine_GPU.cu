@@ -19,14 +19,14 @@ __global__ void computepfImageFromHistogram_device(Vector4u* inimg, float* histo
 // host functions
 //////////////////////////////////////////////////////////////////////////
 
-void LibISR::Engine::ISRLowlevelEngine_GPU::subsampleImageRGBDImage(ISRFloat4Image *outimg, ISRFloat4Image *inimg)
+void LibISR::Engine::ISRLowlevelEngine_GPU::subsampleImageRGBDImage(Float4Image *outimg, Float4Image *inimg)
 {
 	Vector2i oldDims = inimg->noDims;
 	Vector2i newDims; newDims.x = inimg->noDims.x / 2; newDims.y = inimg->noDims.y / 2;
 	outimg->ChangeDims(newDims);
 
-	const Vector4f *imageData_in = inimg->GetData(true);
-	Vector4f *imageData_out = outimg->GetData(true);
+	const Vector4f *imageData_in = inimg->GetData(MEMORYDEVICE_CUDA);
+	Vector4f *imageData_out = outimg->GetData(MEMORYDEVICE_CUDA);
 
 	dim3 blockSize(16, 16);
 	dim3 gridSize((int)ceil((float)newDims.x / (float)blockSize.x), (int)ceil((float)newDims.y / (float)blockSize.y));
@@ -34,14 +34,14 @@ void LibISR::Engine::ISRLowlevelEngine_GPU::subsampleImageRGBDImage(ISRFloat4Ima
 	subsampleImageRGBDImage_device << <gridSize, blockSize >> >(imageData_in, oldDims, imageData_out, newDims);
 }
 
-void LibISR::Engine::ISRLowlevelEngine_GPU::prepareAlignedRGBDData(ISRFloat4Image *outimg, ISRShortImage *raw_depth_in, ISRUChar4Image *rgb_in, Objects::ISRExHomography *home)
+void LibISR::Engine::ISRLowlevelEngine_GPU::prepareAlignedRGBDData(Float4Image *outimg, ShortImage *raw_depth_in, UChar4Image *rgb_in, Objects::ISRExHomography *home)
 {
 	int w = raw_depth_in->noDims.width;
 	int h = raw_depth_in->noDims.height;
 
-	short* depth_in_ptr = raw_depth_in->GetData(true);
-	Vector4u* rgb_in_ptr = rgb_in->GetData(true);
-	Vector4f* rgbd_out_ptr = outimg->GetData(true);
+	short* depth_in_ptr = raw_depth_in->GetData(MEMORYDEVICE_CUDA);
+	Vector4u* rgb_in_ptr = rgb_in->GetData(MEMORYDEVICE_CUDA);
+	Vector4f* rgbd_out_ptr = outimg->GetData(MEMORYDEVICE_CUDA);
 
 	dim3 blockSize(16, 16);
 	dim3 gridSize((int)ceil((float)w / (float)blockSize.x), (int)ceil((float)h / (float)blockSize.y));
@@ -49,7 +49,7 @@ void LibISR::Engine::ISRLowlevelEngine_GPU::prepareAlignedRGBDData(ISRFloat4Imag
 	prepareAlignedRGBDData_device << <gridSize, blockSize >> >(rgbd_out_ptr, depth_in_ptr, rgb_in_ptr, raw_depth_in->noDims, home->H, home->T);
 }
 
-void LibISR::Engine::ISRLowlevelEngine_GPU::preparePointCloudFromAlignedRGBDImage(ISRFloat4Image *ptcloud_out, ISRFloat4Image *inimg, Objects::ISRHistogram *histogram, const Vector4f &intrinsic, const Vector4i &boundingbox)
+void LibISR::Engine::ISRLowlevelEngine_GPU::preparePointCloudFromAlignedRGBDImage(Float4Image *ptcloud_out, Float4Image *inimg, Objects::ISRHistogram *histogram, const Vector4f &intrinsic, const Vector4i &boundingbox)
 {
 	if (inimg->noDims != ptcloud_out->noDims) ptcloud_out->ChangeDims(inimg->noDims);
 	
@@ -58,8 +58,8 @@ void LibISR::Engine::ISRLowlevelEngine_GPU::preparePointCloudFromAlignedRGBDImag
 
 	int noBins = histogram->noBins;
 
-	Vector4f *inimg_ptr = inimg->GetData(true);
-	Vector4f* ptcloud_ptr = ptcloud_out->GetData(true);
+	Vector4f *inimg_ptr = inimg->GetData(MEMORYDEVICE_CUDA);
+	Vector4f* ptcloud_ptr = ptcloud_out->GetData(MEMORYDEVICE_CUDA);
 	float* histogram_ptr = histogram->getPosteriorHistogram(true);
 
 	dim3 blockSize(16, 16);
@@ -68,7 +68,7 @@ void LibISR::Engine::ISRLowlevelEngine_GPU::preparePointCloudFromAlignedRGBDImag
 	preparePointCloudFromAlignedRGBDImage_device << <gridSize, blockSize >> >(ptcloud_ptr, inimg_ptr, histogram_ptr, intrinsic, boundingbox, inimg->noDims, noBins);
 }
 
-void LibISR::Engine::ISRLowlevelEngine_GPU::computepfImageFromHistogram(ISRUChar4Image *rgb_in, Objects::ISRHistogram *histogram)
+void LibISR::Engine::ISRLowlevelEngine_GPU::computepfImageFromHistogram(UChar4Image *rgb_in, Objects::ISRHistogram *histogram)
 {
 	
 	int w = rgb_in->noDims.width;
@@ -76,7 +76,7 @@ void LibISR::Engine::ISRLowlevelEngine_GPU::computepfImageFromHistogram(ISRUChar
 
 	int noBins = histogram->noBins;
 
-	Vector4u *inimg_ptr = rgb_in->GetData(true);
+	Vector4u *inimg_ptr = rgb_in->GetData(MEMORYDEVICE_CUDA);
 	float* histogram_ptr = histogram->getPosteriorHistogram(true);
 
 	dim3 blockSize(16, 16);

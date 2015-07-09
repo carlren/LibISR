@@ -2,6 +2,12 @@
 #include "../../Utils/LibISRDefine.h"
 #include "../Lowlevel/ISRVoxelAccess_DA.h"
 
+//------------------------------------------------
+//
+// basic raycast
+//
+//------------------------------------------------
+
 _CPU_AND_GPU_CODE_ inline bool castRay(Vector3f &pt_out, int x, int y, const float* voxelData, const Matrix4f& invH, const Vector4f& invIntrinsic, const Vector2f& maxminvalue, float maxvoxelrange)
 {
 	if (maxminvalue.x < 0) return false;
@@ -39,8 +45,7 @@ _CPU_AND_GPU_CODE_ inline bool castRay(Vector3f &pt_out, int x, int y, const flo
 		sdfValue = getSDFValue(pt_result, voxelData, inside_volume);
 		if (inside_volume)
 		{
-			if (fabs(sdfValue) <= 1.0f){pt_found = true;break;}
-			if (lastsdfValue != MAX_SDF &&lastsdfValue*sdfValue<0){ pt_found = true; break; }
+			if (fabs(sdfValue) <= 1.0f || (lastsdfValue != MAX_SDF && lastsdfValue*sdfValue < 0)){ pt_found = true; break; }
 			lastsdfValue = sdfValue;
 			stepLength = sdfValue*step_fine;
 		}
@@ -56,6 +61,95 @@ _CPU_AND_GPU_CODE_ inline bool castRay(Vector3f &pt_out, int x, int y, const flo
 	pt_out = pt_result;
 	return pt_found;
 }
+
+_CPU_AND_GPU_CODE_ inline float castRayAsSDF(bool& pt_found, Vector4f &pt_out, int x, int y, const float* voxelData, const Matrix4f& invH, const Vector4f& invIntrinsic, const Vector2f& maxminvalue, float maxvoxelrange)
+{
+	if (maxminvalue.x < 0)
+	{
+		pt_out.w = -1;
+		pt_found = false;
+		return -MAX_SDF;
+	}
+
+	Vector3f pt_camera_f, pt_block_s, pt_block_e, rayDirection, pt_result;
+	bool inside_volume;
+	float sdfValue = MAX_SDF, lastsdfValue = MAX_SDF, minSDF = MAX_SDF;
+	float totalLength = 0, stepLength, totalLengthMax;
+	int voxidx;
+
+	float step_coarse, step_fine;
+
+	pt_camera_f.z = maxminvalue.x; // min
+	pt_camera_f.x = pt_camera_f.z * ((float(x) *invIntrinsic.x + invIntrinsic.z));
+	pt_camera_f.y = pt_camera_f.z * ((float(y) *invIntrinsic.y + invIntrinsic.w));
+	pt_block_s = (invH * pt_camera_f);
+
+	pt_camera_f.z = maxminvalue.y; // max
+	pt_camera_f.x = pt_camera_f.z * ((float(x) *invIntrinsic.x + invIntrinsic.z));
+	pt_camera_f.y = pt_camera_f.z * ((float(y) *invIntrinsic.y + invIntrinsic.w));
+	pt_block_e = (invH * pt_camera_f);
+
+	totalLengthMax = length(pt_block_e - pt_block_s);
+	rayDirection = (pt_block_e - pt_block_s).normalised();
+	pt_result = pt_block_s;
+
+	step_fine = totalLengthMax * maxvoxelrange;
+	step_coarse = step_fine * 10;
+
+	pt_found = false;
+
+	while (totalLength <= totalLengthMax)
+	{
+		sdfValue = getSDFValue(pt_result, voxelData, inside_volume);
+		if (inside_volume)
+		{
+			if (fabs(sdfValue) <= 1.0f || (lastsdfValue != MAX_SDF && lastsdfValue*sdfValue < 0))
+			{ 
+				pt_found = true; 
+				pt_out.x = pt_result.x; 
+				pt_out.y = pt_result.y;
+				pt_out.z = pt_result.z;
+				pt_out.w = 1;
+				break; 
+			}
+			if (fabs(sdfValue) < minSDF) 
+			{
+				minSDF = fabs(sdfValue); 
+				pt_out.x = pt_result.x;
+				pt_out.y = pt_result.y;
+				pt_out.z = pt_result.z;
+				pt_out.w = 1;
+			}
+
+			lastsdfValue = sdfValue;
+			stepLength = sdfValue*step_fine;
+		}
+		else
+		{
+			stepLength = step_coarse;
+		}
+
+		pt_result += stepLength * rayDirection;
+		totalLength += stepLength;
+	}
+	
+
+	if (minSDF>10)
+	{
+		minSDF = -MAX_SDF;
+		pt_out.w = -1;
+	}
+
+	return minSDF;
+}
+
+
+
+//------------------------------------------------
+//
+// basic raycast
+//
+//------------------------------------------------
 
 _CPU_AND_GPU_CODE_ inline void computeNormalAndAngle(Vector3f & normal_out, float & angle_out, bool& foundPoint, const Vector3f& pt_in, const float *voxelData, const Vector3f & lightSource)
 {
@@ -80,7 +174,7 @@ _CPU_AND_GPU_CODE_ inline void drawRendering(const bool & foundPoint, const floa
 
 	float outRes = (0.6f * angle + 0.4f) * 255.0f;
 	dest = Vector4u((uchar)outRes);
-	dest.r = 0;
+	dest.r *= 0.8;
 }
 
 _CPU_AND_GPU_CODE_ inline void raycastAndRender(Vector4u *outImg, int x, int y, const Vector2i& imagesize, const float* voxelData, const Matrix4f& invH, const Vector4f& invIntrinsic, const Vector2f *minmaxdata, const Vector3f& lightsource, float maxvoxelrange)
@@ -151,4 +245,25 @@ _CPU_AND_GPU_CODE_ inline void raycastAndRenderWithDepthAndSurfaceNormal(ushort 
 	else outImgNormal[idx] = Vector4u((uchar)0);
 
 	drawRendering(foundpoint, angle, outImgGray[idx]);
+}
+
+
+_CPU_AND_GPU_CODE_ inline void raycaseAsSDF(float* outSDFImg, Vector4f* outPtCloud, Vector4u *outImgGray,  int x, int y, const Vector2i& imagesize, const float* voxelData, const Matrix4f& invH, const Vector4f& invIntrinsic, const Vector2f *minmaxdata, const Vector3f& lightsource, float maxvoxelrange)
+{
+	Vector4f pt_obj(0,0,0,-1);
+	Vector3f normal_obj;
+
+	Matrix4f H, tmpinvH = invH; tmpinvH.inv(H);
+	float angle;
+
+	int idx = x + y*imagesize.x;
+
+	Vector2f minmaxvalue = minmaxdata[idx];
+	bool foundpoint;
+	float minSDF = castRayAsSDF(foundpoint, pt_obj, x, y, voxelData, invH, invIntrinsic, minmaxvalue, maxvoxelrange);
+	computeNormalAndAngle(normal_obj, angle, foundpoint, pt_obj.toVector3(), voxelData, lightsource);
+	drawRendering(foundpoint, angle, outImgGray[idx]);
+
+	outSDFImg[idx] = foundpoint ? -minSDF : minSDF;
+	outPtCloud[idx] = pt_obj;
 }

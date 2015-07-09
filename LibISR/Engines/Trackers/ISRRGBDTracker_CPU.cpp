@@ -12,7 +12,7 @@ LibISR::Engine::ISRRGBDTracker_CPU::~ISRRGBDTracker_CPU(){}
 void LibISR::Engine::ISRRGBDTracker_CPU::evaluateEnergy(float *energy, Objects::ISRTrackingState * trackerState)
 {
 	int count = this->frame->ptCloud->dataSize;
-	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(false);
+	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(MEMORYDEVICE_CPU);
 
 	ISRShape_ptr shapes = this->shapeUnion->getShapeList(false);
 	ISRPose_ptr poses = trackerState->getPoseList(false);
@@ -39,7 +39,7 @@ void LibISR::Engine::ISRRGBDTracker_CPU::evaluateEnergy(float *energy, Objects::
 void LibISR::Engine::ISRRGBDTracker_CPU::computeJacobianAndHessian(float *gradient, float *hessian, Objects::ISRTrackingState * trackerState) const
 {
 	int count = this->frame->ptCloud->dataSize;
-	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(false);
+	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(MEMORYDEVICE_CPU);
 
 	ISRShape_ptr shapes = this->shapeUnion->getShapeList(false);
 	ISRPose_ptr poses = trackerState->getPoseList(false);
@@ -76,8 +76,8 @@ void LibISR::Engine::ISRRGBDTracker_CPU::computeJacobianAndHessian(float *gradie
 void LibISR::Engine::ISRRGBDTracker_CPU::lableForegroundPixels(Objects::ISRTrackingState * trackerState)
 {
 	int count = this->frame->ptCloud->dataSize;
-	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(false);
-	Vector4f* rgbd_ptr = this->frame->currentLevel->rgbd->GetData(false);
+	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(MEMORYDEVICE_CPU);
+	Vector4f* rgbd_ptr = this->frame->currentLevel->rgbd->GetData(MEMORYDEVICE_CPU);
 
 	ISRShape_ptr shapes = this->shapeUnion->getShapeList(false);
 	ISRPose_ptr poses = trackerState->getPoseList(false);
@@ -94,6 +94,10 @@ void LibISR::Engine::ISRRGBDTracker_CPU::lableForegroundPixels(Objects::ISRTrack
 			if (fabs(dt) <= 5) { rgbd_ptr[i].w = HIST_FG_PIXEL; }
 			else { rgbd_ptr[i].w = HIST_BG_PIXEL; }
 		}
+		//else
+		//{
+		//	rgbd_ptr[i].w = HIST_BG_PIXEL;
+		//}
 	}	
 }
 

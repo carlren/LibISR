@@ -149,7 +149,8 @@ namespace LibISR
 			_CPU_AND_GPU_CODE_ void applyIncrementalChangeToH(const float* step)
 			{
 				Matrix4f deltaM = getProjectionMatrixFromParam(step);
-				H = deltaM*H; H.inv(invH);
+				H = deltaM*H;
+				H.inv(invH);
 			}
 
 			ISRPose(void) { H.setZeros(); invH.setZeros(); }

@@ -28,6 +28,9 @@
     <Filter Include="Engines\Reconstruction">
       <UniqueIdentifier>{0626232b-86d9-4f5f-91c7-288ef1af2950}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ORUtils">
+      <UniqueIdentifier>{97c516a5-997e-479c-a0b5-ba7834a59ae5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engines\ISRCoreEngine.cpp">
@@ -35,9 +38,6 @@
     </ClCompile>
     <ClCompile Include="Utils\ISRCalibIO.cpp">
       <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Engines\Trackers\ISRDepthTracker.cpp">
-      <Filter>Engines\Trackers</Filter>
     </ClCompile>
     <ClCompile Include="Engines\Trackers\ISRRGBDTracker.cpp">
       <Filter>Engines\Trackers</Filter>
@@ -63,6 +63,18 @@
     <ClCompile Include="Engines\Reconstruction\ISRReconstructionEngine_CPU.cpp">
       <Filter>Engines\Reconstruction</Filter>
     </ClCompile>
+    <ClCompile Include="Engines\Trackers\ISRColorTracker_CPU.cpp">
+      <Filter>Engines\Trackers</Filter>
+    </ClCompile>
+    <ClCompile Include="Engines\Trackers\ISRColorTracker.cpp">
+      <Filter>Engines\Trackers</Filter>
+    </ClCompile>
+    <ClCompile Include="Engines\Trackers\ISRJointTracker.cpp">
+      <Filter>Engines\Trackers</Filter>
+    </ClCompile>
+    <ClCompile Include="Engines\Trackers\ISRJointTracker_CPU.cpp">
+      <Filter>Engines\Trackers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engines\ISRCoreEngine.h">
@@ -78,9 +90,6 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="LibISR.h" />
-    <ClInclude Include="Engines\Trackers\ISRDepthTracker.h">
-      <Filter>Engines\Trackers</Filter>
-    </ClInclude>
     <ClInclude Include="Engines\Trackers\ISRRGBDTracker.h">
       <Filter>Engines\Trackers</Filter>
     </ClInclude>
@@ -179,6 +188,51 @@
     </ClInclude>
     <ClInclude Include="Engines\Reconstruction\ISRReconstructionEngine_GPU.h">
       <Filter>Engines\Reconstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ORUtils\Cholesky.h">
+      <Filter>ORUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ORUtils\CUDADefines.h">
+      <Filter>ORUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ORUtils\Image.h">
+      <Filter>ORUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ORUtils\LexicalCast.h">
+      <Filter>ORUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ORUtils\MathUtils.h">
+      <Filter>ORUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ORUtils\Matrix.h">
+      <Filter>ORUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ORUtils\MemoryBlock.h">
+      <Filter>ORUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ORUtils\MemoryBlockPersister.h">
+      <Filter>ORUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ORUtils\Vector.h">
+      <Filter>ORUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ORUtils\PlatformIndependence.h">
+      <Filter>ORUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="Engines\Trackers\ISRColorTracker.h">
+      <Filter>Engines\Trackers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engines\Trackers\ISRColorTracker_CPU.h">
+      <Filter>Engines\Trackers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engines\Trackers\ISRColorTracker_DA.h">
+      <Filter>Engines\Trackers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engines\Trackers\ISRJointTracker.h">
+      <Filter>Engines\Trackers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engines\Trackers\ISRJointTracker_CPU.h">
+      <Filter>Engines\Trackers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

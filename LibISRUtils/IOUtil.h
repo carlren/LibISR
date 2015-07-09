@@ -7,11 +7,11 @@
 
 #include "../LibISR/Utils/LibISRDefine.h"
 
-void SaveImageToFile(const ISRUChar4Image* image, const char* fileName, bool flipVertical = false);
-void SaveImageToFile(const ISRShortImage* image, const char* fileName);
-void SaveImageToFile(const ISRFloatImage* image, const char* fileName);
-bool ReadImageFromFile(ISRUChar4Image* image, const char* fileName);
-bool ReadImageFromFile(ISRShortImage *image, const char *fileName);
+void SaveImageToFile(const UChar4Image* image, const char* fileName, bool flipVertical = false);
+void SaveImageToFile(const ShortImage* image, const char* fileName);
+void SaveImageToFile(const FloatImage* image, const char* fileName);
+bool ReadImageFromFile(UChar4Image* image, const char* fileName);
+bool ReadImageFromFile(ShortImage *image, const char *fileName);
 
 template <typename T> void ReadFromBIN(T *data, int dataSize, const char *fileName)
 {
@@ -74,7 +74,7 @@ static inline void PrintPointListToFile(char* fileName, Vector4f *data, int nCou
 
 	for (int i = 0; i < nCount; i++)
 	{
-		//if (data[i].w!=-1)
+		if (data[i].w!=-1)
 		{
 			fprintf(fid, "%f\t", data[i].x);
 			fprintf(fid, "%f\t", data[i].y);

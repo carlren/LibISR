@@ -13,7 +13,7 @@ using namespace LibISR::Engine;
 using namespace LibISR::Objects;
 using namespace LibISRUtils;
 
-int main_(int argc, char** argv)
+int main(int argc, char** argv)
 {
 
 	//////////////////////////////////////////////////////////////////////////
@@ -21,8 +21,9 @@ int main_(int argc, char** argv)
 	//////////////////////////////////////////////////////////////////////////
 
 	//const char *sdfFile = "../Data/newCut.bin";
-	const char *sdfFile = "../Data/teacan.bin";
+	const char *sdfFile = "../Data/car_red.bin";
 	//const char *sdfFile = "../Data/ball.bin";
+	//const char *sdfFile = "../Data/sofa.bin";
 
 	const char *calibFile = "../Data/calib_reg.txt";
 	ImageSourceEngine *imageSource = new OpenNIEngine(calibFile, NULL, true);
@@ -31,14 +32,14 @@ int main_(int argc, char** argv)
 	isrSettings.noHistogramDim = HISTOGRAM_BIN;
 	isrSettings.noTrackingObj = 1;
 	isrSettings.singleAappearanceModel = true;
-	isrSettings.useGPU = true;
+	isrSettings.useGPU = false;
 
 	ISRCoreEngine *coreEngine = new ISRCoreEngine(&isrSettings, &imageSource->calib, imageSource->getDepthImageSize(), imageSource->getRGBImageSize());
 	coreEngine->shapeUnion->loadShapeFromFile(sdfFile, Vector3i(DT_VOL_SIZE, DT_VOL_SIZE, DT_VOL_SIZE), 0);
 	for (int i = 1; i < isrSettings.noTrackingObj; i++)
 		coreEngine->shapeUnion->shareSDFWithExistingShape(*coreEngine->shapeUnion->getShape(0), i);
 
-	float poses[6] = { 0.0f, 0.0f, 0.7f, 0.1f, 0.0f, 0.0f };
+	float poses[6] = { 0.0f, 0.0f, 0.7f, 0, -PI/2, 0.0f };
 	coreEngine->trackingState->setHFromParam(poses, 0);
 
 
@@ -65,8 +66,8 @@ int main_(int argc, char** argv)
 
 	//const char* histogram_rgb = "../Data/color.ppm";
 	//const char* histogram_mask = "../Data/mask.ppm";
-	//ISRUChar4Image *histogramimage = new ISRUChar4Image(imageSource->getDepthImageSize(), false);
-	//ISRUChar4Image *histogrammask = new ISRUChar4Image(imageSource->getDepthImageSize(), false);
+	//UChar4Image *histogramimage = new UChar4Image(imageSource->getDepthImageSize(), false);
+	//UChar4Image *histogrammask = new UChar4Image(imageSource->getDepthImageSize(), false);
 	//if (!ReadImageFromFile(histogramimage, histogram_rgb)) { printf("histogram initialization error!\n"); return 0; }
 	//if (!ReadImageFromFile(histogrammask, histogram_mask)) { printf("histogram initialization error!\n"); return 0; }
 	//coreEngine->frame->histogram->buildHistogram(histogramimage, histogrammask);
@@ -80,7 +81,7 @@ int main_(int argc, char** argv)
 	///////////////////////////////////////////////////////////////////////////
 	// run it!
 	///////////////////////////////////////////////////////////////////////////
-	UIEngine::Instance()->Initialise(argc, argv, imageSource, coreEngine, "E:/Data/LibISR_out/");
+	UIEngine::Instance()->Initialise(argc, argv, imageSource, coreEngine, "C:/LibISR/");
 	UIEngine::Instance()->Run();
 	UIEngine::Instance()->Shutdown();
 

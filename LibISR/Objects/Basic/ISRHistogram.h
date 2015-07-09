@@ -67,7 +67,7 @@ namespace LibISR
 			}
 
 			template <class T>
-			void buildHistogram(ORUtils::Image<T> *color, ISRUChar4Image *mask)
+			void buildHistogram(ORUtils::Image<T> *color, UChar4Image *mask)
 			{
 				int idx_mask;
 				int ru, gu, bu;
@@ -76,8 +76,8 @@ namespace LibISR
 				float sumHistogramForeground = 0; 
 				float sumHistogramBackground = 0;
 
-				T *pixels = color->GetData(false);
-				Vector4u *maskdata = mask->GetData(false);
+				T *pixels = color->GetData(MEMORYDEVICE_CPU);
+				Vector4u *maskdata = mask->GetData(MEMORYDEVICE_CPU);
 
 				int height = mask->noDims.x;
 				int width = mask->noDims.y;
@@ -123,7 +123,7 @@ namespace LibISR
 				if (useGPU) ORcudaSafeCall(cudaMemcpy(posterior_device, posterior, dim*sizeof(float), cudaMemcpyHostToDevice));
 			}
 
-			void buildHistogramFromLabeledRGBD(ISRFloat4Image *inimg)
+			void buildHistogramFromLabeledRGBD(Float4Image *inimg)
 			{
 				int idx_mask;
 				int ru, gu, bu;
@@ -132,7 +132,7 @@ namespace LibISR
 				float sumHistogramForeground = 0;
 				float sumHistogramBackground = 0;
 
-				Vector4f *pixels = inimg->GetData(false);
+				Vector4f *pixels = inimg->GetData(MEMORYDEVICE_CPU);
 
 				int height = inimg->noDims.y;
 				int width = inimg->noDims.x;
@@ -174,7 +174,7 @@ namespace LibISR
 			}
 
 
-			void buildHistogramFromLabeledRGBD(ISRFloat4Image *inimg, const Vector4i& bb)
+			void buildHistogramFromLabeledRGBD(Float4Image *inimg, const Vector4i& bb)
 			{
 				int idx_mask;
 				int ru, gu, bu;
@@ -183,7 +183,7 @@ namespace LibISR
 				float sumHistogramForeground = 0;
 				float sumHistogramBackground = 0;
 
-				Vector4f *pixels = inimg->GetData(false);
+				Vector4f *pixels = inimg->GetData(MEMORYDEVICE_CPU);
 
 				int height = inimg->noDims.y;
 				int width = inimg->noDims.x;
@@ -225,14 +225,14 @@ namespace LibISR
 			}
 
 
-			void updateHistogramFromLabeledRGBD(ISRFloat4Image *inimg, float rf, float rb)
+			void updateHistogramFromLabeledRGBD(Float4Image *inimg, float rf, float rb)
 			{
 				ISRHistogram* tmphist = new ISRHistogram(this->noBins);
 				buildHistogramFromLabeledRGBD(inimg);
 				updateHistogram(tmphist, rf, rb);
 			}
 
-			void updateHistogramFromLabeledRGBD(ISRFloat4Image *inimg, float rf, float rb, const Vector4i& bb)
+			void updateHistogramFromLabeledRGBD(Float4Image *inimg, float rf, float rb, const Vector4i& bb)
 			{
 				ISRHistogram* tmphist = new ISRHistogram(this->noBins);
 				buildHistogramFromLabeledRGBD(inimg,bb);

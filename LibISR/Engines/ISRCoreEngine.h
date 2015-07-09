@@ -16,6 +16,13 @@
 #include "Trackers/ISRRGBDTracker_CPU.h"
 #include "Trackers/ISRRGBDTracker_GPU.h"
 
+#include "Trackers/ISRColorTracker.h"
+#include "Trackers/ISRColorTracker_DA.h"
+#include "Trackers/ISRColorTracker_CPU.h"
+
+#include "Trackers/ISRJointTracker.h"
+#include "Trackers/ISRColorTracker_CPU.h"
+
 #include "Visualization/ISRVisualisationEngine.h"
 #include "Visualization/ISRVisualisationEngine_CPU.h"
 #include "Visualization/ISRVisualisationEngine_DA.h"
@@ -35,7 +42,13 @@ namespace LibISR
 			Engine::ISRTracker* tracker;
 			Engine::ISRVisualisationEngine* visualizationEngine;
 
+			Engine::ISRColorTracker_CPU *tmpTracker;
+
+			float maxposediff;
+
 		public:
+
+			bool needStarTracker;
 
 			Objects::ISRFrame *frame;
 			Objects::ISRShapeUnion *shapeUnion;

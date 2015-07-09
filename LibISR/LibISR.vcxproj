@@ -24,7 +24,10 @@
     <ClCompile Include="Engines\Lowlevel\ISRLowlevelEngine_CPU.cpp" />
     <ClCompile Include="Engines\Reconstruction\ISRReconstructionEngine.cpp" />
     <ClCompile Include="Engines\Reconstruction\ISRReconstructionEngine_CPU.cpp" />
-    <ClCompile Include="Engines\Trackers\ISRDepthTracker.cpp" />
+    <ClCompile Include="Engines\Trackers\ISRColorTracker.cpp" />
+    <ClCompile Include="Engines\Trackers\ISRColorTracker_CPU.cpp" />
+    <ClCompile Include="Engines\Trackers\ISRJointTracker.cpp" />
+    <ClCompile Include="Engines\Trackers\ISRJointTracker_CPU.cpp" />
     <ClCompile Include="Engines\Trackers\ISRRGBDTracker.cpp" />
     <ClCompile Include="Engines\Trackers\ISRRGBDTracker_CPU.cpp" />
     <ClCompile Include="Engines\Visualization\ISRVisualisationEngine.cpp" />
@@ -32,6 +35,16 @@
     <ClCompile Include="Utils\ISRCalibIO.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\ORUtils\Cholesky.h" />
+    <ClInclude Include="..\ORUtils\CUDADefines.h" />
+    <ClInclude Include="..\ORUtils\Image.h" />
+    <ClInclude Include="..\ORUtils\LexicalCast.h" />
+    <ClInclude Include="..\ORUtils\MathUtils.h" />
+    <ClInclude Include="..\ORUtils\Matrix.h" />
+    <ClInclude Include="..\ORUtils\MemoryBlock.h" />
+    <ClInclude Include="..\ORUtils\MemoryBlockPersister.h" />
+    <ClInclude Include="..\ORUtils\PlatformIndependence.h" />
+    <ClInclude Include="..\ORUtils\Vector.h" />
     <ClInclude Include="Engines\Lowlevel\ISRLowlevelEngine.h" />
     <ClInclude Include="Engines\Lowlevel\ISRLowlevelEngine_CPU.h" />
     <ClInclude Include="Engines\Lowlevel\ISRLowlevelEngine_DA.h" />
@@ -41,7 +54,11 @@
     <ClInclude Include="Engines\Reconstruction\ISRReconstructionEngine_CPU.h" />
     <ClInclude Include="Engines\Reconstruction\ISRReconstructionEngine_DA.h" />
     <ClInclude Include="Engines\Reconstruction\ISRReconstructionEngine_GPU.h" />
-    <ClInclude Include="Engines\Trackers\ISRDepthTracker.h" />
+    <ClInclude Include="Engines\Trackers\ISRColorTracker.h" />
+    <ClInclude Include="Engines\Trackers\ISRColorTracker_CPU.h" />
+    <ClInclude Include="Engines\Trackers\ISRColorTracker_DA.h" />
+    <ClInclude Include="Engines\Trackers\ISRJointTracker.h" />
+    <ClInclude Include="Engines\Trackers\ISRJointTracker_CPU.h" />
     <ClInclude Include="Engines\Trackers\ISRRGBDTracker.h" />
     <ClInclude Include="Engines\Trackers\ISRRGBDTracker_CPU.h" />
     <ClInclude Include="Engines\Trackers\ISRRGBDTracker_DA.h" />

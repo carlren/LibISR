@@ -103,59 +103,78 @@ void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion
 	float currentenergy = 0;
 
 	bool converged = false;
-	float lambda = 1000.0f;
+	float lambda = 10000.0f;
 
-	// These are some sensible default parameters for Levenberg Marquardt.
-	// The first three control the convergence criteria, the others might
-	// impact convergence speed.
-	static const int MAX_STEPS = 100;
-	static const float MIN_STEP = 0.00005f;
-	static const float MIN_DECREASE = 0.0001f;
-	static const float TR_REGION_INCREASE = 0.10f;
-	static const float TR_REGION_DECREASE = 10.0f;
+	evaluateEnergy(&lastenergy, accpetedState);
+	if (lastenergy < 0.1f) { trackerState->energy = 0; return; }
 
-	{// minimalist LM main loop
+	//--------------------------------------------------------------------------
+	//
+	// Gauss Newton
+	//
+	//--------------------------------------------------------------------------
+
+	for (int i = 0; i < 20;i++)
+	{
+		computeJacobianAndHessian(ATb_host, ATA_host, accpetedState);
+		computeSingleStep(cacheNabla, ATA_host, ATb_host, lambda, ATb_Size);
+		accpetedState->applyIncrementalPoseChangesToInvH(cacheNabla);
 		evaluateEnergy(&lastenergy, accpetedState);
-
-		if (lastenergy<0.1f) { trackerState->energy = 0; return; }
-
-		for (int iter = 0; iter < MAX_STEPS; iter++)
-		{
-			computeJacobianAndHessian(ATb_host, ATA_host, tempState);
-
-			while (true)
-			{
-				computeSingleStep(cacheNabla, ATA_host, ATb_host, lambda, ATb_Size);
-
-				// check if step size is very small, if so, converge.
-				float MAXnorm = 0.0;
-				for (int i = 0; i<ATb_Size; i++) { float tmp = fabs(cacheNabla[i]); if (tmp>MAXnorm) MAXnorm = tmp; }
-				if (MAXnorm < MIN_STEP) { converged = true; break; }
-
-				tempState->applyIncrementalPoseChangesToInvH(cacheNabla);
-
-				evaluateEnergy(&currentenergy, tempState);
-
-				if (currentenergy > lastenergy)
-				{
-					// check if energy decrease is too small, if so, converge.
-					if (abs(currentenergy - lastenergy) / abs(lastenergy) < MIN_DECREASE) {converged = true;}
-					lastenergy = currentenergy;
-					lambda *= TR_REGION_INCREASE;
-					accpetedState->setFrom(*tempState);
-					break;
-				}
-				else
-				{
-					lambda *= TR_REGION_DECREASE;
-					tempState->setFrom(*accpetedState);
-				}
-			}
-			if (converged) break;
-		}
-
 	}
 	
+	//--------------------------------------------------------------------------
+	//
+	// LM
+	//
+	//--------------------------------------------------------------------------
+
+	//// These are some sensible default parameters for Levenberg Marquardt.
+	//// The first three control the convergence criteria, the others might
+	//// impact convergence speed.
+	//static const int MAX_STEPS = 100;
+	//static const float MIN_STEP = 0.00005f;
+	//static const float MIN_DECREASE = 0.0001f;
+	//static const float TR_REGION_INCREASE = 0.10f;
+	//static const float TR_REGION_DECREASE = 10.0f;
+
+	//{// minimalist LM main loop
+	//	for (int iter = 0; iter < MAX_STEPS; iter++)
+	//	{
+	//		computeJacobianAndHessian(ATb_host, ATA_host, tempState);
+
+	//		while (true)
+	//		{
+	//			computeSingleStep(cacheNabla, ATA_host, ATb_host, lambda, ATb_Size);
+
+	//			// check if step size is very small, if so, converge.
+	//			float MAXnorm = 0.0;
+	//			for (int i = 0; i<ATb_Size; i++) { float tmp = fabs(cacheNabla[i]); if (tmp>MAXnorm) MAXnorm = tmp; }
+	//			if (MAXnorm < MIN_STEP) { converged = true; break; }
+
+	//			tempState->applyIncrementalPoseChangesToInvH(cacheNabla);
+
+	//			evaluateEnergy(&currentenergy, tempState);
+
+	//			if (currentenergy > lastenergy)
+	//			{
+	//				// check if energy decrease is too small, if so, converge.
+	//				if (abs(currentenergy - lastenergy) / abs(lastenergy) < MIN_DECREASE) {converged = true;}
+	//				lastenergy = currentenergy;
+	//				lambda *= TR_REGION_INCREASE;
+	//				accpetedState->setFrom(*tempState);
+	//				break;
+	//			}
+	//			else
+	//			{
+	//				lambda *= TR_REGION_DECREASE;
+	//				tempState->setFrom(*accpetedState);
+	//			}
+	//		}
+	//		if (converged) break;
+	//	}
+
+	//}
+	//
 
 	// after convergence, the w channel of ptcloud is recycled for histogram update
 	if (lastenergy>=0.5f && updateappearance)
@@ -165,10 +184,10 @@ void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion
 		frame->histogram->updateHistogramFromLabeledRGBD(frame->currentLevel->rgbd, 0.3f, 0.1f);
 	}
 
-	if (trackerState->numPoses() == 1 && lastenergy > 0.3f && lastenergy < 0.7f)
-	{
-		fastReinitialize(lastenergy);
-	}
+	//if (trackerState->numPoses() == 1 && lastenergy > 0.3f && lastenergy < 0.7f)
+	//{
+	//	fastReinitialize(lastenergy);
+	//}
 	
 	trackerState->setFrom(*accpetedState);
 	trackerState->energy = lastenergy;

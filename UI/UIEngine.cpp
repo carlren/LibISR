@@ -14,6 +14,7 @@
 #endif
 
 #include "../LibISRUtils/IOUtil.h"
+#include <iostream>
 
 using namespace LibISRUtils;
 using namespace LibISR::Engine;
@@ -42,7 +43,7 @@ void UIEngine::glutDisplayFunction()
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glEnable(GL_TEXTURE_2D);
 
-	ISRUChar4Image** showImgs = uiEngine->outImage;
+	UChar4Image** showImgs = uiEngine->outImage;
 	Vector4f *winReg = uiEngine->winReg;
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -56,7 +57,7 @@ void UIEngine::glutDisplayFunction()
 			glEnable(GL_TEXTURE_2D);
 			for (int w = 0; w < NUM_WIN; w++)	{// Draw each sub window
 				glBindTexture(GL_TEXTURE_2D, uiEngine->textureId[w]);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, showImgs[w]->noDims.x, showImgs[w]->noDims.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, showImgs[w]->GetData(false));
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, showImgs[w]->noDims.x, showImgs[w]->noDims.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, showImgs[w]->GetData(MEMORYDEVICE_CPU));
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glBegin(GL_QUADS); {
@@ -73,6 +74,18 @@ void UIEngine::glutDisplayFunction()
 	}
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
+
+
+	//if (uiEngine->startDrawingBoundingBox)
+	//{
+	//	glColor3f(0.0, 1.0, 0.0);
+	//	glBegin(GL_QUADS);
+	//	glVertex2f((float)uiEngine->mouseBB.x / (float)showImgs[0]->noDims.x, (float)uiEngine->mouseBB.y / (float)showImgs[0]->noDims.y);
+	//	glVertex2f((float)uiEngine->mouseBB.z / (float)showImgs[0]->noDims.x, (float)uiEngine->mouseBB.y / (float)showImgs[0]->noDims.y);
+	//	glVertex2f((float)uiEngine->mouseBB.z / (float)showImgs[0]->noDims.x, (float)uiEngine->mouseBB.w / (float)showImgs[0]->noDims.y);
+	//	glVertex2f((float)uiEngine->mouseBB.x / (float)showImgs[0]->noDims.x, (float)uiEngine->mouseBB.w / (float)showImgs[0]->noDims.y);
+	//	glEnd();
+	//}
 
 	glColor3f(1.0f, 0.0f, 0.0f); 
 	glRasterPos2f(0.75f, -0.967f);
@@ -93,21 +106,15 @@ void UIEngine::glutDisplayFunction()
 	uiEngine->needsRefresh = false;
 }
 
-void inline updateHistogramFromRendering(ISRUChar4Image* rendering, ISRUChar4Image* rgb, LibISR::Objects::ISRHistogram* hist)
+void inline updateHistogramFromRendering(UChar4Image* rendering, UChar4Image* rgb, LibISR::Objects::ISRHistogram* hist)
 {
-	Vector4u* imgptr = rendering->GetData(false);
+	Vector4u* imgptr = rendering->GetData(MEMORYDEVICE_CPU);
 	Vector4u bpix((uchar)0);
 	for (int i = 0; i < rendering->dataSize;i++)
 		if (imgptr[i] != bpix) imgptr[i] = Vector4u(255,255,255,255);
 		else imgptr[i] = Vector4u(100, 100, 100, 100);
 	
-	//WritePPMimage("e:/test.ppm", rendering->GetData(false), 640, 480);
-
-	//LibISR::Objects::ISRHistogram* tmphist = new LibISR::Objects::ISRHistogram(hist->noBins);
-	//tmphist->buildHistogram(rgb, rendering);
-	//hist->updateHistogram(tmphist, 0.8, 0.8);
-
-		hist->buildHistogram(rgb, rendering);
+	hist->buildHistogram(rgb, rendering);
 
 }
 
@@ -119,6 +126,7 @@ void UIEngine::glutIdleFunction()
 	{
 	case REINIT_HIST:
 		updateHistogramFromRendering(uiEngine->mainEngine->getRenderingState()->outputImage, uiEngine->mainEngine->getView()->rgb, uiEngine->mainEngine->frame->histogram);
+		uiEngine->mainEngine->needStarTracker = true;
 		uiEngine->mainLoopAction = PROCESS_VIDEO; uiEngine->processedFrameNo++;
 		uiEngine->needsRefresh = true;
 		break;
@@ -183,36 +191,48 @@ void UIEngine::glutKeyUpFunction(unsigned char key, int x, int y)
 		printf("exiting ...\n");
 		uiEngine->mainLoopAction = UIEngine::EXIT;
 		break;
+	case  'f':
+		glutFullScreenToggle();
+		break;
 	default:
 		break;
 	}
 }
 
-static inline Matrix3f createRotation(const Vector3f & _axis, float angle)
-{
-	Vector3f axis = normalize(_axis);
-	float si = sinf(angle);
-	float co = cosf(angle);
+//void UIEngine::glutMouseButtonFunction(int button, int state, int x, int y)
+//{
+//	UIEngine *uiEngine = UIEngine::Instance();
+//
+//	if (state == GLUT_DOWN)
+//	{
+//		if (button == GLUT_LEFT_BUTTON)
+//		{
+//			uiEngine->startDrawingBoundingBox = true;
+//			uiEngine->mouseBB.x = x;
+//			uiEngine->mouseBB.y = y;
+//		}
+//	}
+//	else if (state == GLUT_UP)
+//	{
+//		if (button == GLUT_LEFT_BUTTON && uiEngine->startDrawingBoundingBox)
+//		{
+//			uiEngine->startDrawingBoundingBox = false;
+//			uiEngine->finsihedDrawingBoundingBox = true;
+//			uiEngine->mouseBB.z = x;
+//			uiEngine->mouseBB.w = y;
+//		}
+//	}
+//}
 
-	Matrix3f ret;
-	ret.setIdentity();
-
-	ret *= co;
-	for (int r = 0; r < 3; ++r) for (int c = 0; c < 3; ++c) ret.at(c, r) += (1.0f - co) * axis[c] * axis[r];
-
-	Matrix3f skewmat;
-	skewmat.setZeros();
-	skewmat.at(1, 0) = -axis.z;
-	skewmat.at(0, 1) = axis.z;
-	skewmat.at(2, 0) = axis.y;
-	skewmat.at(0, 2) = -axis.y;
-	skewmat.at(2, 1) = axis.x;
-	skewmat.at(1, 2) = -axis.x;
-	skewmat *= si;
-	ret += skewmat;
-
-	return ret;
-}
+//void UIEngine::glutMouseMoveFunction(int x, int y)
+//{
+//	UIEngine *uiEngine = UIEngine::Instance();
+//	if (uiEngine->startDrawingBoundingBox = true)
+//	{
+//		uiEngine->mouseBB.z = x;
+//		uiEngine->mouseBB.w = y;
+//	}
+//}
 
 void UIEngine::Initialise(int & argc, char** argv, ImageSourceEngine *imageSource, ISRCoreEngine *mainEngine, const char *outFolder)
 {
@@ -245,12 +265,15 @@ void UIEngine::Initialise(int & argc, char** argv, ImageSourceEngine *imageSourc
 	glutKeyboardUpFunc(UIEngine::glutKeyUpFunction);
 	glutIdleFunc(UIEngine::glutIdleFunction);
 
+	//glutMouseFunc(UIEngine::glutMouseButtonFunction);
+	//glutMotionFunc(UIEngine::glutMouseMoveFunction);
+
 #ifdef FREEGLUT
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, 1);
 #endif
 
 	for (int w = 0; w < NUM_WIN; w++)
-		outImage[w] = new ISRUChar4Image(imageSource->getDepthImageSize(), false);
+		outImage[w] = new UChar4Image(imageSource->getDepthImageSize(),true, false);
 
 	mainLoopAction = PROCESS_PAUSED;
 	mouseState = 0;
@@ -265,14 +288,14 @@ void UIEngine::Initialise(int & argc, char** argv, ImageSourceEngine *imageSourc
 
 void UIEngine::SaveScreenshot(const char *filename) const
 {
-	ISRUChar4Image screenshot(getWindowSize());
+	UChar4Image screenshot(getWindowSize(),true,false);
 	GetScreenshot(&screenshot);
 	SaveImageToFile(&screenshot, filename, true);
 }
 
-void UIEngine::GetScreenshot(ISRUChar4Image *dest) const
+void UIEngine::GetScreenshot(UChar4Image *dest) const
 {
-	glReadPixels(0, 0, dest->noDims.x, dest->noDims.y, GL_RGBA, GL_UNSIGNED_BYTE, dest->GetData(false));
+	glReadPixels(0, 0, dest->noDims.x, dest->noDims.y, GL_RGBA, GL_UNSIGNED_BYTE, dest->GetData(MEMORYDEVICE_CPU));
 }
 
 static inline float interpolate(float val, float y0, float x0, float y1, float x1) {
@@ -287,13 +310,13 @@ static inline float base(float val) {
 	else return 0.0;
 }
 
-static inline void  DepthToUchar4(ISRUChar4Image *dst, ISRShortImage *src)
+static inline void  DepthToUchar4(UChar4Image *dst, ShortImage *src)
 {
-	Vector4u *dest = dst->GetData(false);
-	short *source = src->GetData(false);
+	Vector4u *dest = dst->GetData(MEMORYDEVICE_CPU);
+	short *source = src->GetData(MEMORYDEVICE_CPU);
 	int dataSize = dst->dataSize;
 
-	memset(dst->GetData(false), 0, dataSize * 4);
+	memset(dst->GetData(MEMORYDEVICE_CPU), 0, dataSize * 4);
 
 	Vector4u *destUC4;
 	float lims[2], scale;
@@ -329,14 +352,14 @@ static inline void  DepthToUchar4(ISRUChar4Image *dst, ISRShortImage *src)
 	}
 }
 
-static inline void  DepthToUchar4_overlay(ISRUChar4Image *dst, ISRShortImage *src, ISRUChar4Image *rgb)
+static inline void  DepthToUchar4_overlay(UChar4Image *dst, ShortImage *src, UChar4Image *rgb)
 {
-	Vector4u *srgb = rgb->GetData(false);
-	Vector4u *dest = dst->GetData(false);
-	short *source = src->GetData(false);
+	Vector4u *srgb = rgb->GetData(MEMORYDEVICE_CPU);
+	Vector4u *dest = dst->GetData(MEMORYDEVICE_CPU);
+	short *source = src->GetData(MEMORYDEVICE_CPU);
 	int dataSize = dst->dataSize;
 
-	memset(dst->GetData(false), 0, dataSize * 4);
+	memset(dst->GetData(MEMORYDEVICE_CPU), 0, dataSize * 4);
 
 	Vector4u *destUC4;
 	float lims[2], scale;
@@ -376,8 +399,6 @@ void UIEngine::ProcessFrame()
 {
 	if (!imageSource->hasMoreImages()) return;
 	imageSource->getImages(mainEngine->getView());
-	//DepthToUchar4(outImage[1], mainEngine->getView()->rawDepth);
-	DepthToUchar4_overlay(outImage[1], mainEngine->getView()->rawDepth,mainEngine->getView()->rgb);
 
 	if (isRecording)
 	{
@@ -386,13 +407,12 @@ void UIEngine::ProcessFrame()
 		//sprintf(str, "%s/%04d.pgm", outFolder, currentFrameNo);
 		//SaveImageToFile(mainEngine->getView()->rawDepth, str);
 
-		sprintf(str, "%s/%04d.txt", outFolder, currentFrameNo);
-		WriteMatlabTXTImg(str, mainEngine->getView()->rawDepth->GetData(false), 640, 480);
-
-		sprintf(str, "%s/%04d.ppm", outFolder, currentFrameNo);
+		sprintf(str, "%s/c_%04d.ppm", outFolder, currentFrameNo);
 		SaveImageToFile(mainEngine->getView()->rgb, str);
-
 	}
+
+	//DepthToUchar4(outImage[1], mainEngine->getView()->rawDepth);
+	DepthToUchar4_overlay(outImage[1], mainEngine->getView()->rawDepth,mainEngine->getView()->rgb);
 
 	//actual processing on the mailEngine
 
@@ -400,10 +420,26 @@ void UIEngine::ProcessFrame()
 	mainEngine->processFrame();
 	sdkStopTimer(&timer); processedTime += sdkGetTimerValue(&timer);
 
-
 	this->energy = mainEngine->getEnergy();
-	outImage[0]->SetFrom(mainEngine->getView()->alignedRgb);
-	outImage[2]->SetFrom(mainEngine->getView()->rgb);
+
+
+	outImage[0]->SetFrom(mainEngine->getView()->alignedRgb, ORUtils::MemoryBlock< Vector4u >::CPU_TO_CPU);
+	outImage[2]->SetFrom(mainEngine->getView()->rgb, ORUtils::MemoryBlock< Vector4u >::CPU_TO_CPU);
+
+	if (isRecording)
+	{
+		char str[250];
+
+		//sprintf(str, "%s/%04d.pgm", outFolder, currentFrameNo);
+		//SaveImageToFile(mainEngine->getView()->rawDepth, str);
+
+		sprintf(str, "%s/r_%04d.ppm", outFolder, currentFrameNo);
+		SaveImageToFile(outImage[0], str);
+
+		sprintf(str, "%s/o_%04d.ppm", outFolder, currentFrameNo);
+		SaveImageToFile(outImage[1], str);
+	}
+
 	currentFrameNo++;
 }
 
@@ -417,3 +453,4 @@ void UIEngine::Shutdown()
 	delete[] outFolder;
 	delete instance;
 }
+

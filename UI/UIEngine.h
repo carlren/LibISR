@@ -22,12 +22,13 @@ namespace LibISRUtils
 
 		LibISR::Engine::ISRCoreEngine *mainEngine;
 
+
 	private: // For UI layout
 		static const int NUM_WIN = 3;
 		Vector4f winReg[NUM_WIN]; // (x1, y1, x2, y2)
 		Vector2i winSize;
 		uint textureId[NUM_WIN];
-		ISRUChar4Image *outImage[NUM_WIN];
+		UChar4Image *outImage[NUM_WIN];
 
 		int mouseState;
 		Vector2i mouseLastClick;
@@ -42,6 +43,8 @@ namespace LibISRUtils
 		static void glutDisplayFunction();
 		static void glutIdleFunction();
 		static void glutKeyUpFunction(unsigned char key, int x, int y);
+		static void glutMouseButtonFunction(int button, int state, int x, int y);
+		static void glutMouseMoveFunction(int x, int y);
 
 		const Vector2i & getWindowSize(void) const
 		{
@@ -60,7 +63,7 @@ namespace LibISRUtils
 		void Run();
 		void ProcessFrame();
 
-		void GetScreenshot(ISRUChar4Image *dest) const;
+		void GetScreenshot(UChar4Image *dest) const;
 		void SaveScreenshot(const char *filename) const;
 	};
 }

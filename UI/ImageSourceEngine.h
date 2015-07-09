@@ -25,8 +25,8 @@ namespace LibISRUtils
 		char rgbImageMask[BUF_SIZE];
 		char depthImageMask[BUF_SIZE];
 
-		ISRUChar4Image *cached_rgb;
-		ISRShortImage *cached_depth;
+		UChar4Image *cached_rgb;
+		ShortImage *cached_depth;
 
 		void loadIntoCache();
 		int cachedFrameNo;

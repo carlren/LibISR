@@ -4,16 +4,12 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "../../ORUtils/MathDefine.h"
-#include "../../ORUtils/Image.h"
-#include "../../ORUtils/MathUtils.h"
-
 //////////////////////////////////////////////////////////////////////////
 // Some settings for LibISR, some of them will be moved to an setting class
 //////////////////////////////////////////////////////////////////////////
 
 #define MAX_OBJECT_COUNT 2
-#define HISTOGRAM_BIN 16
+#define HISTOGRAM_BIN 32
 #define MAX_IMG_PTS 307200
 #define DT_VOL_SIZE 200
 #define VOL_SCALE 1000
@@ -25,6 +21,45 @@
 #define NUM_OBJ 2
 
 #define  TMP_WEIGHT 1.3f
+
+//------------------------------------------------------
+// 
+// math defines
+//
+//------------------------------------------------------
+
+typedef unsigned char uchar;
+typedef unsigned short ushort;
+typedef unsigned int uint;
+typedef unsigned long ulong;
+
+#include "../../ORUtils/PlatformIndependence.h"
+#include "../../ORUtils/Vector.h"
+#include "../../ORUtils/Matrix.h"
+
+typedef class ORUtils::Matrix3<float> Matrix3f;
+typedef class ORUtils::Matrix4<float> Matrix4f;
+
+typedef class ORUtils::Vector2<short> Vector2s;
+typedef class ORUtils::Vector2<int> Vector2i;
+typedef class ORUtils::Vector2<float> Vector2f;
+typedef class ORUtils::Vector2<double> Vector2d;
+
+typedef class ORUtils::Vector3<short> Vector3s;
+typedef class ORUtils::Vector3<double> Vector3d;
+typedef class ORUtils::Vector3<int> Vector3i;
+typedef class ORUtils::Vector3<uint> Vector3ui;
+typedef class ORUtils::Vector3<uchar> Vector3u;
+typedef class ORUtils::Vector3<float> Vector3f;
+
+typedef class ORUtils::Vector4<float> Vector4f;
+typedef class ORUtils::Vector4<int> Vector4i;
+typedef class ORUtils::Vector4<short> Vector4s;
+typedef class ORUtils::Vector4<uchar> Vector4u;
+
+
+#include "../../ORUtils/Image.h"
+#include "../../ORUtils/MathUtils.h"
 
 //////////////////////////////////////////////////////////////////////////
 // Types for mask images
@@ -70,52 +105,52 @@
 // Image types used by LibISR
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef ISRFloatImage
-#define ISRFloatImage ORUtils::Image<float>
+#ifndef FloatImage
+#define FloatImage ORUtils::Image<float>
 #endif
 
-#ifndef ISRFloat2Image
-#define ISRFloat2Image ORUtils::Image<Vector2f>
+#ifndef Float2Image
+#define Float2Image ORUtils::Image<Vector2f>
 #endif
 
-#ifndef ISRFloat4Image
-#define ISRFloat4Image ORUtils::Image<Vector4f>
+#ifndef Float4Image
+#define Float4Image ORUtils::Image<Vector4f>
 #endif
 
-#ifndef ISRShortImage
-#define ISRShortImage ORUtils::Image<short>
+#ifndef ShortImage
+#define ShortImage ORUtils::Image<short>
 #endif
 
-#ifndef ISRShort3Image
-#define ISRShort3Image ORUtils::Image<Vector3s>
+#ifndef Short3Image
+#define Short3Image ORUtils::Image<Vector3s>
 #endif
 
-#ifndef ISRShort4Image
-#define ISRShort4Image ORUtils::Image<Vector4s>
+#ifndef Short4Image
+#define Short4Image ORUtils::Image<Vector4s>
 #endif
 
-#ifndef ISRUShortImage
-#define ISRUShortImage ORUtils::Image<ushort>
+#ifndef UShortImage
+#define UShortImage ORUtils::Image<ushort>
 #endif
 
-#ifndef ISRUIntImage
-#define ISRUIntImage ORUtils::Image<uint>
+#ifndef UIntImage
+#define UIntImage ORUtils::Image<uint>
 #endif
 
-#ifndef ISRIntImage
-#define ISRIntImage ORUtils::Image<int>
+#ifndef IntImage
+#define IntImage ORUtils::Image<int>
 #endif
 
-#ifndef ISRUCharImage
-#define ISRUCharImage ORUtils::Image<uchar>
+#ifndef UCharImage
+#define UCharImage ORUtils::Image<uchar>
 #endif
 
-#ifndef ISRUChar4Image
-#define ISRUChar4Image ORUtils::Image<Vector4u>
+#ifndef UChar4Image
+#define UChar4Image ORUtils::Image<Vector4u>
 #endif
 
-#ifndef ISRBoolImage
-#define ISRBoolImage ORUtils::Image<bool>
+#ifndef BoolImage
+#define BoolImage ORUtils::Image<bool>
 #endif
 
 

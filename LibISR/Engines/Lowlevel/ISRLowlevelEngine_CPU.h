@@ -10,13 +10,13 @@ namespace LibISR
 		{
 		public:
 
-			void computepfImageFromHistogram(ISRUChar4Image *rgb_in, Objects::ISRHistogram *histogram);
+			void computepfImageFromHistogram(UChar4Image *rgb_in, Objects::ISRHistogram *histogram);
 
-			void prepareAlignedRGBDData(ISRFloat4Image *outimg, ISRShortImage *raw_depth_in, ISRUChar4Image *rgb_in, Objects::ISRExHomography *home);
+			void prepareAlignedRGBDData(Float4Image *outimg, ShortImage *raw_depth_in, UChar4Image *rgb_in, Objects::ISRExHomography *home);
 
-			void subsampleImageRGBDImage(ISRFloat4Image *outimg, ISRFloat4Image *inimg);
+			void subsampleImageRGBDImage(Float4Image *outimg, Float4Image *inimg);
 
-			void preparePointCloudFromAlignedRGBDImage(ISRFloat4Image *ptcloud_out, ISRFloat4Image *inimg, Objects::ISRHistogram *histogram, const Vector4f &intrinsic, const Vector4i &boundingbox);
+			void preparePointCloudFromAlignedRGBDImage(Float4Image *ptcloud_out, Float4Image *inimg, Objects::ISRHistogram *histogram, const Vector4f &intrinsic, const Vector4i &boundingbox);
 
 			ISRLowlevelEngine_CPU(){}
 			~ISRLowlevelEngine_CPU(){}

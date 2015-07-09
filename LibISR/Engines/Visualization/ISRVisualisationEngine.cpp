@@ -3,7 +3,7 @@
 using namespace LibISR::Engine;
 using namespace LibISR::Objects;
 
-void LibISR::Engine::ISRVisualisationEngine::updateMinmaxmImage(ISRFloat2Image* minmaximg, const Matrix4f& H, const Matrix3f& K, const Vector2i& imgsize)
+void LibISR::Engine::ISRVisualisationEngine::updateMinmaxmImage(Float2Image* minmaximg, const Matrix4f& H, const Matrix3f& K, const Vector2i& imgsize)
 {
 	Vector3f crns[8], ipts[8];
 	Vector4i bb(imgsize.x, imgsize.y, 0, 0);
@@ -32,10 +32,10 @@ void LibISR::Engine::ISRVisualisationEngine::updateMinmaxmImage(ISRFloat2Image* 
 	bb.x = bb.x < 0 ? 0 : bb.x;
 	bb.y = bb.y < 0 ? 0 : bb.y;
 	bb.z = bb.z > imgsize.x ? imgsize.x : bb.z;
-	bb.w = bb.w < imgsize.y ? imgsize.y : bb.w;
+	bb.w = bb.w > imgsize.y ? imgsize.y : bb.w;
 	
 	
-	Vector2f* minmax_ptr = minmaximg->GetData(false);
+	Vector2f* minmax_ptr = minmaximg->GetData(MEMORYDEVICE_CPU);
 
 	for (int i = 0; i < imgsize.y; i++)  for (int j = 0; j < imgsize.x;j++)
 	{

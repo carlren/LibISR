@@ -7,13 +7,13 @@ namespace LibISR
 	{
 		class ISRVisualisationState {
 		public:
-			ISRFloat2Image *minmaxImage;
-			ISRUChar4Image *outputImage;
+			Float2Image *minmaxImage;
+			UChar4Image *outputImage;
 
 			ISRVisualisationState(const Vector2i & imgSize, bool allocateGPU)
 			{
-				minmaxImage = new ISRFloat2Image(imgSize, allocateGPU);
-				outputImage = new ISRUChar4Image(imgSize, allocateGPU);
+				minmaxImage = new Float2Image(imgSize, true, allocateGPU);
+				outputImage = new UChar4Image(imgSize, true, allocateGPU);
 			}
 
 			virtual ~ISRVisualisationState(void)

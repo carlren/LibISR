@@ -12,7 +12,7 @@ namespace LibISR
 			
 			typedef struct 
 			{ 
-				ISRFloat4Image* rgbd;
+				Float4Image* rgbd;
 				Vector4f intrinsic;
 				Vector4i boundingbox;
 			} ImageLevel;
@@ -29,7 +29,7 @@ namespace LibISR
 
 				for (int i = 0; i < noLevels;i++)
 				{
-					levels[i].rgbd = new ISRFloat4Image(currentsize, usegpu);
+					levels[i].rgbd = new Float4Image(currentsize,true, usegpu);
 					currentsize /= 2;
 				}
 			}

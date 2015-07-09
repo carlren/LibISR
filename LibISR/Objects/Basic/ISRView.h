@@ -31,19 +31,19 @@ namespace LibISR
 
 			ISRCalib *calib;
 
-			ISRUChar4Image *rgb;
-			ISRShortImage *rawDepth;
+			UChar4Image *rgb;
+			ShortImage *rawDepth;
 
-			ISRFloatImage *depth;
-			ISRUChar4Image *alignedRgb;
+			FloatImage *depth;
+			UChar4Image *alignedRgb;
 
 			ISRView(const ISRCalib &calib, Vector2i rgb_size, Vector2i d_size, bool  useGPU = false)
 			{
 				this->calib = new ISRCalib(calib);
-				this->rgb = new ISRUChar4Image(rgb_size, useGPU);
-				this->rawDepth = new ISRShortImage(d_size, useGPU);
-				this->depth = new ISRFloatImage(d_size, useGPU);
-				this->alignedRgb = new ISRUChar4Image(d_size, useGPU);
+				this->rgb = new UChar4Image(rgb_size, true,useGPU);
+				this->rawDepth = new ShortImage(d_size, true, useGPU);
+				this->depth = new FloatImage(d_size, true, useGPU);
+				this->alignedRgb = new UChar4Image(d_size, true, useGPU);
 			}
 
 			~ISRView()

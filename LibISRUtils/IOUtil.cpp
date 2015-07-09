@@ -131,7 +131,7 @@ static bool pnm_writedata(FILE *f, int xsize, int ysize, PNMtype type, const voi
 	return true;
 }
 
-void SaveImageToFile(const ISRUChar4Image* image, const char* fileName, bool flipVertical)
+void SaveImageToFile(const UChar4Image* image, const char* fileName, bool flipVertical)
 {
 	FILE *f = fopen(fileName, "wb");
 	if (!pnm_writeheader(f, image->noDims.x, image->noDims.y, PNM_PPM)) {
@@ -150,17 +150,17 @@ void SaveImageToFile(const ISRUChar4Image* image, const char* fileName, bool fli
 			locId_src = x + y * noDims.x;
 			locId_dst = x + (noDims.y - y - 1) * noDims.x;
 
-			data[locId_dst * 3 + 0] = image->GetData(false)[locId_src].r;
-			data[locId_dst * 3 + 1] = image->GetData(false)[locId_src].g;
-			data[locId_dst * 3 + 2] = image->GetData(false)[locId_src].b;
+			data[locId_dst * 3 + 0] = image->GetData(MEMORYDEVICE_CPU)[locId_src].r;
+			data[locId_dst * 3 + 1] = image->GetData(MEMORYDEVICE_CPU)[locId_src].g;
+			data[locId_dst * 3 + 2] = image->GetData(MEMORYDEVICE_CPU)[locId_src].b;
 		}
 	}
 	else
 	{
 		for (int i = 0; i < noDims.x * noDims.y; ++i) {
-			data[i * 3 + 0] = image->GetData(false)[i].r;
-			data[i * 3 + 1] = image->GetData(false)[i].g;
-			data[i * 3 + 2] = image->GetData(false)[i].b;
+			data[i * 3 + 0] = image->GetData(MEMORYDEVICE_CPU)[i].r;
+			data[i * 3 + 1] = image->GetData(MEMORYDEVICE_CPU)[i].g;
+			data[i * 3 + 2] = image->GetData(MEMORYDEVICE_CPU)[i].b;
 		}
 	}
 
@@ -169,22 +169,22 @@ void SaveImageToFile(const ISRUChar4Image* image, const char* fileName, bool fli
 	fclose(f);
 }
 
-void SaveImageToFile(const ISRShortImage* image, const char* fileName)
+void SaveImageToFile(const ShortImage* image, const char* fileName)
 {
 	FILE *f = fopen(fileName, "wb");
 	if (!pnm_writeheader(f, image->noDims.x, image->noDims.y, PNM_PGM_16u)) {
 		fclose(f); return;
 	}
-	pnm_writedata(f, image->noDims.x, image->noDims.y, PNM_PGM_16u, image->GetData(false));
+	pnm_writedata(f, image->noDims.x, image->noDims.y, PNM_PGM_16u, image->GetData(MEMORYDEVICE_CPU));
 	fclose(f);
 }
 
-void SaveImageToFile(const ISRFloatImage* image, const char* fileName)
+void SaveImageToFile(const FloatImage* image, const char* fileName)
 {
 	unsigned short *data = new unsigned short[image->dataSize];
 	for (int i = 0; i < image->dataSize; i++)
 	{
-		float localData = image->GetData(false)[i];
+		float localData = image->GetData(MEMORYDEVICE_CPU)[i];
 		data[i] = localData >= 0 ? (unsigned short)(localData * 1000.0f) : 0;
 	}
 
@@ -198,7 +198,7 @@ void SaveImageToFile(const ISRFloatImage* image, const char* fileName)
 	delete[] data;
 }
 
-bool ReadImageFromFile(ISRUChar4Image* image, const char* fileName)
+bool ReadImageFromFile(UChar4Image* image, const char* fileName)
 {
 	int xsize, ysize;
 	bool binary;
@@ -219,10 +219,10 @@ bool ReadImageFromFile(ISRUChar4Image* image, const char* fileName)
 	image->ChangeDims(newSize);
 	for (int i = 0; i < image->noDims.x*image->noDims.y; ++i)
 	{
-		image->GetData(false)[i].r = data[i * 3 + 0];
-		image->GetData(false)[i].g = data[i * 3 + 1];
-		image->GetData(false)[i].b = data[i * 3 + 2];
-		image->GetData(false)[i].w = 255;
+		image->GetData(MEMORYDEVICE_CPU)[i].r = data[i * 3 + 0];
+		image->GetData(MEMORYDEVICE_CPU)[i].g = data[i * 3 + 1];
+		image->GetData(MEMORYDEVICE_CPU)[i].b = data[i * 3 + 2];
+		image->GetData(MEMORYDEVICE_CPU)[i].w = 255;
 	}
 
 	delete[] data;
@@ -230,7 +230,7 @@ bool ReadImageFromFile(ISRUChar4Image* image, const char* fileName)
 	return true;
 }
 
-bool ReadImageFromFile(ISRShortImage *image, const char *fileName)
+bool ReadImageFromFile(ShortImage *image, const char *fileName)
 {
 	int xsize, ysize;
 	bool binary;
@@ -252,12 +252,12 @@ bool ReadImageFromFile(ISRShortImage *image, const char *fileName)
 	image->ChangeDims(newSize);
 	if (binary) {
 		for (int i = 0; i < image->noDims.x*image->noDims.y; ++i) {
-			image->GetData(false)[i] = (data[i] << 8) | ((data[i] >> 8) & 255);
+			image->GetData(MEMORYDEVICE_CPU)[i] = (data[i] << 8) | ((data[i] >> 8) & 255);
 		}
 	}
 	else {
 		for (int i = 0; i < image->noDims.x*image->noDims.y; ++i) {
-			image->GetData(false)[i] = data[i];
+			image->GetData(MEMORYDEVICE_CPU)[i] = data[i];
 		}
 	}
 	delete[] data;

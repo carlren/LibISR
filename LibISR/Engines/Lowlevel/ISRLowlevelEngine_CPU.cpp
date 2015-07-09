@@ -11,28 +11,28 @@ using namespace LibISR::Objects;
 // Below are the functions that are currently used
 //////////////////////////////////////////////////////////////////////////
 
-void LibISR::Engine::ISRLowlevelEngine_CPU::subsampleImageRGBDImage(ISRFloat4Image *outimg, ISRFloat4Image *inimg)
+void LibISR::Engine::ISRLowlevelEngine_CPU::subsampleImageRGBDImage(Float4Image *outimg, Float4Image *inimg)
 {
 	Vector2i oldDims = inimg->noDims;
 	Vector2i newDims; newDims.x = inimg->noDims.x / 2; newDims.y = inimg->noDims.y / 2;
 
 	outimg->ChangeDims(newDims);
 
-	const Vector4f *imageData_in = inimg->GetData(false);
-	Vector4f *imageData_out = outimg->GetData(false);
+	const Vector4f *imageData_in = inimg->GetData(MEMORYDEVICE_CPU);
+	Vector4f *imageData_out = outimg->GetData(MEMORYDEVICE_CPU);
 
 		for (int y = 0; y < newDims.y; y++) for (int x = 0; x < newDims.x; x++)
 			filterSubsampleWithHoles(imageData_out, x, y, newDims, imageData_in, oldDims);
 }
 
-void LibISR::Engine::ISRLowlevelEngine_CPU::prepareAlignedRGBDData(ISRFloat4Image *outimg, ISRShortImage *raw_depth_in, ISRUChar4Image *rgb_in, Objects::ISRExHomography *home)
+void LibISR::Engine::ISRLowlevelEngine_CPU::prepareAlignedRGBDData(Float4Image *outimg, ShortImage *raw_depth_in, UChar4Image *rgb_in, Objects::ISRExHomography *home)
 {
 	int w = raw_depth_in->noDims.width;
 	int h = raw_depth_in->noDims.height;
 
-	short* depth_ptr = raw_depth_in->GetData(false);
-	Vector4u* rgb_in_ptr = rgb_in->GetData(false);
-	Vector4f* rgbd_out_ptr = outimg->GetData(false);
+	short* depth_ptr = raw_depth_in->GetData(MEMORYDEVICE_CPU);
+	Vector4u* rgb_in_ptr = rgb_in->GetData(MEMORYDEVICE_CPU);
+	Vector4f* rgbd_out_ptr = outimg->GetData(MEMORYDEVICE_CPU);
 
 	bool alreadyAligned = home->T == Vector3f(0, 0, 0);
 
@@ -58,7 +58,7 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::prepareAlignedRGBDData(ISRFloat4Imag
 
 }
 
-void LibISR::Engine::ISRLowlevelEngine_CPU::preparePointCloudFromAlignedRGBDImage(ISRFloat4Image *ptcloud_out, ISRFloat4Image *inimg, Objects::ISRHistogram *histogram, const Vector4f &intrinsic, const Vector4i &boundingbox)
+void LibISR::Engine::ISRLowlevelEngine_CPU::preparePointCloudFromAlignedRGBDImage(Float4Image *ptcloud_out, Float4Image *inimg, Objects::ISRHistogram *histogram, const Vector4f &intrinsic, const Vector4i &boundingbox)
 {
 	if (inimg->noDims != ptcloud_out->noDims) ptcloud_out->ChangeDims(inimg->noDims);
 	
@@ -67,8 +67,8 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::preparePointCloudFromAlignedRGBDImag
 
 	int noBins = histogram->noBins;
 
-	Vector4f *inimg_ptr = inimg->GetData(false);
-	Vector4f* ptcloud_ptr = ptcloud_out->GetData(false);
+	Vector4f *inimg_ptr = inimg->GetData(MEMORYDEVICE_CPU);
+	Vector4f* ptcloud_ptr = ptcloud_out->GetData(MEMORYDEVICE_CPU);
 
 		for (int i = 0; i < h; i++) for (int j = 0; j < w; j++)
 		{
@@ -86,14 +86,14 @@ void LibISR::Engine::ISRLowlevelEngine_CPU::preparePointCloudFromAlignedRGBDImag
 		}
 }
 
-void LibISR::Engine::ISRLowlevelEngine_CPU::computepfImageFromHistogram(ISRUChar4Image *rgb_in, Objects::ISRHistogram *histogram)
+void LibISR::Engine::ISRLowlevelEngine_CPU::computepfImageFromHistogram(UChar4Image *rgb_in, Objects::ISRHistogram *histogram)
 {
 	int w = rgb_in->noDims.width;
 	int h = rgb_in->noDims.height;
 	int noBins = histogram->noBins;
 	float pf = 0;
 
-	Vector4u *inimg_ptr = rgb_in->GetData(false);
+	Vector4u *inimg_ptr = rgb_in->GetData(MEMORYDEVICE_CPU);
 
 		for (int i = 0; i < h; i++) for (int j = 0; j < w; j++)
 		{

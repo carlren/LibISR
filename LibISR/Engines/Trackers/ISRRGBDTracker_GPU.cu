@@ -47,7 +47,7 @@ void LibISR::Engine::ISRRGBDTracker_GPU::evaluateEnergy(float *energy, Objects::
 {
 	int ptCount = this->frame->ptCloud->dataSize;
 	int objCount = trackerState->numPoses();
-	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(true);
+	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(MEMORYDEVICE_CUDA);
 	ISRShape_ptr shapes = shapeUnion->getShapeList(true);
 	ISRPose_ptr poses = trackerState->getPoseList(true);
 
@@ -72,7 +72,7 @@ void LibISR::Engine::ISRRGBDTracker_GPU::computeJacobianAndHessian(float *gradie
 	int noPara = objCount * 6;
 	int noParaSQ = noPara*noPara;
 
-	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(true);
+	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(MEMORYDEVICE_CUDA);
 	ISRShape_ptr shapes = shapeUnion->getShapeList(true);
 	ISRPose_ptr poses = trackerState->getPoseList(true);
 
@@ -110,8 +110,8 @@ void LibISR::Engine::ISRRGBDTracker_GPU::lableForegroundPixels(Objects::ISRTrack
 {
 	int ptCount = this->frame->ptCloud->dataSize;
 	int objCount = trackerState->numPoses();
-	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(true);
-	Vector4f* rgbd_ptr = this->frame->currentLevel->rgbd->GetData(true);
+	Vector4f* ptcloud_ptr = this->frame->ptCloud->GetData(MEMORYDEVICE_CUDA);
+	Vector4f* rgbd_ptr = this->frame->currentLevel->rgbd->GetData(MEMORYDEVICE_CUDA);
 	ISRShape_ptr shapes = shapeUnion->getShapeList(true);
 	ISRPose_ptr poses = trackerState->getPoseList(true);
 
