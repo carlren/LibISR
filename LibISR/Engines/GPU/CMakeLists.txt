@@ -1,0 +1,10 @@
+set(LibISR_Engines_GPU
+	ISRRGBDTracker_GPU.h
+	ISRRGBDTracker_GPU.cu
+	ISRLowlevelEngine_GPU.h
+	ISRLowlevelEngine_GPU.cu
+	ISRReconstructionEngine_GPU.h
+	ISRReconstructionEngine_GPU.cu
+	ISRVisualisationEngine_GPU.h
+	ISRVisualisationEngine_GPU.cu
+	)

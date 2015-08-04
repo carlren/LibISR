@@ -1,0 +1,19 @@
+set(LibISR_Engines_Base
+	ISRTracker.h
+	ISRColorTracker.h
+	ISRColorTracker.cpp
+	ISRJointTracker.h
+	ISRJointTracker.cpp
+	ISRRGBDTracker.h
+	ISRRGBDTracker.cpp
+	ISRLowlevelEngine.h
+	ISRLowlevelEngine.cpp
+	ISRReconstructionEngine.h
+	ISRReconstructionEngine.cpp
+	ISRVisualisationEngine.h
+	ISRVisualisationEngine.cpp
+)
+
+add_subdirectory(shared)
+add_subdirectory(CPU)
+add_subdirectory(GPU)
