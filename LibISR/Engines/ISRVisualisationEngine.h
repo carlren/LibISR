@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../../Objects/Basic/ISRVisualisationState.h"
+#include "../Objects/ISRVisualisationState.h"
 
-#include "../../Objects/Highlevel/ISRFrame.h"
-#include "../../Objects/Highlevel/ISRTrackingState.h"
-#include "../../Objects/Highlevel/ISRShapeUnion.h"
+#include "../Objects/ISRFrame.h"
+#include "../Objects/ISRTrackingState.h"
+#include "../Objects/ISRShapeUnion.h"
 
 namespace LibISR
 {

@@ -4,8 +4,7 @@
 #include <stdlib.h>
 #include <fstream>
 
-
-#include "../LibISR/Utils/LibISRDefine.h"
+#include"../LibISRDefine.h"
 
 void SaveImageToFile(const UChar4Image* image, const char* fileName, bool flipVertical = false);
 void SaveImageToFile(const ShortImage* image, const char* fileName);

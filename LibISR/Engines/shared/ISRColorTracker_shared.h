@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../../Utils/LibISRDefine.h"
-#include "../Lowlevel/ISRVoxelAccess_DA.h"
+#include "../../LibISRDefine.h"
+#include "../shared/ISRVoxelAccess_shared.h"
 
-#include "../../Objects//Highlevel/ISRTrackingState.h"
-#include "../../Objects/Highlevel/ISRShapeUnion.h"
+#include "../../Objects/ISRTrackingState.h"
+#include "../../Objects/ISRShapeUnion.h"
 
-#include "../../Objects/Basic/ISRPose.h"
-#include "../../Objects/Basic/ISRShape.h"
+#include "../../Objects/ISRPose.h"
+#include "../../Objects/ISRShape.h"
 
 
 #ifndef NARROW_BAND

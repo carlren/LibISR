@@ -1,7 +1,6 @@
 #include "ISRCoreEngine.h"
-#include "../../LibISRUtils/IOUtil.h"
-#include "../../LibISRUtils/Timer.h"
-#include "../../LibISRUtils/NVTimer.h"
+#include "../Utils/IOUtil.h"
+#include "../Utils/NVTimer.h"
 
 using namespace LibISR::Engine;
 using namespace LibISR::Objects;

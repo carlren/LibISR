@@ -1,5 +1,5 @@
 #pragma once
-#include "../../Utils/LibISRDefine.h"
+#include "../LibISRDefine.h"
 
 #include "ISRHistogram.h"
 #include "ISRCalib.h"

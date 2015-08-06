@@ -1,5 +1,5 @@
 #pragma once
-#include "../../Utils/LibISRDefine.h"
+#include "../../LibISRDefine.h"
 
 _CPU_AND_GPU_CODE_ inline int pt2IntIdx(Vector3f pt)
 {

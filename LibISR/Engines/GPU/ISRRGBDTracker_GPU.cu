@@ -1,10 +1,8 @@
 #include "ISRRGBDTracker_GPU.h"
-#include "ISRRGBDTracker_DA.h"
+#include "../shared/ISRRGBDTracker_shared.h"
+#include "../shared/ISRCudaUtil.h"
 
-#include "../../Utils/ISRCUDAUtils.h"
-
-#include "../../../LibISRUtils/IOUtil.h"
-#include "../../../ORUtils/CUDADefines.h"
+#include "../../Utils/IOUtil.h"
 
 
 using namespace LibISR::Engine;
@@ -253,7 +251,9 @@ __global__ void computeJacobianAndHessian_device(float* g_device, float* h_devic
 			if (locId_local < 64) dim_shared[locId_local] += dim_shared[locId_local + 64];
 			__syncthreads();
 
-			if (locId_local < 32) warpReduce(dim_shared, locId_local);
+            if (locId_local < 32) {
+                warpReduce(dim_shared, locId_local);
+            }
 
 			if (locId_local == 0) h_device[blockIdx.x * noParaSQ + paraId] = dim_shared[locId_local];
 		}

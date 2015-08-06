@@ -1,9 +1,9 @@
 #include "ISRJointTracker_CPU.h"
-#include "ISRColorTracker_DA.h"
-#include "ISRRGBDTracker_DA.h"
+#include "../shared/ISRColorTracker_shared.h"
+#include "../shared/ISRRGBDTracker_shared.h"
 
-#include "../../../LibISRUtils/IOUtil.h"
-#include "../Lowlevel/ISRLowlevelEngine_DA.h"
+#include "../../Utils/IOUtil.h"
+#include "../shared/ISRLowlevelEngine_shared.h"
 
 using namespace LibISR::Engine;
 using namespace LibISR::Objects;

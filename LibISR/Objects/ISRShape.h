@@ -1,6 +1,5 @@
 #pragma once
-#include "../../Utils/LibISRDefine.h"
-#include "../../../ORUtils/CUDADefines.h"
+#include "../LibISRDefine.h"
 
 namespace LibISR
 {

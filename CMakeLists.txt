@@ -40,4 +40,4 @@ add_subdirectory(ORUtils)
 add_subdirectory(LibISR)
 
 add_executable(demo demo.cpp)
-target_link_libraries(demo LibISR_CPU LibISR_GPU)
+target_link_libraries(demo LibISR_ALL)

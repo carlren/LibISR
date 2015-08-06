@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../Objects/Highlevel/ISRFrame.h"
-#include "../../Objects/Highlevel/ISRTrackingState.h"
+#include "../Objects/ISRFrame.h"
+#include "../Objects/ISRTrackingState.h"
 
 namespace LibISR
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ISRColorTracker.h"
+#include "../ISRColorTracker.h"
 
 namespace LibISR
 {

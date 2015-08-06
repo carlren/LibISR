@@ -1,8 +1,7 @@
 #pragma once
 
-#include "../LibISR/LibISR.h"
-#include "../LibISRUtils/NVTimer.h"
-
+#include "../LibISR.h"
+#include "../Utils/NVTimer.h"
 #include "ImageSourceEngine.h"
 
 namespace LibISRUtils

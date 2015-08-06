@@ -1,7 +1,7 @@
 #include "ISRLowlevelEngine_GPU.h"
-#include "ISRLowlevelEngine_DA.h"
+#include "../shared/ISRLowlevelEngine_shared.h"
 
-#include "../../../LibISRUtils/IOUtil.h"
+#include "../../Utils/IOUtil.h"
 
 using namespace LibISR;
 using namespace LibISR::Engine;

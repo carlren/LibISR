@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Utils/LibISRDefine.h"
+#include "../../LibISRDefine.h"
 
 _CPU_AND_GPU_CODE_ inline void unprojectPtWithIntrinsic(const Vector4f intrinsic, const Vector3f &inpt, Vector4f &outpt)
 {
@@ -24,8 +24,8 @@ _CPU_AND_GPU_CODE_ inline float getPf(const T &pixel, float* histogram, int noBi
 	return histogram[pidx];
 }
 
-template<class T>
-_CPU_AND_GPU_CODE_ inline void mapRGBDtoRGB(T &rgb_out, const Vector3f& inpt, const Vector4u *rgb_in, const Vector2i& imgSize, const Matrix3f &H, const Vector3f &T)
+template<class VecType>
+_CPU_AND_GPU_CODE_ inline void mapRGBDtoRGB(VecType &rgb_out, const Vector3f& inpt, const Vector4u *rgb_in, const Vector2i& imgSize, const Matrix3f &H, const Vector3f &T)
 {
 	if (inpt.z>0)
 	{

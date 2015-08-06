@@ -1,17 +1,17 @@
 #include <stdio.h>
 
-#include "../LibISR/LibISR.h"
+#include"LibISR/LibISR.h"
+#include"LibISR/UI/ImageSourceEngine.h"
+#include"LibISR/UI/OpenNIEngine.h"
+#include"LibISR/UI/UIEngine.h"
 
-#include "ImageSourceEngine.h"
-#include "OpenNIEngine.h"
-#include "UIEngine.h"
-
-#include "../LibISRUtils/IOUtil.h"
-#include "../LibISRUtils/Timer.h"
+#include"LibISR/Utils/IOUtil.h"
+#include"LibISR/Utils/NVTimer.h"
 
 using namespace LibISR::Engine;
 using namespace LibISR::Objects;
 using namespace LibISRUtils;
+using namespace std;
 
 int main(int argc, char** argv)
 {
@@ -21,13 +21,14 @@ int main(int argc, char** argv)
 	//////////////////////////////////////////////////////////////////////////
 
 	//const char *sdfFile = "../Data/newCut.bin";
-	const char *sdfFile = "../Data/car_red.bin";
-	//const char *sdfFile = "../Data/ball.bin";
+	//const char *sdfFile = "/home/carl/Work/Code/github/LibISR/Data/car_red.bin";
+	const char *sdfFile = "/home/carl/Work/Code/github/LibISR/Data/teacan.bin";
 	//const char *sdfFile = "../Data/sofa.bin";
 
-	const char *calibFile = "../Data/calib_reg.txt";
+	const char *calibFile = "/home/carl/Work/Code/github/LibISR/Data/calib_reg.txt";
 	ImageSourceEngine *imageSource = new OpenNIEngine(calibFile, NULL, true);
-
+    
+    
 	ISRLibSettings isrSettings;
 	isrSettings.noHistogramDim = HISTOGRAM_BIN;
 	isrSettings.noTrackingObj = 1;
@@ -35,14 +36,17 @@ int main(int argc, char** argv)
 	isrSettings.useGPU = false;
 
 	ISRCoreEngine *coreEngine = new ISRCoreEngine(&isrSettings, &imageSource->calib, imageSource->getDepthImageSize(), imageSource->getRGBImageSize());
-	coreEngine->shapeUnion->loadShapeFromFile(sdfFile, Vector3i(DT_VOL_SIZE, DT_VOL_SIZE, DT_VOL_SIZE), 0);
+    
+    coreEngine->shapeUnion->loadShapeFromFile(sdfFile, Vector3i(DT_VOL_SIZE, DT_VOL_SIZE, DT_VOL_SIZE), 0);
 	for (int i = 1; i < isrSettings.noTrackingObj; i++)
 		coreEngine->shapeUnion->shareSDFWithExistingShape(*coreEngine->shapeUnion->getShape(0), i);
+    
 
+    
 	float poses[6] = { 0.0f, 0.0f, 0.7f, 0, -PI/2, 0.0f };
 	coreEngine->trackingState->setHFromParam(poses, 0);
 
-
+    
 	//////////////////////////////////////////////////////////////////////////
 	// setup for recorded sequence
 	//////////////////////////////////////////////////////////////////////////

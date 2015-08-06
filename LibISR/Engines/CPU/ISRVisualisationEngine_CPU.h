@@ -1,5 +1,5 @@
 #pragma once
-#include "ISRVisualisationEngine.h"
+#include "../ISRVisualisationEngine.h"
 
 namespace LibISR
 {

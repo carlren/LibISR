@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ISRJointTracker.h"
+#include "../ISRJointTracker.h"
 
 namespace LibISR
 {

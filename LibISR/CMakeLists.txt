@@ -1,23 +1,128 @@
-add_subdirectory(UI)
-add_subdirectory(Objects)
-add_subdirectory(Engines)
+set(LibISR_Utils
+	Utils/IOUtil.h
+	Utils/IOUtil.cpp
+	Utils/NVTimer.h
+	Utils/ISRCalibIO.h
+	Utils/ISRCalibIO.cpp
+)
+
+set(LibISR_UI
+	UI/ImageSourceEngine.h
+	UI/ImageSourceEngine.cpp
+	UI/OpenNIEngine.h
+	UI/OpenNIEngine.cpp
+	UI/UIEngine.h
+	UI/UIEngine.cpp
+	)
+
+set(LibISR_Objects
+	Objects/ISRCalib.h
+	Objects/ISRDisparityCalib.h
+	Objects/ISRExHomography.h
+	Objects/ISRExtrinsics.h
+	Objects/ISRFrame.h
+	Objects/ISRHistogram.h
+	Objects/ISRImageHierarchy.h
+	Objects/ISRIntrinsics.h
+	Objects/ISRPose.h
+	Objects/ISRShape.h
+	Objects/ISRShapeUnion.h
+	Objects/ISRTrackingState.h
+	Objects/ISRView.h
+	Objects/ISRVisualisationState.h
+	Objects/ISRLibSettings.h
+)
+
+set(LibISR_Engines_Base
+	Engines/ISRTracker.h
+	Engines/ISRColorTracker.h
+	Engines/ISRColorTracker.cpp
+	Engines/ISRJointTracker.h
+	Engines/ISRJointTracker.cpp
+	Engines/ISRRGBDTracker.h
+	Engines/ISRRGBDTracker.cpp
+	Engines/ISRLowlevelEngine.h
+	Engines/ISRLowlevelEngine.cpp
+	Engines/ISRReconstructionEngine.h
+	Engines/ISRReconstructionEngine.cpp
+	Engines/ISRVisualisationEngine.h
+	Engines/ISRVisualisationEngine.cpp
+        Engines/ISRCoreEngine.h
+        Engines/ISRCoreEngine.cpp
+)
+
+set(LibISR_Engines_shared
+	Engines/shared/ISRColorTracker_shared.h
+	Engines/shared/ISRLowlevelEngine_shared.h
+	Engines/shared/ISRReconstructionEngine_shared.h
+	Engines/shared/ISRRGBDTracker_shared.h
+	Engines/shared/ISRVisualisationEngine_shared.h
+	Engines/shared/ISRVoxelAccess_shared.h
+        Engines/shared/ISRCudaUtil.h
+	)
+
+set(LibISR_Engines_GPU
+	Engines/GPU/ISRRGBDTracker_GPU.h
+	Engines/GPU/ISRRGBDTracker_GPU.cu
+	Engines/GPU/ISRLowlevelEngine_GPU.h
+	Engines/GPU/ISRLowlevelEngine_GPU.cu
+	Engines/GPU/ISRReconstructionEngine_GPU.h
+	Engines/GPU/ISRReconstructionEngine_GPU.cu
+	Engines/GPU/ISRVisualisationEngine_GPU.h
+	Engines/GPU/ISRVisualisationEngine_GPU.cu
+	)
+
+set(LibISR_Engines_CPU
+	Engines/CPU/ISRColorTracker_CPU.h
+	Engines/CPU/ISRColorTracker_CPU.cpp
+	Engines/CPU/ISRJointTracker_CPU.h
+	Engines/CPU/ISRJointTracker_CPU.cpp
+	Engines/CPU/ISRRGBDTracker_CPU.h
+	Engines/CPU/ISRRGBDTracker_CPU.cpp
+	Engines/CPU/ISRLowlevelEngine_CPU.h
+	Engines/CPU/ISRLowlevelEngine_CPU.cpp
+	Engines/CPU/ISRReconstructionEngine_CPU.h
+	Engines/CPU/ISRReconstructionEngine_CPU.cpp
+	Engines/CPU/ISRVisualisationEngine_CPU.h
+	Engines/CPU/ISRVisualisationEngine_CPU.cpp
+	)
 
 set(LibISR_Common
+        LibISR.h
 	LibISRDefine.h
 	${LibISR_Objects}
 	${LibISR_Engines_Base}
 	${LibISR_Engines_shared}
 	${LibISR_Utils}
+        ${LibISR_UI}
 	)
 
 cuda_add_library(LibISR_GPU
-	${LibISR_Common}
-	${LibISR_Engines_GPU}
+        ${LibISR_Engines_GPU}	
+        ${LibISR_Common}
 	)
-target_link_libraries(LibISR_GPU UI Objects Engines ${CUDA_LIBRARY})
+target_link_libraries(LibISR_GPU 
+        ${CUDA_LIBRARY}
+        ${OPENGL_LIBRARY}
+        ${GLUT_LIBRARIES}
+        ${OpenNI_LIBRARY})
 
 add_library(LibISR_CPU
 	${LibISR_Common}
 	${LibISR_Engines_CPU}
 	)
-target_link_libraries(LibISR_CPU UI Objects Engines)
+target_link_libraries(LibISR_CPU 
+        ${OPENGL_LIBRARY}
+        ${GLUT_LIBRARIES}
+        ${OpenNI_LIBRARY})
+
+cuda_add_library(LibISR_ALL
+	${LibISR_Common}
+	${LibISR_Engines_GPU}
+        ${LibISR_Engines_CPU}
+	)
+target_link_libraries(LibISR_ALL
+        ${CUDA_LIBRARY}
+        ${OPENGL_LIBRARY}
+        ${GLUT_LIBRARIES}
+        ${OpenNI_LIBRARY})

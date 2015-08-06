@@ -1,7 +1,7 @@
 #include "ISRVisualisationEngine_CPU.h"
-#include "ISRVisualisationEngine_DA.h"
+#include "../shared/ISRVisualisationEngine_shared.h"
 
-#include "../../../LibISRUtils/IOUtil.h"
+#include "../../Utils/IOUtil.h"
 
 using namespace LibISR::Engine;
 using namespace LibISR::Objects;

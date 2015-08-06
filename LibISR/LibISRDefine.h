@@ -33,9 +33,9 @@ typedef unsigned short ushort;
 typedef unsigned int uint;
 typedef unsigned long ulong;
 
-#include "../../ORUtils/PlatformIndependence.h"
-#include "../../ORUtils/Vector.h"
-#include "../../ORUtils/Matrix.h"
+#include "../ORUtils/PlatformIndependence.h"
+#include "../ORUtils/Vector.h"
+#include "../ORUtils/Matrix.h"
 
 typedef class ORUtils::Matrix3<float> Matrix3f;
 typedef class ORUtils::Matrix4<float> Matrix4f;
@@ -58,8 +58,8 @@ typedef class ORUtils::Vector4<short> Vector4s;
 typedef class ORUtils::Vector4<uchar> Vector4u;
 
 
-#include "../../ORUtils/Image.h"
-#include "../../ORUtils/MathUtils.h"
+#include "../ORUtils/Image.h"
+#include "../ORUtils/MathUtils.h"
 
 //////////////////////////////////////////////////////////////////////////
 // Types for mask images

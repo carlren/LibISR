@@ -1,6 +1,6 @@
 #pragma once
-#include "../../Utils/LibISRDefine.h"
-#include "../Basic/ISRShape.h"
+#include "../LibISRDefine.h"
+#include "ISRShape.h"
 
 namespace LibISR
 {

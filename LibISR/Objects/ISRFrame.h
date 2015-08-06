@@ -1,10 +1,9 @@
 #pragma once
-#include "../../Utils/LibISRDefine.h"
-
-#include "../Basic/ISRImageHierarchy.h"
-#include "../Basic/ISRHistogram.h"
-#include "../Basic/ISRView.h"
-#include "../Basic/ISRVisualisationState.h"
+#include "../LibISRDefine.h"
+#include "ISRImageHierarchy.h"
+#include "ISRHistogram.h"
+#include "ISRView.h"
+#include "ISRVisualisationState.h"
 
 namespace LibISR
 {

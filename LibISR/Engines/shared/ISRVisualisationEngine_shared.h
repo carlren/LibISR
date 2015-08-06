@@ -1,6 +1,6 @@
 #pragma once
-#include "../../Utils/LibISRDefine.h"
-#include "../Lowlevel/ISRVoxelAccess_DA.h"
+#include "../../LibISRDefine.h"
+#include "../shared/ISRVoxelAccess_shared.h"
 
 //------------------------------------------------
 //
