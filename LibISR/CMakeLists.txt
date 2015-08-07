@@ -35,10 +35,6 @@ set(LibISR_Objects
 
 set(LibISR_Engines_Base
 	Engines/ISRTracker.h
-	Engines/ISRColorTracker.h
-	Engines/ISRColorTracker.cpp
-	Engines/ISRJointTracker.h
-	Engines/ISRJointTracker.cpp
 	Engines/ISRRGBDTracker.h
 	Engines/ISRRGBDTracker.cpp
 	Engines/ISRLowlevelEngine.h
@@ -52,7 +48,6 @@ set(LibISR_Engines_Base
 )
 
 set(LibISR_Engines_shared
-	Engines/shared/ISRColorTracker_shared.h
 	Engines/shared/ISRLowlevelEngine_shared.h
 	Engines/shared/ISRReconstructionEngine_shared.h
 	Engines/shared/ISRRGBDTracker_shared.h
@@ -73,10 +68,6 @@ set(LibISR_Engines_GPU
 	)
 
 set(LibISR_Engines_CPU
-	Engines/CPU/ISRColorTracker_CPU.h
-	Engines/CPU/ISRColorTracker_CPU.cpp
-	Engines/CPU/ISRJointTracker_CPU.h
-	Engines/CPU/ISRJointTracker_CPU.cpp
 	Engines/CPU/ISRRGBDTracker_CPU.h
 	Engines/CPU/ISRRGBDTracker_CPU.cpp
 	Engines/CPU/ISRLowlevelEngine_CPU.h

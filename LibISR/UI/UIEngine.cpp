@@ -126,20 +126,28 @@ void UIEngine::glutIdleFunction()
 	switch (uiEngine->mainLoopAction)
 	{
 	case REINIT_HIST:
-		updateHistogramFromRendering(uiEngine->mainEngine->getRenderingState()->outputImage, uiEngine->mainEngine->getView()->rgb, uiEngine->mainEngine->frame->histogram);
-		uiEngine->mainEngine->needStarTracker = true;
-		uiEngine->mainLoopAction = PROCESS_VIDEO; uiEngine->processedFrameNo++;
-		uiEngine->needsRefresh = true;
-		break;
+    {
+        float poses[6] = { 0.0f, 0.0f, 0.8f, -PI/2 , 0, 0 };
+        uiEngine->mainEngine->trackingState->setHFromParam(poses, 0);
+        updateHistogramFromRendering(uiEngine->mainEngine->getRenderingState()->outputImage, uiEngine->mainEngine->getView()->rgb, uiEngine->mainEngine->frame->histogram);
+        uiEngine->mainEngine->needStarTracker = true;
+        uiEngine->mainLoopAction = PROCESS_VIDEO; uiEngine->processedFrameNo++;
+        uiEngine->needsRefresh = true;
+        break;
+    }
 	case PROCESS_FRAME:
-		uiEngine->ProcessFrame(); uiEngine->processedFrameNo++;
-		uiEngine->mainLoopAction = PROCESS_PAUSED;
-		uiEngine->needsRefresh = true;
-		break;
+    {
+        uiEngine->ProcessFrame(); uiEngine->processedFrameNo++;
+        uiEngine->mainLoopAction = PROCESS_PAUSED;
+        uiEngine->needsRefresh = true;
+        break;
+    }
 	case PROCESS_VIDEO:
-		uiEngine->ProcessFrame(); uiEngine->processedFrameNo++;
-		uiEngine->needsRefresh = true;
-		break;
+    {
+        uiEngine->ProcessFrame(); uiEngine->processedFrameNo++;
+        uiEngine->needsRefresh = true;
+        break;
+    }
 	case EXIT:
 #ifdef FREEGLUT
 		glutLeaveMainLoop();

@@ -16,13 +16,6 @@
 #include "CPU/ISRRGBDTracker_CPU.h"
 #include "GPU/ISRRGBDTracker_GPU.h"
 
-#include "ISRColorTracker.h"
-#include "shared/ISRColorTracker_shared.h"
-#include "CPU/ISRColorTracker_CPU.h"
-
-#include "ISRJointTracker.h"
-#include "CPU/ISRColorTracker_CPU.h"
-
 #include "ISRVisualisationEngine.h"
 #include "shared/ISRVisualisationEngine_shared.h"
 #include "CPU/ISRVisualisationEngine_CPU.h"
@@ -41,8 +34,6 @@ namespace LibISR
 			Engine::ISRLowlevelEngine* lowLevelEngine;
 			Engine::ISRTracker* tracker;
 			Engine::ISRVisualisationEngine* visualizationEngine;
-
-			Engine::ISRColorTracker_CPU *tmpTracker;
 
 			float maxposediff;
 
