@@ -10,6 +10,10 @@ Cholesky.h
 MathUtils.h
 Image.h
 CUDADefines.h
+LexicalCast.h
+MemoryBlock.h
+MemoryBlockPersister.h
+PlatformIndependence.h
 )
 
 #################################################################
@@ -17,6 +21,7 @@ CUDADefines.h
 #################################################################
 
 set(ORUTILS_OBJECTS
+Dummy.cpp
 ${ORUTILS_HEADERS}
 )
 
@@ -29,6 +34,8 @@ SOURCE_GROUP("" FILES ${ORUTILS_HEADERS})
 ##############################################################
 # Specify the include directories, target and link libraries #
 ##############################################################
+
+add_library(ORUtils ${ORUTILS_OBJECTS})
 
 IF(WITH_CUDA)
 #  include_directories(${CUDA_INCLUDE_DIRS})

@@ -1,25 +1,25 @@
 #pragma once
 
-#include "../Utils/ISRLibSettings.h"
+#include "../Objects/ISRLibSettings.h"
 
-#include "../Objects/Highlevel/ISRFrame.h"
-#include "../Objects/Highlevel/ISRShapeUnion.h"
-#include "../Objects/Highlevel/ISRTrackingState.h"
+#include "../Objects/ISRFrame.h"
+#include "../Objects/ISRShapeUnion.h"
+#include "../Objects/ISRTrackingState.h"
 
-#include "Lowlevel/ISRLowlevelEngine.h"
-#include "Lowlevel/ISRLowlevelEngine_DA.h"
-#include "Lowlevel/ISRLowlevelEngine_CPU.h"
-#include "Lowlevel/ISRLowlevelEngine_GPU.h"
+#include "ISRLowlevelEngine.h"
+#include "shared/ISRLowlevelEngine_shared.h"
+#include "CPU/ISRLowlevelEngine_CPU.h"
+#include "GPU/ISRLowlevelEngine_GPU.h"
 
-#include "Trackers/ISRRGBDTracker.h"
-#include "Trackers/ISRRGBDTracker_DA.h"
-#include "Trackers/ISRRGBDTracker_CPU.h"
-#include "Trackers/ISRRGBDTracker_GPU.h"
+#include "ISRRGBDTracker.h"
+#include "shared/ISRRGBDTracker_shared.h"
+#include "CPU/ISRRGBDTracker_CPU.h"
+#include "GPU/ISRRGBDTracker_GPU.h"
 
-#include "Visualization/ISRVisualisationEngine.h"
-#include "Visualization/ISRVisualisationEngine_CPU.h"
-#include "Visualization/ISRVisualisationEngine_DA.h"
-#include "Visualization/ISRVisualisationEngine_GPU.h"
+#include "ISRVisualisationEngine.h"
+#include "shared/ISRVisualisationEngine_shared.h"
+#include "CPU/ISRVisualisationEngine_CPU.h"
+#include "GPU/ISRVisualisationEngine_GPU.h"
 
 namespace LibISR
 {
@@ -35,7 +35,11 @@ namespace LibISR
 			Engine::ISRTracker* tracker;
 			Engine::ISRVisualisationEngine* visualizationEngine;
 
+			float maxposediff;
+
 		public:
+
+			bool needStarTracker;
 
 			Objects::ISRFrame *frame;
 			Objects::ISRShapeUnion *shapeUnion;

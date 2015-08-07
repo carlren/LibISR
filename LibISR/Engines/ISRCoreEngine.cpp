@@ -1,7 +1,6 @@
 #include "ISRCoreEngine.h"
-#include "../../LibISRUtils/IOUtil.h"
-#include "../../LibISRUtils/Timer.h"
-#include "../../LibISRUtils/NVTimer.h"
+#include "../Utils/IOUtil.h"
+#include "../Utils/NVTimer.h"
 
 using namespace LibISR::Engine;
 using namespace LibISR::Objects;
@@ -27,6 +26,8 @@ LibISR::Engine::ISRCoreEngine::ISRCoreEngine(const ISRLibSettings *settings, con
 		this->tracker = new ISRRGBDTracker_CPU(settings->noTrackingObj);
 	}
 	
+	maxposediff = 0;
+	needStarTracker = false;
 }
 
 void LibISR::Engine::ISRCoreEngine::processFrame(void)
@@ -46,41 +47,41 @@ void LibISR::Engine::ISRCoreEngine::processFrame(void)
 		myview->rgb->UpdateDeviceFromHost();
 	}
 
-	sdkResetTimer(&timer); sdkStartTimer(&timer);
+	// align colour image with depth image if need to
 	lowLevelEngine->prepareAlignedRGBDData(myhierarchy->levels[0].rgbd, myview->rawDepth, myview->rgb, &myview->calib->homo_depth_to_color);
-	sdkStopTimer(&timer); printf("\rAlign:[%.2f] ", sdkGetTimerValue(&timer));
-
-	sdkResetTimer(&timer); sdkStartTimer(&timer);
+	
+	// build image hierarchy
 	for (int i = 1; i < myhierarchy->noLevels; i++)
 	{
 		myhierarchy->levels[i].intrinsic = myhierarchy->levels[i - 1].intrinsic / 2;
 		myhierarchy->levels[i].boundingbox = myhierarchy->levels[i - 1].boundingbox / 2;
 		lowLevelEngine->subsampleImageRGBDImage(myhierarchy->levels[i].rgbd, myhierarchy->levels[i - 1].rgbd);
 	}
-	sdkStopTimer(&timer); printf("Hier:[%.2f] ", sdkGetTimerValue(&timer));
-
 	trackingState->boundingBox = myhierarchy->levels[0].boundingbox;
 
+    // set hierarchy to work on
 	int lvlnum; lvlnum = settings->useGPU ? 1 : myhierarchy->noLevels - 1;
 	ISRImageHierarchy::ImageLevel& lastLevel = myhierarchy->levels[lvlnum];
 	frame->currentLevel = &lastLevel;
 
-	sdkResetTimer(&timer); sdkStartTimer(&timer);
+    // prepare point cloud
 	lowLevelEngine->preparePointCloudFromAlignedRGBDImage(frame->ptCloud, lastLevel.rgbd, frame->histogram, lastLevel.intrinsic, lastLevel.boundingbox);
-	sdkStopTimer(&timer); printf("Prep:[%.2f] ", sdkGetTimerValue(&timer));
 
-	sdkResetTimer(&timer); sdkStartTimer(&timer);
-	tracker->TrackObjects(frame, shapeUnion, trackingState);
-	sdkStopTimer(&timer); printf("Track:[%.2f] ", sdkGetTimerValue(&timer));
+	if (needStarTracker)
+	{
+		tracker->TrackObjects(frame, shapeUnion, trackingState);
+	}
 
-	myview->alignedRgb->SetFrom(myview->rgb);
+
+	if (settings->useGPU) myview->alignedRgb->SetFrom(myview->rgb, ORUtils::MemoryBlock<Vector4u>::CUDA_TO_CPU);
+	else myview->alignedRgb->SetFrom(myview->rgb, ORUtils::MemoryBlock<Vector4u>::CPU_TO_CPU);
+
 	lowLevelEngine->computepfImageFromHistogram(myview->rgb, frame->histogram);
 
 	ISRVisualisationState* myrendering = getRenderingState();
 	ISRVisualisationState** tmprendering = new ISRVisualisationState*[settings->noTrackingObj];
 
-
-	sdkResetTimer(&timer); sdkStartTimer(&timer);
+	// raycast for rendering, not necessary if only track
 	for (int i = 0; i < settings->noTrackingObj; i++)
 	{
 		tmprendering[i] = new ISRVisualisationState(myview->rawDepth->noDims, settings->useGPU);
@@ -89,26 +90,24 @@ void LibISR::Engine::ISRCoreEngine::processFrame(void)
 		tmprendering[i]->minmaxImage->UpdateDeviceFromHost();
 		visualizationEngine->renderObject(tmprendering[i], trackingState->getPose(i)->getInvH(), shapeUnion->getShape(0), myview->calib->intrinsics_d.getParam());
 	}
-	sdkStopTimer(&timer); printf("Render:[%.2f] ", sdkGetTimerValue(&timer));
 
-
-	sdkResetTimer(&timer); sdkStartTimer(&timer);
 	myrendering->outputImage->Clear(0);
 	for (int i = 0; i < myrendering->outputImage->dataSize; i++)
 	{
 		for (int j = 0; j < settings->noTrackingObj; j++)
 		{
-			myrendering->outputImage->GetData(false)[i] += tmprendering[j]->outputImage->GetData(false)[i] / settings->noTrackingObj;
+			myrendering->outputImage->GetData(MEMORYDEVICE_CPU)[i] += tmprendering[j]->outputImage->GetData(MEMORYDEVICE_CPU)[i] / settings->noTrackingObj;
 		}
 
-		if (myrendering->outputImage->GetData(false)[i] != Vector4u(0, 0, 0, 0))
+		if (myrendering->outputImage->GetData(MEMORYDEVICE_CPU)[i] != Vector4u(0, 0, 0, 0))
 		{
-			myview->alignedRgb->GetData(false)[i] = myrendering->outputImage->GetData(false)[i] / 3 * 2 + myview->alignedRgb->GetData(false)[i] / 3;
+			myview->alignedRgb->GetData(MEMORYDEVICE_CPU)[i] = myrendering->outputImage->GetData(MEMORYDEVICE_CPU)[i] / 5 * 4 + myview->alignedRgb->GetData(MEMORYDEVICE_CPU)[i] / 5;
+			//myview->alignedRgb->GetData(MEMORYDEVICE_CPU)[i] = myrendering->outputImage->GetData(MEMORYDEVICE_CPU)[i];
+
 		}
 	}
 
 	for (int i = 0; i < settings->noTrackingObj; i++) delete tmprendering[i];
 	delete[] tmprendering;
-	sdkStopTimer(&timer); printf("Rest:[%.2f]", sdkGetTimerValue(&timer));
 }
 
