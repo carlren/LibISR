@@ -200,41 +200,6 @@ void UIEngine::glutKeyUpFunction(unsigned char key, int x, int y)
 	}
 }
 
-//void UIEngine::glutMouseButtonFunction(int button, int state, int x, int y)
-//{
-//	UIEngine *uiEngine = UIEngine::Instance();
-//
-//	if (state == GLUT_DOWN)
-//	{
-//		if (button == GLUT_LEFT_BUTTON)
-//		{
-//			uiEngine->startDrawingBoundingBox = true;
-//			uiEngine->mouseBB.x = x;
-//			uiEngine->mouseBB.y = y;
-//		}
-//	}
-//	else if (state == GLUT_UP)
-//	{
-//		if (button == GLUT_LEFT_BUTTON && uiEngine->startDrawingBoundingBox)
-//		{
-//			uiEngine->startDrawingBoundingBox = false;
-//			uiEngine->finsihedDrawingBoundingBox = true;
-//			uiEngine->mouseBB.z = x;
-//			uiEngine->mouseBB.w = y;
-//		}
-//	}
-//}
-
-//void UIEngine::glutMouseMoveFunction(int x, int y)
-//{
-//	UIEngine *uiEngine = UIEngine::Instance();
-//	if (uiEngine->startDrawingBoundingBox = true)
-//	{
-//		uiEngine->mouseBB.z = x;
-//		uiEngine->mouseBB.w = y;
-//	}
-//}
-
 void UIEngine::Initialise(int & argc, char** argv, ImageSourceEngine *imageSource, ISRCoreEngine *mainEngine, const char *outFolder)
 {
 	this->mainEngine = mainEngine;

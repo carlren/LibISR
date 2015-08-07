@@ -41,9 +41,8 @@ int main(int argc, char** argv)
 	for (int i = 1; i < isrSettings.noTrackingObj; i++)
 		coreEngine->shapeUnion->shareSDFWithExistingShape(*coreEngine->shapeUnion->getShape(0), i);
     
-
     
-	float poses[6] = { 0.0f, 0.0f, 0.7f, 0, -PI/2, 0.0f };
+	float poses[6] = { 0.0f, 0.0f, 0.7f, PI/2 , 0, 0 };
 	coreEngine->trackingState->setHFromParam(poses, 0);
 
     
@@ -85,7 +84,7 @@ int main(int argc, char** argv)
 	///////////////////////////////////////////////////////////////////////////
 	// run it!
 	///////////////////////////////////////////////////////////////////////////
-	UIEngine::Instance()->Initialise(argc, argv, imageSource, coreEngine, "C:/LibISR/");
+	UIEngine::Instance()->Initialise(argc, argv, imageSource, coreEngine, "./");
 	UIEngine::Instance()->Run();
 	UIEngine::Instance()->Shutdown();
 

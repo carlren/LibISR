@@ -76,64 +76,20 @@ void LibISR::Engine::ISRCoreEngine::processFrame(void)
 	lowLevelEngine->preparePointCloudFromAlignedRGBDImage(frame->ptCloud, lastLevel.rgbd, frame->histogram, lastLevel.intrinsic, lastLevel.boundingbox);
 	sdkStopTimer(&timer); printf("Prep:[%.2f] ", sdkGetTimerValue(&timer));
 
-	//sdkResetTimer(&timer); sdkStartTimer(&timer);
-	//
-	//Matrix4f H = trackingState->getPose(0)->getInvH();
-	//tracker->TrackObjects(frame, shapeUnion, trackingState);
-	//Matrix4f newH = trackingState->getPose(0)->getInvH();
-
-	//float posediff = (H.m30 - newH.m30)*(H.m30 - newH.m30);
-	//posediff = (H.m31 - newH.m31)*(H.m31 - newH.m31);
-	//posediff = (H.m32 - newH.m32)*(H.m32 - newH.m32);
-	//posediff = sqrt(posediff);
-	//
-	//if (posediff>0.5)
-	//{
-	//	trackingState->getPose(0)->setFromInvH(H);
-	//}
-
-
-	//if (trackingState->energy != 0 && trackingState->energy<0.7)
-	//	tmpTracker->TrackObjects(frame, shapeUnion, trackingState);
-
-	//maxposediff = posediff > maxposediff ? posediff : maxposediff;
-	//printf("posediff:%.3f ", maxposediff);
-	////sdkStopTimer(&timer); printf("Track:[%.2f] ", sdkGetTimerValue(&timer));
-
-
-	//if (trackingState->energy != 0)
-	//{
-	//	tmpTracker->TrackObjects(frame, shapeUnion, trackingState);
-	//}
-	//else
-	//{
-	//	tracker->TrackObjects(frame, shapeUnion, trackingState);
-	//}
 
 	if (needStarTracker)
 	{
-		Matrix4f H = trackingState->getPose(0)->getInvH();
-		tmpTracker->TrackObjects(frame, shapeUnion, trackingState);
-		Matrix4f newH = trackingState->getPose(0)->getInvH();
-		trackingState->getPose(0)->setFromInvH(H);
+//		Matrix4f H = trackingState->getPose(0)->getInvH();
+//		tmpTracker->TrackObjects(frame, shapeUnion, trackingState);
+//		Matrix4f newH = trackingState->getPose(0)->getInvH();
+//		trackingState->getPose(0)->setFromInvH(H);
 		tracker->TrackObjects(frame, shapeUnion, trackingState);
 		
-		if (trackingState->energy<0.3)
-		{
-			trackingState->getPose(0)->setFromInvH(newH);
-		}
+//		if (trackingState->energy<0.3)
+//		{
+//			trackingState->getPose(0)->setFromInvH(newH);
+//		}
 
-		//Matrix4f newH = trackingState->getPose(0)->getInvH();
-
-		//float posediff = (H.m30 - newH.m30)*(H.m30 - newH.m30);
-		//posediff = (H.m31 - newH.m31)*(H.m31 - newH.m31);
-		//posediff = (H.m32 - newH.m32)*(H.m32 - newH.m32);
-		//posediff = sqrt(posediff);
-		//
-		//if (posediff>0.5 || trackingState->energy <0.3)
-		//{
-		//	trackingState->getPose(0)->setFromInvH(H);
-		//}
 	}
 
 
