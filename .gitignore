@@ -15,3 +15,5 @@
 *.pgm
 *.lib
 *.jpg
+*.user
+/build
