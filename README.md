@@ -68,19 +68,18 @@ title={STAR3D: Simultaneous Tracking and Reconstruction of 3D Objects Using RGB-
 year={2013}, 
 month={Dec}, 
 pages={1561-1568}, 
-doi={10.1109/ICCV.2013.197}
 }
 
 ```
 
 ```
 @incollection{Ren_Reid:ECCV2012,
-	year={2012},
-	booktitle={Computer Vision -- ECCV 2012. Workshops and Demonstrations},
-	title={A Unified Energy Minimization Framework for Model Fitting in Depth},
-	publisher={Springer Berlin Heidelberg},
-	author={Ren, C. Y. and Reid, I.},
-	pages={72-82},
+year={2012},
+booktitle={Computer Vision -- ECCV 2012. Workshops and Demonstrations},
+title={A Unified Energy Minimization Framework for Model Fitting in Depth},
+publisher={Springer Berlin Heidelberg},
+author={Ren, C. Y. and Reid, I.},
+pages={72-82},
 }
 
 ```
