@@ -1,6 +1,6 @@
 #LibISR: Implicite Shape Representation for 3D Tracking and Reconstruction
 
-This software is implemented by Carl Yuheng Ren [Carl Yuheng Ren](http://carlyuheng.com/).
+This software is implemented by [Carl Yuheng Ren](http://carlyuheng.com/).
 
 It is available free for non-commercial use, and may be redistributed under these conditions. For commercial use, please contact [ren@carlyuheng.com](ren@carlyuheng.com).
 
