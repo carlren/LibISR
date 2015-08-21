@@ -44,6 +44,7 @@ It is available free for non-commercial use, and may be redistributed under thes
 ```
 then you can play with a coke can as shown in this [video](https://www.youtube.com/watch?v=ExAqnnEZOVU&feature=youtu.be)
 
+## Citation
 
 If you use this code for your research, please kindly cite the following publications:
 ```
