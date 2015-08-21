@@ -47,7 +47,6 @@ set(LibISR_Engines_Base
 
 set(LibISR_Engines_shared
 	Engines/shared/ISRLowlevelEngine_shared.h
-	Engines/shared/ISRReconstructionEngine_shared.h
 	Engines/shared/ISRRGBDTracker_shared.h
 	Engines/shared/ISRVisualisationEngine_shared.h
 	Engines/shared/ISRVoxelAccess_shared.h
@@ -59,8 +58,6 @@ set(LibISR_Engines_GPU
 	Engines/GPU/ISRRGBDTracker_GPU.cu
 	Engines/GPU/ISRLowlevelEngine_GPU.h
 	Engines/GPU/ISRLowlevelEngine_GPU.cu
-	Engines/GPU/ISRReconstructionEngine_GPU.h
-	Engines/GPU/ISRReconstructionEngine_GPU.cu
 	Engines/GPU/ISRVisualisationEngine_GPU.h
 	Engines/GPU/ISRVisualisationEngine_GPU.cu
 	)
@@ -70,8 +67,6 @@ set(LibISR_Engines_CPU
 	Engines/CPU/ISRRGBDTracker_CPU.cpp
 	Engines/CPU/ISRLowlevelEngine_CPU.h
 	Engines/CPU/ISRLowlevelEngine_CPU.cpp
-	Engines/CPU/ISRReconstructionEngine_CPU.h
-	Engines/CPU/ISRReconstructionEngine_CPU.cpp
 	Engines/CPU/ISRVisualisationEngine_CPU.h
 	Engines/CPU/ISRVisualisationEngine_CPU.cpp
 	)

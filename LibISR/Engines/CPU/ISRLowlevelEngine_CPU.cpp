@@ -1,3 +1,5 @@
+// Copyright 2014-2015 Isis Innovation Limited and the authors of LibISR
+
 #include "ISRLowlevelEngine_CPU.h"
 #include "../shared/ISRLowlevelEngine_shared.h"
 

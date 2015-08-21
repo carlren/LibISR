@@ -1,3 +1,5 @@
+// Copyright 2014-2015 Isis Innovation Limited and the authors of LibISR
+
 #include "ISRVisualisationEngine.h"
 
 using namespace LibISR::Engine;

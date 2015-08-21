@@ -1,3 +1,5 @@
+// Copyright 2014-2015 Isis Innovation Limited and the authors of LibISR
+
 #include "ISRRGBDTracker_GPU.h"
 #include "../shared/ISRRGBDTracker_shared.h"
 #include "../shared/ISRCudaUtil.h"

@@ -1,3 +1,5 @@
+// Copyright 2014-2015 Isis Innovation Limited and the authors of LibISR
+
 #include "ISRCoreEngine.h"
 #include "../Utils/IOUtil.h"
 #include "../Utils/NVTimer.h"
