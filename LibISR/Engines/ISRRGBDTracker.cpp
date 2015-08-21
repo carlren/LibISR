@@ -3,13 +3,14 @@
 #include <math.h>
 #include <stdio.h>
 #include <iostream>
+#include <cmath> 
 
 #include "../../ORUtils/Cholesky.h"
 #include "../Utils/IOUtil.h"
 
 using namespace LibISR::Engine;
 using namespace LibISR::Objects;
-
+using namespace std;
 
 LibISR::Engine::ISRRGBDTracker::ISRRGBDTracker(int nObjs, bool useGPU)
 {
@@ -115,13 +116,13 @@ void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion
 //	//
 //	//--------------------------------------------------------------------------
 
-	for (int i = 0; i < 20;i++)
-	{
-		computeJacobianAndHessian(ATb_host, ATA_host, accpetedState);
-		computeSingleStep(cacheNabla, ATA_host, ATb_host, lambda, ATb_Size);
-		accpetedState->applyIncrementalPoseChangesToInvH(cacheNabla);
-		evaluateEnergy(&lastenergy, accpetedState);
-	}
+//	for (int i = 0; i < 20;i++)
+//	{
+//		computeJacobianAndHessian(ATb_host, ATA_host, accpetedState);
+//		computeSingleStep(cacheNabla, ATA_host, ATb_host, lambda, ATb_Size);
+//		accpetedState->applyIncrementalPoseChangesToInvH(cacheNabla);
+//		evaluateEnergy(&lastenergy, accpetedState);
+//	}
 	
 //	--------------------------------------------------------------------------
 	
@@ -129,52 +130,53 @@ void LibISR::Engine::ISRRGBDTracker::TrackObjects(ISRFrame *frame, ISRShapeUnion
 	
 //	--------------------------------------------------------------------------
 
-	// These are some sensible default parameters for Levenberg Marquardt.
-	// The first three control the convergence criteria, the others might
-	// impact convergence speed.
-//	static const int MAX_STEPS = 100;
-//	static const float MIN_STEP = 0.00005f;
-//	static const float MIN_DECREASE = 0.0001f;
-//	static const float TR_REGION_INCREASE = 0.10f;
-//	static const float TR_REGION_DECREASE = 10.0f;
+////	 These are some sensible default parameters for Levenberg Marquardt.
+////	 The first three control the convergence criteria, the others might
+////	 impact convergence speed.
+	static const int MAX_STEPS = 100;
+	static const float MIN_STEP = 0.00005f;
+	static const float MIN_DECREASE = 0.0001f;
+	static const float TR_REGION_INCREASE = 0.10f;
+	static const float TR_REGION_DECREASE = 10.0f;
 
-//	{// minimalist LM main loop
-//		for (int iter = 0; iter < MAX_STEPS; iter++)
-//		{
-//			computeJacobianAndHessian(ATb_host, ATA_host, tempState);
+	{// minimalist LM main loop
+		for (int iter = 0; iter < MAX_STEPS; iter++)
+		{
+			computeJacobianAndHessian(ATb_host, ATA_host, tempState);
             
-//			while (true)
-//			{
-//				computeSingleStep(cacheNabla, ATA_host, ATb_host, lambda, ATb_Size);
+			while (true)
+			{
+				computeSingleStep(cacheNabla, ATA_host, ATb_host, lambda, ATb_Size);
 
-//				// check if step size is very small, if so, converge.
-//				float MAXnorm = 0.0;
-//				for (int i = 0; i<ATb_Size; i++) { float tmp = fabs(cacheNabla[i]); if (tmp>MAXnorm) MAXnorm = tmp; }
-//				if (MAXnorm < MIN_STEP) { converged = true; break; }
+				// check if step size is very small, if so, converge.
+				float MAXnorm = 0.0;
+				for (int i = 0; i<ATb_Size; i++) { float tmp = fabs(cacheNabla[i]); if (tmp>MAXnorm) MAXnorm = tmp; }
+				if (MAXnorm < MIN_STEP) { converged = true; break; }
 
-//				tempState->applyIncrementalPoseChangesToInvH(cacheNabla);
+				tempState->applyIncrementalPoseChangesToInvH(cacheNabla);
                 
-//				evaluateEnergy(&currentenergy, tempState);
+				evaluateEnergy(&currentenergy, tempState);
+                
+				if (currentenergy > lastenergy)
+				{
+					// check if energy decrease is too small, if so, converge.
+					if (std::abs(currentenergy - lastenergy) / std::abs(lastenergy+0.01) < MIN_DECREASE) {converged = true;}
+					lastenergy = currentenergy;
+					lambda *= TR_REGION_INCREASE;
+					accpetedState->setFrom(*tempState);
+					break;
+				}
+				else
+				{
+					lambda *= TR_REGION_DECREASE;
+					tempState->setFrom(*accpetedState);
+				}
+			}
+			if (converged) break;
+            
+		}
 
-//				if (currentenergy > lastenergy)
-//				{
-//					// check if energy decrease is too small, if so, converge.
-//					if (abs(currentenergy - lastenergy) / abs(lastenergy) < MIN_DECREASE) {converged = true;}
-//					lastenergy = currentenergy;
-//					lambda *= TR_REGION_INCREASE;
-//					accpetedState->setFrom(*tempState);
-//					break;
-//				}
-//				else
-//				{
-//					lambda *= TR_REGION_DECREASE;
-//					tempState->setFrom(*accpetedState);
-//				}
-//			}
-//			if (converged) break;
-//		}
-
-//	}
+	}
 	
     
 

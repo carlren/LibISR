@@ -100,7 +100,7 @@ void UIEngine::glutDisplayFunction()
 
 	glColor3f(1.0f, 1.0f, 0.0f);
 	glRasterPos2f(-0.95f, -0.95f);
-	sprintf(str, "n - next frame \t b - all frames \t e - exit");
+	sprintf(str, "b - start demo \t r - start tracking \t f - full screen on/off  e - exit");
 	safe_glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const char*)str);
 
 	glutSwapBuffers();

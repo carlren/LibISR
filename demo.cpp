@@ -20,16 +20,17 @@ int main(int argc, char** argv)
 	// setup for live demo
 	//////////////////////////////////////////////////////////////////////////
 
-//    if (argc !=3){
-//        std::cout<<"Usage: ./demo <path to SDF model> <path to calib file>"<<std::endl;
-//        return -1;
-//    }
+    if (argc !=3){
+        std::cout<<"Usage: ./demo <path to SDF model> <path to calib file>"<<std::endl;
+        return -1;
+    }
+
+    const char *sdfFile = argv[1];
+	const char *calibFile = argv[2];
     
-	const char *sdfFile = "/home/carl/Work/Code/github/LibISR/Data/teacan.bin";
-	const char *calibFile = "/home/carl/Work/Code/github/LibISR/Data/calib_reg.txt";
+//	const char *sdfFile = "/home/carl/Work/Code/github/LibISR/Data/teacan.bin";
+//	const char *calibFile = "/home/carl/Work/Code/github/LibISR/Data/calib_reg.txt";
     
-//    const char *sdfFile = argv[1];
-//	const char *calibFile = argv[2];
     
 	ImageSourceEngine *imageSource = new OpenNIEngine(calibFile, NULL, true);
     

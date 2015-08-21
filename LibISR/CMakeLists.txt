@@ -39,8 +39,6 @@ set(LibISR_Engines_Base
 	Engines/ISRRGBDTracker.cpp
 	Engines/ISRLowlevelEngine.h
 	Engines/ISRLowlevelEngine.cpp
-	Engines/ISRReconstructionEngine.h
-	Engines/ISRReconstructionEngine.cpp
 	Engines/ISRVisualisationEngine.h
 	Engines/ISRVisualisationEngine.cpp
         Engines/ISRCoreEngine.h
