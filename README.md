@@ -17,12 +17,12 @@ It is available free for non-commercial use, and may be redistributed under thes
     available at http://freeglut.sourceforge.net/
 
   - CUDA (e.g. version 6.0 or 7.0)  
-    OPTIONAL but REQUIRED for all GPU accelerated code  
+    REQUIRED for all GPU accelerated code  
     at least with cmake it is still possible to compile the CPU part without  
     available at https://developer.nvidia.com/cuda-downloads
 
   - OpenNI (e.g. version 2.2.0.33)  
-    OPTIONAL but REQUIRED to get live images from suitable hardware  
+    REQUIRED to get live images from suitable hardware  
     also make sure you have freenect/OpenNI2-FreenectDriver if you need it  
     available at http://structure.io/openni
 
