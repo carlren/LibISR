@@ -1,4 +1,4 @@
-#LibISR: Implicite Shape Representation for 3D Tracking and Reconstruction
+#LibISR: Implicit Shape Representation for 3D Tracking and Reconstruction
 
 This software is implemented by [Carl Yuheng Ren](http://carlyuheng.com/).
 
