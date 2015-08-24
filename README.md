@@ -42,7 +42,7 @@ It is available free for non-commercial use, and may be redistributed under thes
 ```
   $ ./demo ../Data/teacan.bin ../Data/Calib_reg.txt
 ```
-then you can play with a coke can as shown in this [video](https://www.youtube.com/watch?v=ExAqnnEZOVU&feature=youtu.be)
+then you can play with a coke can as shown in this [video (on Yutube)](https://www.youtube.com/watch?v=ExAqnnEZOVU&feature=youtu.be) or [video (on Weibo)](http://video.weibo.com/show?fid=1034:50e519c5d1d8974a02dc6ace742910ca)
 
 ## Citation
 
