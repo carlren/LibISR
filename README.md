@@ -1,8 +1,13 @@
 #LibISR: Implicit Shape Representation for 3D Tracking and Reconstruction
 
-This software is implemented by [Carl Yuheng Ren](http://carlyuheng.com/).
+This is the software bundle "LibISR",  the current version is maintained by:
 
-It is available free for non-commercial use, and may be redistributed under these conditions. For commercial use, please contact [ren@carlyuheng.com](ren@carlyuheng.com).
+  Carl Yuheng Ren <carl@robots.ox.ac.uk>  
+  Victor Adrian Prisacariu <victor@robots.ox.ac.uk>  
+  
+For more information about LibISR please visit the project website http://www.robots.ox.ac.uk/~victor/libisr.
+
+Other related projects can be found in the Oxford Active Vision Library http://www.oxvisionlib.org.
 
 ## Requirements:
 
@@ -68,18 +73,6 @@ title={STAR3D: Simultaneous Tracking and Reconstruction of 3D Objects Using RGB-
 year={2013}, 
 month={Dec}, 
 pages={1561-1568}, 
-}
-
-```
-
-```
-@incollection{Ren_Reid:ECCV2012,
-year={2012},
-booktitle={Computer Vision -- ECCV 2012. Workshops and Demonstrations},
-title={A Unified Energy Minimization Framework for Model Fitting in Depth},
-publisher={Springer Berlin Heidelberg},
-author={Ren, C. Y. and Reid, I.},
-pages={72-82},
 }
 
 ```
