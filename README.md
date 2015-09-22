@@ -2,8 +2,8 @@
 
 This is the software bundle "LibISR",  the current version is maintained by:
 
-  Carl Yuheng Ren <carl@robots.ox.ac.uk>  
-  Victor Adrian Prisacariu <victor@robots.ox.ac.uk>  
+  [Carl Yuheng Ren](http://www.carlyuheng.com/) <<carl@robots.ox.ac.uk>>  
+  [Victor Adrian Prisacariu](http://www.robots.ox.ac.uk/~victor/) <<victor@robots.ox.ac.uk>> 
   
 For more information about LibISR please visit the project website http://www.robots.ox.ac.uk/~victor/libisr.
 
